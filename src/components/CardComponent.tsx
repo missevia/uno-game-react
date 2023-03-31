@@ -144,12 +144,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
     }
   };
   
-
-  // change this. Something is wrong with types. Should not be undefined everywhere
-
   const handleClick = () => {
-    console.log('handling click')
-    cardIndex && game.playCard(cardIndex)
+    if (cardIndex !== undefined) {
+      game.playCard(cardIndex);
+    }
   }
 
   return (

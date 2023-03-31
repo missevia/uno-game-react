@@ -58,28 +58,23 @@ export class GameStore {
         return cards;
     }
 
-    addCardToPlayerHand(card: Card) {
-        this.playerHand.push(card);
+    addCardsToPlayerHand(cardArray: Card[]) {
+        this.playerHand.push(...cardArray);
     }
 
     // action to play a card from the player's hand
     playCard(cardIndex: number) {
+        console.log('Evia', this.playerHand)
         const card = this.playerHand[cardIndex];
         console.log('card', card) 
 
         // check if the card is valid to play and perform any necessary actions
         if (this.checkValidCard(card)) {
-            console.log('card is valid')
-            this.discardPile.push(card);
-            this.playerHand.splice(cardIndex, 1);
-         
-
-            // if (this.isSpecialCard(card)) {
-            //     this.handleSpecialCards(card)
-            // }
-
-            this.changeTurn();
-
+            runInAction(() => {
+                this.discardPile.push(card);
+                this.playerHand.splice(cardIndex, 1);
+                this.changeTurn();
+            })
              // If it's an AI player's turn, automatically play a card
             if (this.currentPlayer !== 0) {
                 this.aiPlayCard(this.currentPlayer - 1);
@@ -121,9 +116,9 @@ export class GameStore {
                 this.discardPile.push(cardToPlay);
                 aiHand.splice(cardIndexToPlay, 1);
                 // set(this.aiHands, aiPlayerIndex, aiHand); // Update the AI's hand using MobX's set method
-                if (this.isSpecialCard(cardToPlay)) {
-                    this.handleSpecialCards(cardToPlay)
-                }
+                // if (this.isSpecialCard(cardToPlay)) {
+                //     this.handleSpecialCards(cardToPlay)
+                // }
                 this.changeTurn();
             })
         } else {

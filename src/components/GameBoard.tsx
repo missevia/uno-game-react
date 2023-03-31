@@ -4,11 +4,9 @@ import PlayerHand from './PlayerHand';
 import AIHand from './AIHand';
 import DiscardPile from './DiscardPile';
 import { useGame } from '../hooks/useGameStore';
-import { Card } from '../utils/cardUtils';
 import Deck from './Deck';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { toJS } from 'mobx';
 
 const GameBoardStyled = styled.div`
     display: flex;
@@ -17,16 +15,24 @@ const GameBoardStyled = styled.div`
 const GameBoard: React.FC = () => {
     const { game } = useGame();
 
-    // useEffect(() => {
-    //     console.log('discardPile', discardPile)
-    // }, [discardPile])
-
     const handleDeckClick = () => {
-        // if (currentPlayer === 0 && validMoves.length === 0) {
+        // check the top card of the discard pile 
+        // if card === wildDrawFour, draw four cards
+        // if card === drawTwo, draw two cards
+        // else, draw 1 card
+        const topDiscardCard = game.discardPile[game.discardPile.length - 1]
         if (game.currentPlayer === 0) {
-          const newCard = game.drawCard();
-          game.addCardToPlayerHand(newCard);
-          
+          console.log('topDiscardValue', topDiscardCard.value)
+          if (topDiscardCard.value === 'drawTwo') {
+            const newCards = game.drawCards(2);
+            game.addCardsToPlayerHand(newCards);
+          } else if (topDiscardCard.value === 'drawFour') {
+            const newCards = game.drawCards(4);
+            game.addCardsToPlayerHand(newCards);
+          } else {
+            const newCard = game.drawCard();
+            game.addCardsToPlayerHand([newCard]);
+          }
             // Check if it's an AI player's turn after the player draws a card
             if (game.currentPlayer !== 0) {
                 game.aiPlayCard(game.currentPlayer - 1);

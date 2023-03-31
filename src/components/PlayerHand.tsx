@@ -1,6 +1,5 @@
 import React from 'react';
 import CardComponent from './CardComponent';
-import { Card } from '../utils/cardUtils';
 import styled from 'styled-components';
 import { useGame } from '../hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
