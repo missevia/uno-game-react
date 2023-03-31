@@ -12,6 +12,7 @@ export class GameStore {
     currentPlayer: number = 0;
     gameStatus: GameStatus = GameStatus.NotStarted;
     gameInProgress: boolean = false;
+    fourCardsDrawnByAI: boolean = false;
 
     constructor(store: RootStore) {
         makeAutoObservable(this);
@@ -20,9 +21,13 @@ export class GameStore {
 
     get validMoves(): number[] {
         return this.playerHand.reduce((validMoves, card, index) => {
-          if (this.checkValidCard(card)) {
+          if (this.fourCardsDrawnByAI) {
+            console.log('4 cards drawn by AI')
+            validMoves.push(index);
+          } else if (this.checkValidCard(card)) {
             validMoves.push(index);
           }
+          console.log('result', this.fourCardsDrawnByAI)
           return validMoves;
         }, [] as number[]);
       }
@@ -105,7 +110,21 @@ export class GameStore {
 
     aiPlayCard(aiPlayerIndex: number) {
         const aiHand = this.aiHands[aiPlayerIndex];
-    
+         // Check the top card of the discard pile
+        const topDiscardCard = this.discardPile[this.discardPile.length - 1];
+
+        if (topDiscardCard.value === CardValue.DrawTwo) {
+            const newCards = this.drawCards(2);
+            aiHand.push(...newCards);
+            this.changeTurn();
+            return; // Exit the function early after handling the drawTwo case
+        } else if (topDiscardCard.value === CardValue.WildDrawFour) {
+            const newCards = this.drawCards(4);
+            aiHand.push(...newCards);
+            this.fourCardsDrawnByAI = true;
+            this.changeTurn();
+            return; // Exit the function early after handling the drawFour case
+        }
         // Find the first valid card in the AI's hand
         const cardIndexToPlay = aiHand.findIndex((card) => this.checkValidCard(card));
     
@@ -115,10 +134,6 @@ export class GameStore {
                 const cardToPlay = aiHand[cardIndexToPlay];
                 this.discardPile.push(cardToPlay);
                 aiHand.splice(cardIndexToPlay, 1);
-                // set(this.aiHands, aiPlayerIndex, aiHand); // Update the AI's hand using MobX's set method
-                // if (this.isSpecialCard(cardToPlay)) {
-                //     this.handleSpecialCards(cardToPlay)
-                // }
                 this.changeTurn();
             })
         } else {
@@ -128,19 +143,35 @@ export class GameStore {
                 aiHand.push(newCard);
                 this.changeTurn();
             })
-          
-            // set(this.aiHands, aiPlayerIndex, aiHand); // Update the AI's hand
           }
-       
     }
     
     // action to check if a card is valid to play
     checkValidCard(card: Card): boolean {
         const topDiscard = this.discardPile[this.discardPile.length - 1];
+        if (this.currentPlayer === 0 && this.fourCardsDrawnByAI) {
+            this.fourCardsDrawnByAI = false;
+            return true;
+        }
         console.log('topDiscard', topDiscard)
-
-        // Check if the card color or value matches the top card in the discard pile, or if the card is a Wild card
-        return card.color === topDiscard.color || card.value === topDiscard.value || card.value === CardValue.Wild || card.value === CardValue.WildDrawFour;
+        // Check if the card is a Wild card
+        if (card.value === CardValue.Wild || card.value === CardValue.WildDrawFour) {
+            return true;
+        }
+    
+        // Check if the top card is an action card (reverse, skip, drawTwo, or drawFour)
+        if (
+            topDiscard.value === CardValue.Reverse ||
+            topDiscard.value === CardValue.Skip ||
+            topDiscard.value === CardValue.DrawTwo ||
+            topDiscard.value === CardValue.WildDrawFour
+        ) {
+            // In this case, only allow playing a card with the same value
+            return card.value === topDiscard.value;
+        }
+    
+        // If the top card is not an action card, check if the card color or value matches the top card in the discard pile
+        return card.color === topDiscard.color || card.value === topDiscard.value;
     }
 
     handleSpecialCards(card: Card) {

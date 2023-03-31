@@ -33,6 +33,8 @@ const GameBoard: React.FC = () => {
             const newCard = game.drawCard();
             game.addCardsToPlayerHand([newCard]);
           }
+
+          game.changeTurn()
             // Check if it's an AI player's turn after the player draws a card
             if (game.currentPlayer !== 0) {
                 game.aiPlayCard(game.currentPlayer - 1);
