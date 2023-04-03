@@ -159,16 +159,16 @@ export class GameStore {
             return true;
         }
     
-        // Check if the top card is an action card (reverse, skip, drawTwo, or drawFour)
-        if (
-            topDiscard.value === CardValue.Reverse ||
-            topDiscard.value === CardValue.Skip ||
-            topDiscard.value === CardValue.DrawTwo ||
-            topDiscard.value === CardValue.WildDrawFour
-        ) {
-            // In this case, only allow playing a card with the same value
-            return card.value === topDiscard.value;
-        }
+        // // Check if the top card is an action card (reverse, skip, drawTwo, or drawFour)
+        // if (
+        //     topDiscard.value === CardValue.Reverse ||
+        //     topDiscard.value === CardValue.Skip ||
+        //     topDiscard.value === CardValue.DrawTwo ||
+        //     topDiscard.value === CardValue.WildDrawFour
+        // ) {
+        //     // In this case, only allow playing a card with the same value
+        //     return card.value === topDiscard.value;
+        // }
     
         // If the top card is not an action card, check if the card color or value matches the top card in the discard pile
         return card.color === topDiscard.color || card.value === topDiscard.value;
@@ -198,5 +198,6 @@ export class GameStore {
     // 3. write checkGameOver function
     // 4. write calculateScore function
     // 5. write resetGame function
+    // TO-DO write logic for wild card - the player should be able to pick color, the AI bot should pick random color and somehow display it to the user
 
 }
