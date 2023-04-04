@@ -7,6 +7,9 @@ import { useGame } from '../hooks/useGameStore';
 import Deck from './Deck';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
+import { CardValue } from '../utils/cardUtils';
+import { toJS } from 'mobx';
+import { ActiveSpecialCard } from '../utils/gameUtils';
 
 const GameBoardStyled = styled.div`
     display: flex;
@@ -15,32 +18,26 @@ const GameBoardStyled = styled.div`
 const GameBoard: React.FC = () => {
     const { game } = useGame();
 
-    const handleDeckClick = () => {
-        // check the top card of the discard pile 
-        // if card === wildDrawFour, draw four cards
-        // if card === drawTwo, draw two cards
-        // else, draw 1 card
-        const topDiscardCard = game.discardPile[game.discardPile.length - 1]
-        if (game.currentPlayer === 0) {
-          console.log('topDiscardValue', topDiscardCard.value)
-          if (topDiscardCard.value === 'drawTwo') {
-            const newCards = game.drawCards(2);
-            game.addCardsToPlayerHand(newCards);
-          } else if (topDiscardCard.value === 'drawFour') {
-            const newCards = game.drawCards(4);
-            game.addCardsToPlayerHand(newCards);
-          } else {
-            const newCard = game.drawCard();
-            game.addCardsToPlayerHand([newCard]);
-          }
-
-          game.changeTurn()
-            // Check if it's an AI player's turn after the player draws a card
-            if (game.currentPlayer !== 0) {
-                game.aiPlayCard(game.currentPlayer - 1);
-            }
+    useEffect(() => {
+        if (game.activeSpecialCard) {
+            console.log('ACTIVE SPECIAL CARD', ActiveSpecialCard[game.activeSpecialCard])
         }
-    };
+
+    }, [game.activeSpecialCard])
+
+    // const handleDeckClick = () => {
+    //     if (game.currentPlayer === 0) {
+    //       const newCards = game.drawCards(game.nextPlayerDraws);
+    //       game.addCardsToPlayerHand(newCards);
+    //       game.nextPlayerDraws = 1;
+      
+    //       game.changeTurn();
+    //       // Check if it's an AI player's turn after the player draws a card
+    //       if (game.currentPlayer !== 0) {
+    //         game.aiPlayCard(game.currentPlayer - 1);
+    //       }
+    //     }
+    //   };
 
     return (
         <div>
@@ -59,7 +56,7 @@ const GameBoard: React.FC = () => {
                 ))}
             </div>
             <DiscardPile topCard={game.discardPile[game.discardPile.length - 1]} />
-            <Deck deck={game.deck} onClick={handleDeckClick} />
+            <Deck deck={game.deck} onClick={game.handleDeckClick} />
         </div>
 )}
 

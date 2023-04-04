@@ -19,10 +19,6 @@ interface AIHandProps {
 
 const AIHand: React.FC<AIHandProps> = observer(({ handIndex, aiHand }) => {
 
-    useEffect(() => {
-        console.log('ai', toJS(aiHand))
-    }, [aiHand])
-
    return (
         <>
         <h2>AI Opponent {handIndex + 1} Hand</h2>

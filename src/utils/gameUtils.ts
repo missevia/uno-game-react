@@ -1,11 +1,8 @@
-export enum GameStatus {
-    NotStarted, 
-    InProgress, 
-    Skipped, 
-    Reversed, 
-    Drawing, 
-    DrawingTwo,
-    DrawingFour,
-    ChoosingColor, // wild card
-    GameOver, 
+export enum ActiveSpecialCard {
+    Skip, 
+    Reverse, 
+    DrawTwo,
+    DrawFour,
+    Wild,
+    None
 }
