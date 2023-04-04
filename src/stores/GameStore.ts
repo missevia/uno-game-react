@@ -7,7 +7,6 @@ import { RootStore } from "./RootStore";
 // 1. Implement logic for ending the game - when first player gets rid of all cards
 // 2. Skip card is not overriden by another skip card
 // 3. Logic is wrong if the first card in the discard pile is an action card/ wild card
-// 4. Add prettier or similar to format the code
 // 5. Re-factor GameStore and move out some of the logic to other files
 // 6. Add new variable for storing points of each player (Give each player a name?)
 
@@ -36,6 +35,27 @@ export class GameStore {
 			}
 			return validMoves;
 		}, [] as number[]);
+        
+	}
+
+	checkGameOver(): boolean {
+		if (this.playerHand.length === 0) {
+			this.endGame();
+			return true;
+		}    
+		for (let i = 0; i < this.aiHands.length; i++) {
+			if (this.aiHands[i].length === 0) {
+				this.endGame();
+				return true;
+			}
+		}    
+		return false;
+	}
+
+	endGame() {
+		this.gameInProgress = false;
+		console.log("game finished");
+		// add more logic/ cleanup here
 	}
 
 	// action to start a new game
@@ -89,6 +109,9 @@ export class GameStore {
 	}
     
 	async handleDeckClick() {
+		if (!this.gameInProgress) {
+			return; 
+		}
 		const currentPlayer = this.currentPlayer;
     
 		if (currentPlayer === 0) {
@@ -116,6 +139,8 @@ export class GameStore {
 			this.changeTurn();
 			this.activeSpecialCard = ActiveSpecialCard.None;
 		}
+
+		this.checkGameOver();
     
 		// If it's an AI player's turn after the player draws a card, automatically play a card or draw a card
 		if (this.currentPlayer !== 0) {
@@ -150,6 +175,9 @@ export class GameStore {
 
 	// action to play a card from the player's hand
 	async playCard(cardIndex: number) {
+		if (!this.gameInProgress) {
+			return; 
+		}
 		const card = this.playerHand[cardIndex];
 
 		// When a user clicks on the card, check if the card is valid
@@ -169,6 +197,10 @@ export class GameStore {
 					this.skipNextPlayer();
 				} else {
 					this.changeTurn();
+				}
+
+				if (this.checkGameOver()) {
+					return;
 				}
     
 				// this.activeSpecialCard = ActiveSpecialCard.None;
@@ -201,6 +233,9 @@ export class GameStore {
 	}
 
 	async playAllAiTurns() {
+		if (!this.gameInProgress) {
+			return; 
+		}
 		// If it's an AI player's turn, automatically play a card
 		while (this.currentPlayer !== 0) {
 			await new Promise((resolve) => {
@@ -225,6 +260,9 @@ export class GameStore {
 	// when ai plays drawFour, it also draws cards itself
 
 	async aiPlayCard(aiPlayerIndex: number): Promise<void> {
+		if (!this.gameInProgress) {
+			return; 
+		}
 		return new Promise((resolve) => {
 			const aiHand = this.aiHands[aiPlayerIndex];
 
@@ -252,11 +290,14 @@ export class GameStore {
 					this.discardPile.push(cardToPlay);
 					// amending the AI's hand
 					aiHand.splice(cardIndexToPlay, 1);
+					if (this.checkGameOver()) {
+						return;
+					}
 					if (this.activeSpecialCard === ActiveSpecialCard.Skip) {
 						this.skipNextPlayer();
 					} else {
 						this.changeTurn();
-					}
+					}	
 				});
 			} else {
 				// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.

@@ -25,20 +25,6 @@ const GameBoard: React.FC = () => {
 
 	}, [game.activeSpecialCard]);
 
-	// const handleDeckClick = () => {
-	//     if (game.currentPlayer === 0) {
-	//       const newCards = game.drawCards(game.nextPlayerDraws);
-	//       game.addCardsToPlayerHand(newCards);
-	//       game.nextPlayerDraws = 1;
-      
-	//       game.changeTurn();
-	//       // Check if it's an AI player's turn after the player draws a card
-	//       if (game.currentPlayer !== 0) {
-	//         game.aiPlayCard(game.currentPlayer - 1);
-	//       }
-	//     }
-	//   };
-
 	return (
 		<div>
 			{game.gameInProgress ? (
@@ -47,7 +33,6 @@ const GameBoard: React.FC = () => {
 				<h1>Game over</h1>
 			)}
 			<h1>{`Current player: ${game.currentPlayer}`}</h1>
-			{/* <h1>{`Game status: ${toJS(game.gameStatus)}`}</h1> */}
 			<PlayerHand />
         
 			<div className="ai-hands">
