@@ -1,8 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Card } from '../utils/cardUtils';
-import cardBack from '../assets/cards/backside.png';
-import { observer } from 'mobx-react-lite';
+import React from "react";
+import styled from "styled-components";
+import { Card } from "../utils/cardUtils";
+import cardBack from "../assets/cards/backside.png";
+import { observer } from "mobx-react-lite";
 
 interface DeckProps {
   deck: Card[];
@@ -23,15 +23,15 @@ const DeckStyled = styled.div`
   }
 `;
 
-const Deck: React.FC<DeckProps> = observer(({ deck, onClick }) => {
-  return (
-    <>
-        <h1>Deck</h1>
-        <DeckStyled>
-        <div className="card-back" onClick={onClick}></div>
-        </DeckStyled>
-    </>
-  );
+const Deck: React.FC<DeckProps> = observer(({ onClick }) => {
+	return (
+		<>
+			<h1>Deck</h1>
+			<DeckStyled>
+				<div className="card-back" onClick={onClick}></div>
+			</DeckStyled>
+		</>
+	);
 });
 
 export default Deck;
