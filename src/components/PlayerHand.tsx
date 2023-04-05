@@ -6,9 +6,9 @@ import { observer } from "mobx-react-lite";
 import { v4 as uuidv4 } from "uuid";
 
 const PlayerHandStyled = styled.div`
-    .player-hand {
-        display: flex;
-    }
+    position: absolute;
+    bottom: 18%;
+    left: 35%;
 `;
 
 const PlayerHand: React.FC = observer(() => {
@@ -16,17 +16,19 @@ const PlayerHand: React.FC = observer(() => {
 	const isPlayerTurn = game.currentPlayer === 0;
 	return (
 		<PlayerHandStyled>
-			<h3>Your hand</h3>
-			<div className="player-hand">
-				{game.playerHand.map((card, index) => (
-					<CardComponent
-						key={uuidv4()}
-						card={card}
-						cardIndex={index}
-						highlight={isPlayerTurn && game.validMoves.includes(index)}
-					/>
-				))}
-			</div>
+			{game.playerHand.map((card, index) => (
+				<CardComponent
+					key={uuidv4()}
+					card={card}
+					cardIndex={index}
+					highlight={isPlayerTurn && game.validMoves.includes(index)}
+					style={{
+						marginLeft: (index * 80),
+						marginTop: 0,
+						zIndex: index,
+					}}
+				/>
+			))}
 		</PlayerHandStyled>
 	);
 });

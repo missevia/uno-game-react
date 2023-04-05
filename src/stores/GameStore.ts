@@ -3,20 +3,12 @@ import { Card, generateDeck, shuffle, CardValue } from "../utils/cardUtils";
 import { ActiveSpecialCard } from "../utils/gameUtils";
 import { RootStore } from "./RootStore";
 
-// current issues. 
-// 1. Implement logic for ending the game - when first player gets rid of all cards
-// 2. Skip card is not overriden by another skip card
-// 3. Logic is wrong if the first card in the discard pile is an action card/ wild card
-// 5. Re-factor GameStore and move out some of the logic to other files
-// 6. Add new variable for storing points of each player (Give each player a name?)
-
 export class GameStore {
 	deck: Card[] = [];
 	discardPile: Card[] = [];
 	playerHand: Card[] = [];
 	aiHands: Card[][] = [];
 	currentPlayer = 0;
-	// !! handle the case when the first card in the deck is special card
 	activeSpecialCard: ActiveSpecialCard = ActiveSpecialCard.None;
 	gameInProgress = false;
 	wildDrawFourPlayed = false;
@@ -55,11 +47,11 @@ export class GameStore {
 	endGame() {
 		this.gameInProgress = false;
 		console.log("game finished");
-		// add more logic/ cleanup here
+		// TO-DO: add more logic/ cleanup here
 	}
 
 	// action to start a new game
-	startGame(aiOpponents = 2) {
+	startGame(aiOpponents = 3) {
 		runInAction(() => {
 			this.deck = shuffle(generateDeck());
           
@@ -73,7 +65,13 @@ export class GameStore {
 				this.drawCards(i + 1, 7);
 			}
 			// Draw the first card from the deck and place it in the discard pile
-			this.discardPile = [this.drawCard()];
+			let firstDiscardCard = this.drawCard();
+			while (this.isSpecialCard(firstDiscardCard)) {
+				this.deck.push(firstDiscardCard);
+				this.deck = shuffle(this.deck);
+				firstDiscardCard = this.drawCard();
+			}
+			this.discardPile = [firstDiscardCard];
 			this.currentPlayer = 0;
 			this.gameInProgress = true;
 		});
@@ -109,37 +107,24 @@ export class GameStore {
 	}
     
 	async handleDeckClick() {
-		if (!this.gameInProgress) {
-			return; 
+		if (!this.gameInProgress || this.currentPlayer !== 0) {
+			return;
 		}
+    
 		const currentPlayer = this.currentPlayer;
     
-		if (currentPlayer === 0) {
-			if (this.activeSpecialCard === ActiveSpecialCard.DrawFour) {
-				this.drawCards(currentPlayer, 4);
-				this.activeSpecialCard = ActiveSpecialCard.None;
-				this.changeTurn();
-			} else if (this.activeSpecialCard === ActiveSpecialCard.DrawTwo) {
-				this.drawCards(currentPlayer, 2);
-				this.activeSpecialCard = ActiveSpecialCard.None;
-				this.changeTurn();
-			} else {
-				this.drawCards(currentPlayer, 1);
-				this.changeTurn();
-			}
-		} else {
-			if (this.activeSpecialCard === ActiveSpecialCard.DrawFour) {
-				this.drawCards(currentPlayer, 4);
-			} else if (this.activeSpecialCard === ActiveSpecialCard.DrawTwo) {
-				this.drawCards(currentPlayer, 2);
-			} else {
-				this.drawCards(currentPlayer, 1);
-			}
-    
-			this.changeTurn();
+		// Handle special card cases
+		if (this.activeSpecialCard === ActiveSpecialCard.DrawFour) {
+			this.drawCards(currentPlayer, 4);
 			this.activeSpecialCard = ActiveSpecialCard.None;
+		} else if (this.activeSpecialCard === ActiveSpecialCard.DrawTwo) {
+			this.drawCards(currentPlayer, 2);
+			this.activeSpecialCard = ActiveSpecialCard.None;
+		} else {
+			this.drawCards(currentPlayer, 1);
 		}
-
+    
+		this.changeTurn();
 		this.checkGameOver();
     
 		// If it's an AI player's turn after the player draws a card, automatically play a card or draw a card
@@ -158,7 +143,7 @@ export class GameStore {
 			break;
 		case CardValue.Reverse:
 			this.direction *= -1;
-			if (this.aiHands.length === 1) { // In a 2-player game, the Reverse card acts like a Skip card
+			if (this.aiHands.length === 1) { 
 				this.activeSpecialCard = ActiveSpecialCard.Skip;
 			} else {
 				this.activeSpecialCard = ActiveSpecialCard.None;
@@ -202,8 +187,6 @@ export class GameStore {
 				if (this.checkGameOver()) {
 					return;
 				}
-    
-				// this.activeSpecialCard = ActiveSpecialCard.None;
 			});
     
 			// If it's an AI player's turn, automatically play a card
@@ -212,8 +195,6 @@ export class GameStore {
 			}
 		}
 	}
-
-    
 
 	isSpecialCard(card: Card): boolean {
 		return (
@@ -242,7 +223,7 @@ export class GameStore {
 				setTimeout(() => {
 					this.aiPlayCard(this.currentPlayer - 1);
 					resolve(null);
-				}, 2000); // Set a delay of 1000ms (1 second) between AI players' turns
+				}, 2000); //  delay of 2 seconds between AI players' turns
 			});
 		}
 	}
@@ -257,8 +238,6 @@ export class GameStore {
 
 	// Temp solution - AI bot will play the first valid card in his deck or draw a card if no cards are available
 
-	// when ai plays drawFour, it also draws cards itself
-
 	async aiPlayCard(aiPlayerIndex: number): Promise<void> {
 		if (!this.gameInProgress) {
 			return; 
@@ -270,16 +249,13 @@ export class GameStore {
     
 			const cardIndexToPlay = aiHand.findIndex((card) => this.checkValidCard(card));
 
-			// if such card is found
-
-			// either player has a usual card to play or play special card on special card
     
 			if (cardIndexToPlay >= 0) {
-				// 1. IF Handle scenario where there is an active special card and AI's card is not special
-				// 2. IF Handle scenario where there is an active special card and AI's card is of the same special value or DrawFour
-				// 3. ELSE Handle scenario where there is an active special card AI does not have any cards to play, has to draw cards
-				// 4. IF Handle scenario where there is no active cards and AI has a valid card
-				// 5. ELSE Handle scenario where there is no active cards and AI does not have any valid cards
+				// 1. Handle scenario where there is an active special card and AI's card is not special
+				// 2. Handle scenario where there is an active special card and AI's card is of the same special value or DrawFour
+				// 3. Handle scenario where there is an active special card AI does not have any cards to play, has to draw cards
+				// 4. Handle scenario where there is no active cards and AI has a valid card
+				// 5. Handle scenario where there is no active cards and AI does not have any valid cards
                
 				runInAction(() => {
 					// finding the card to play

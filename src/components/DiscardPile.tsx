@@ -1,12 +1,8 @@
 import React from "react";
 import CardComponent from "./CardComponent";
 import { Card } from "../utils/cardUtils";
-import styled from "styled-components";
 import { observer } from "mobx-react-lite";
 
-const DiscardPileStyled = styled.div`
-
-`;
 
 interface DiscardPileProps {
     topCard: Card;
@@ -14,7 +10,6 @@ interface DiscardPileProps {
 
 const DiscardPile: React.FC<DiscardPileProps> = observer(({ topCard }) => (
 	<div>
-		<h2>Discard Pile</h2>
 		{topCard ? (
 			<CardComponent card={topCard} />
 		) : (

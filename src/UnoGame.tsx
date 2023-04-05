@@ -2,12 +2,19 @@ import React, { useEffect } from "react";
 import { useGame } from "./hooks/useGameStore";
 import { observer } from "mobx-react-lite";
 import GameBoard from "./components/GameBoard";
+import styled from "styled-components";
 
 // TO-DO
-// 1. Implement functionality - when wild draw 4 card has already been used by one player, the next one can play any card on it and if clicks on the deck only will draw 1 card
-// 2. Implement reverse functionality
-// 3. when draw 2 card has already been used by one player, the next player would only draw 1 card when clicking on the deck
-// 4 Implement skip next player functionality
+// 1. Skip card is not overriden by another skip card
+// 2. Re-factor GameStore and move out some of the logic to other files
+// 3. Store points of each player (Give each player a name?)
+// 4. At the moment only main player (non-AI can start the game)
+// 5. Implement the logic - what happens when the deck is empty
+
+const UnoGameStyled = styled.div`
+  height: 100vh;
+  max-width: 100vw;
+`;
 
 const UnoGame = observer(() => {
 	const { game } = useGame();
@@ -23,10 +30,9 @@ const UnoGame = observer(() => {
 	}
 
 	return (
-		<div>
-			<h1>Uno game</h1>
+		<UnoGameStyled>
 			<GameBoard />
-		</div>
+		</UnoGameStyled>
 	);
 });
 

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useGame } from "../hooks/useGameStore";
 import { observer } from "mobx-react-lite";
@@ -32,22 +32,22 @@ interface CardStyledProps {
 }
 
 const CardStyled = styled.div<CardStyledProps>`
-    .card-container {
-    position: relative;
-    width: 100px; /* Adjust the card width */
-    height: 150px; /* Adjust the card height */
-    display: inline-block; /* Add this to display cards side by side */
-    margin-right: 10px; /* Add this to create some space between cards */
+  .card-container {
+    position: absolute;
+    width: 100px;
+    height: 150px; 
+    display: inline-block; 
+    margin-right: 10px; 
     box-shadow: ${({ highlight }) =>
 		highlight ? "0 0 5px 5px rgba(255, 255, 0, 0.5)" : "none"};
     cursor: ${({ highlight }) =>
 		highlight ? "pointer" : "default"};
-    }
+  }
    
   .card-front {
     position: absolute;
-    width: 100%; /* Add this */
-    height: 100%; /* Add this */
+    width: 100%; 
+    height: 100%;
     background-color: white;
     border-radius: 4px;
   }
@@ -74,6 +74,7 @@ interface CardComponentProps {
   card: Card;
   cardIndex?: number;
   highlight?: boolean;
+  style?: React.CSSProperties;
 }
 
 const frontImages = {
@@ -107,7 +108,7 @@ const specialImages = {
 	wild: wild,
 };
 
-const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight }) => {
+const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style }) => {
 	const { game } = useGame();
 	const { color, value } = card;
 	let cardFrontSrc = frontImages[color];
@@ -152,7 +153,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 
 	return (
 		<CardStyled highlight={highlight}>
-			<div className="card-container" onClick={handleClick}>
+			<div className="card-container" onClick={handleClick} style={style}>
 				<img className="card-front" src={cardFrontSrc} alt={`${color} card`} />
 				{!isNumeric && value !== CardValue.Wild && (
 					<img className="card-value" src={valueSrc} alt={`${color} ${value}`} />

@@ -7,16 +7,32 @@ import { useGame } from "../hooks/useGameStore";
 import Deck from "./Deck";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
-import { CardValue } from "../utils/cardUtils";
-import { toJS } from "mobx";
 import { ActiveSpecialCard } from "../utils/gameUtils";
 
 const GameBoardStyled = styled.div`
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    max-width: 100vw;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    .game-info {
+        position: absolute; top: 30%; 
+        left: 40%;
+    }
+
+    .deck-discard {
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        width: 200px;
+    }
 `;
+
 const GameBoard: React.FC = () => {
 	const { game } = useGame();
+
+	// TEMP console.log to check if any special card is now active (DrawTwo, DrawFour)
 
 	useEffect(() => {
 		if (game.activeSpecialCard) {
@@ -26,23 +42,29 @@ const GameBoard: React.FC = () => {
 	}, [game.activeSpecialCard]);
 
 	return (
-		<div>
-			{game.gameInProgress ? (
-				<h1>Game in progress</h1>
-			) : (
-				<h1>Game over</h1>
-			)}
-			<h1>{`Current player: ${game.currentPlayer}`}</h1>
-			<PlayerHand />
-        
-			<div className="ai-hands">
-				{game.aiHands.map((aiHand, handIndex) => (
-					<AIHand key={uuidv4()} handIndex={handIndex} aiHand={[...aiHand]} />
-				))}
+		<GameBoardStyled>
+			<div className="game-info">
+				<h1>{`Current player: ${game.currentPlayer}`}</h1>
+				<h1>{game.gameInProgress ? "Game in progress" : "Game over"}</h1>
 			</div>
-			<DiscardPile topCard={game.discardPile[game.discardPile.length - 1]} />
-			<Deck deck={game.deck} onClick={game.handleDeckClick} />
-		</div>
+		
+			<div id='ai-player-1'>
+				<AIHand key={uuidv4()} aiHand={game.aiHands[0]} horizontal={false} right={false} />
+			</div>
+			<div id='ai-player-2'>
+				<AIHand key={uuidv4()} aiHand={game.aiHands[1]} horizontal={true} right={false} />
+			</div>
+			<div id='ai-player-3'>
+				<AIHand key={uuidv4()} aiHand={game.aiHands[2]} horizontal={false} right />
+			</div>
+			<div id='main-player'>
+				<PlayerHand />
+			</div>
+			<div className='deck-discard'>
+				<DiscardPile topCard={game.discardPile[game.discardPile.length - 1]} />
+				<Deck deck={game.deck} onClick={game.handleDeckClick} />
+			</div>
+		</GameBoardStyled>
 	);};
 
 export default observer(GameBoard);
