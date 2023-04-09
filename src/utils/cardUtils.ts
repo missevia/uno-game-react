@@ -39,11 +39,12 @@ export class Card {
 // shuffling the cards using Fisher-Yates shuffle algorithm
 
 export function shuffle(deck: Card[]): Card[] {
-	for (let i = deck.length - 1; i > 0; i--) {
+	const shuffledDeck = [...deck];
+	for (let i = shuffledDeck.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
-		[deck[i], deck[j]] = [deck[j], deck[i]];
+		[shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
 	}
-	return deck;
+	return shuffledDeck;
 }
 
 export const getNumberColor = (color: CardColor): string => {
