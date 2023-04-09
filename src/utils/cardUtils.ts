@@ -1,4 +1,4 @@
-import cardDeck from "../utils/cardDeck.json";
+import { cardDeck } from "./cardDeck";
 
 export enum CardColor {
   Red = "red",
@@ -36,12 +36,6 @@ export class Card {
 	}
 }
 
-export function generateDeck(): Card[] {
-	const deck: Card[] = cardDeck.deck.map(
-		(card) => new Card(card.color as CardColor, card.value as CardValue)
-	);
-	return deck;
-}
 // shuffling the cards using Fisher-Yates shuffle algorithm
 
 export function shuffle(deck: Card[]): Card[] {

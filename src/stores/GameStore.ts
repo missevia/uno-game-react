@@ -1,7 +1,8 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Card, generateDeck, shuffle, CardValue } from "../utils/cardUtils";
+import { Card, shuffle, CardValue, CardColor } from "../utils/cardUtils";
 import { ActiveSpecialCard } from "../utils/gameUtils";
 import { RootStore } from "./RootStore";
+import { cardDeck } from "../utils/cardDeck";
 
 export class GameStore {
 	deck: Card[] = [];
@@ -53,8 +54,10 @@ export class GameStore {
 	// action to start a new game
 	startGame(aiOpponents = 3) {
 		runInAction(() => {
-			this.deck = shuffle(generateDeck());
-          
+			const initialDeck: Card[] = cardDeck.deck.map(
+				(card) => new Card(card.color as CardColor, card.value as CardValue)
+			);
+			this.deck = shuffle(initialDeck);     
 			// Initialize player and AI hands
 			this.playerHand = [];
 			this.aiHands = new Array(aiOpponents).fill(0).map(() => []);
