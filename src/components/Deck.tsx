@@ -8,6 +8,7 @@ import { useGame } from "../hooks/useGameStore";
 interface DeckProps {
   deck: Card[];
   onClick: () => void;
+  currentPlayer: number;
 }
 
 interface DeckStyledProps {
@@ -31,12 +32,10 @@ const DeckStyled = styled.div<DeckStyledProps>`
   }
 `;
 
-const Deck: React.FC<DeckProps> = observer(({ onClick }) => {
-	const { game } = useGame();
-	const isPlayerTurn = game.currentPlayer === 0;
+const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer }) => {
 	return (
 		<>
-			<DeckStyled highlight={isPlayerTurn}>
+			<DeckStyled highlight={currentPlayer === 0}>
 				<div className="card-back" onClick={onClick}></div>
 			</DeckStyled>
 		</>

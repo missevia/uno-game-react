@@ -3,11 +3,11 @@ import { observer } from "mobx-react-lite";
 import PlayerHand from "./PlayerHand";
 import AIHand from "./AIHand";
 import DiscardPile from "./DiscardPile";
-import { useGame } from "../hooks/useGameStore";
 import Deck from "./Deck";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { ActiveSpecialCard } from "../utils/gameUtils";
+import { GameStore } from "../stores/GameStore";
 
 const GameBoardStyled = styled.div`
     height: 100vh;
@@ -29,8 +29,12 @@ const GameBoardStyled = styled.div`
     }
 `;
 
-const GameBoard: React.FC = () => {
-	const { game } = useGame();
+interface GameBoardProps {
+	game: GameStore;
+}
+
+
+const GameBoard:React.FC<GameBoardProps> = ({ game }) => {
 
 	// TEMP console.log to check if any special card is now active (DrawTwo, DrawFour)
 
@@ -58,11 +62,11 @@ const GameBoard: React.FC = () => {
 				<AIHand key={uuidv4()} aiHand={game.aiHands[2]} horizontal={false} right />
 			</div>
 			<div id='main-player'>
-				<PlayerHand />
+				<PlayerHand isPlayerTurn={game.currentPlayer === 0} validMoves={game.validMoves} playerHand={game.playerHand}/>
 			</div>
 			<div className='deck-discard'>
 				<DiscardPile topCard={game.discardPile[game.discardPile.length - 1]} />
-				<Deck deck={game.deck} onClick={game.handleDeckClick} />
+				<Deck deck={game.deck} onClick={game.handleDeckClick} currentPlayer={game.currentPlayer}/>
 			</div>
 		</GameBoardStyled>
 	);};

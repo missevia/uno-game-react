@@ -31,7 +31,7 @@ const UnoGame = observer(() => {
 
 	return (
 		<UnoGameStyled>
-			<GameBoard />
+			<GameBoard game={game}/>
 		</UnoGameStyled>
 	);
 });

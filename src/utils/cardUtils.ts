@@ -52,3 +52,18 @@ export function shuffle(deck: Card[]): Card[] {
 	return deck;
 }
 
+export const getNumberColor = (color: CardColor): string => {
+	switch (color) {
+	case "blue":
+		return "#3545F8";
+	case "green":
+		return "#1DE544";
+	case "red":
+		return "#F83434";
+	case "yellow":
+		return "#F9F716";
+	default:
+		return "white";
+	}
+};
+
