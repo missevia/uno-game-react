@@ -1,4 +1,24 @@
-import { cardDeck } from "./cardDeck";
+import {
+	frontWild,
+	frontBlue,
+	frontGreen,
+	frontRed,
+	frontYellow,
+	drawFour,
+	drawTwoBlue,
+	drawTwoGreen,
+	drawTwoRed,
+	drawTwoYellow,
+	reverseYellow,
+	reverseBlue,
+	reverseGreen,
+	reverseRed,
+	skipBlue,
+	skipGreen,
+	skipRed,
+	skipYellow,
+	wild,
+} from "../components/CardImages";
 
 export enum CardColor {
   Red = "red",
@@ -61,4 +81,37 @@ export const getNumberColor = (color: CardColor): string => {
 		return "white";
 	}
 };
+
+export const frontImages = {
+	wild: frontWild,
+	blue: frontBlue,
+	green: frontGreen,
+	red: frontRed,
+	yellow: frontYellow,
+};
+
+export const specialImages = {
+	drawFour: drawFour,
+	drawTwo: {
+		blue: drawTwoBlue,
+		green: drawTwoGreen,
+		red: drawTwoRed,
+		yellow: drawTwoYellow,
+	},
+	reverse: {
+		blue: reverseBlue,
+		green: reverseGreen,
+		red: reverseRed,
+		yellow: reverseYellow,
+	},
+	skip: {
+		blue: skipBlue,
+		green: skipGreen,
+		red: skipRed,
+		yellow: skipYellow,
+	},
+	wild: wild,
+};
+
+export const numberValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 

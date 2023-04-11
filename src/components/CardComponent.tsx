@@ -2,30 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useGame } from "../hooks/useGameStore";
 import { observer } from "mobx-react-lite";
-import { Card, CardColor, CardValue } from "../utils/cardUtils";
-import {
-	frontWild,
-	frontBlue,
-	frontGreen,
-	frontRed,
-	frontYellow,
-	drawFour,
-	drawTwoBlue,
-	drawTwoGreen,
-	drawTwoRed,
-	drawTwoYellow,
-	reverseYellow,
-	reverseBlue,
-	reverseGreen,
-	reverseRed,
-	skipBlue,
-	skipGreen,
-	skipRed,
-	skipYellow,
-	wild,
-} from "./CardImages";
-
-const numberValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+import { Card, CardValue } from "../utils/cardUtils";
+import { getNumberColor, specialImages, frontImages, numberValues } from "../utils/cardUtils";
 
 interface CardStyledProps {
   highlight?: boolean;
@@ -77,36 +55,6 @@ interface CardComponentProps {
   style?: React.CSSProperties;
 }
 
-const frontImages = {
-	wild: frontWild,
-	blue: frontBlue,
-	green: frontGreen,
-	red: frontRed,
-	yellow: frontYellow,
-};
-
-const specialImages = {
-	drawFour: drawFour,
-	drawTwo: {
-		blue: drawTwoBlue,
-		green: drawTwoGreen,
-		red: drawTwoRed,
-		yellow: drawTwoYellow,
-	},
-	reverse: {
-		blue: reverseBlue,
-		green: reverseGreen,
-		red: reverseRed,
-		yellow: reverseYellow,
-	},
-	skip: {
-		blue: skipBlue,
-		green: skipGreen,
-		red: skipRed,
-		yellow: skipYellow,
-	},
-	wild: wild,
-};
 
 const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style }) => {
 	const { game } = useGame();
@@ -129,21 +77,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 			valueSrc = specialImages.drawFour;
 		}
 	}
-
-	const getNumberColor = (color: CardColor): string => {
-		switch (color) {
-		case "blue":
-			return "#3545F8";
-		case "green":
-			return "#1DE544";
-		case "red":
-			return "#F83434";
-		case "yellow":
-			return "#F9F716";
-		default:
-			return "white";
-		}
-	};
   
 	const handleClick = () => {
 		if (cardIndex !== undefined) {
@@ -168,4 +101,4 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 	);
 });
 
-export default CardComponent;
+export default React.memo(CardComponent);
