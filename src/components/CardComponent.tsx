@@ -7,8 +7,8 @@ import { getNumberColor, specialImages, frontImages, numberValues } from "../uti
 
 const CardContainerStyled = styled.div<{aiHand: boolean | undefined, mainPlayerHand: boolean | undefined, highlight: boolean | undefined }>`
 	position: absolute;
-    width: ${({ aiHand }) => aiHand ? "8rem" : "10rem"};
-    height: ${({ aiHand }) => aiHand ? "13rem" : "15rem"}; 
+    width: ${({ aiHand }) => aiHand ? "var(--cardWidthSmall)" : "var(--cardWidth)"};
+    height: ${({ aiHand }) => aiHand ? "var(--cardHeightSmall)" : "var(--cardHeight)"}; 
     display: inline-block; 
 	filter: ${({ highlight, mainPlayerHand }) => (highlight || !mainPlayerHand) ? "contrast(1)" : "contrast(0.5)"};
     cursor: ${({ highlight }) =>

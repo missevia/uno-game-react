@@ -19,4 +19,6 @@ body {
 :root {
   --cardWidthSmall: 8rem;
   --cardWidth: 10rem;
+  --cardHeightSmall: 13rem;
+  --cardHeight: 15rem;
 }

@@ -53,9 +53,6 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMov
 						cardIndex={index}
 						highlight={isPlayerTurn && validMoves.includes(index)}
 						mainPlayerHand={true}
-						style={{
-							marginLeft: -cardOverlap,
-						}}
 					/>
 				))}
 			</PlayerHandStyled>
