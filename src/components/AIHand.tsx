@@ -5,47 +5,69 @@ import styled from "styled-components";
 import { observer } from "mobx-react-lite";
 import { v4 as uuidv4 } from "uuid";
 
-const AIHandStyled = styled.div<AIHandStyledProps>`
-    display: flex;
-    flex-direction: ${({ horizontal }) => (horizontal ? "row" : "column")};
-    justify-content: center;
-    align-items: ${({ horizontal }) => (horizontal ? "flex-start" : "center")};
-    height: ${({ horizontal }) => (horizontal ? "auto" : "100%")};
-    width: ${({ horizontal }) => (horizontal ? "100%" : "auto")};
-    position: absolute;
-    top: ${({ horizontal }) => (horizontal ? "auto" : "10%")};
-    left: ${({ horizontal }) => (horizontal ? "-15%" : "auto")};
-    right: ${({ right }) => (right ? "6%" : "auto")};
+// change the styles - vertical AI hands are not diplayed correctly
+
+const AIHandContainer = styled.div<{horizontal: boolean}>`
+  position: fixed;
+  width: ${({ horizontal }) => horizontal ? "40vw" : "auto"}; 
+  height: ${({ horizontal }) => horizontal ? "auto" : "50vh"}; 
+  transform: ${({ horizontal }) => horizontal ? "translateX(-50%)" : "translateY(-50%)"};
+`;
+
+const AIHandStyled = styled.div<{ horizontal: boolean }>`
+	display: flex;
+  	justify-content: space-between;
+	flex-direction: ${({ horizontal }) => horizontal ? "row" : "column"}; 
+  	width: ${({ horizontal }) => horizontal ? "100%" : "auto"}; 
+	height: ${({ horizontal }) => horizontal ? "auto" : "100%"}; 
 `;
 
 interface AIHandProps {
     aiHand: Card[];
     horizontal: boolean;
-    right: boolean;
+	style?: React.CSSProperties;
 }
 
-interface AIHandStyledProps extends React.HTMLAttributes<HTMLDivElement> {
-    horizontal: boolean;
-    right: boolean;
-}
-
-const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, right }) => {
+const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style }) => {
+	// simplify the stylings here and move some of the variables to :root (index.css file)
+	const containerMaxWidth = 50; // in vw
+	const containerMaxHeight = 50; // in vh
+	const cardWidth = 8; // in rem
+	const cardHeight = 13; // in rem
+	const cardsCount = aiHand && aiHand.length;
+	const cardOverlapX = Math.max(
+		0,
+		Math.min(
+			((cardWidth * cardsCount * window.innerWidth) / 100 - (containerMaxWidth * window.innerWidth) / 100) /
+		(cardsCount - 1),
+			(cardWidth * window.innerWidth) / 100 / 3
+		)
+	);
+	const cardOverlapY = Math.max(
+		0,
+		Math.min(
+			((cardHeight * cardsCount * window.innerWidth) / 100 - (containerMaxHeight * window.innerWidth) / 100) /
+		(cardsCount - 1),
+			(cardHeight * window.innerWidth) / 100 / 3
+		)
+	);
 	return (
-		<>
-			<AIHandStyled horizontal={horizontal} right={right}>
+		<AIHandContainer horizontal={horizontal} style={style}>
+			<AIHandStyled horizontal={horizontal}>
 				{aiHand?.map((card, index) => (
 					<CardComponent
 						key={uuidv4()}
 						card={card}
+						aiHand
 						style={{
-							marginLeft: horizontal ? (index * 80) : 0,
-							marginTop: horizontal ? 0 : -(index * 80),
+							marginLeft: horizontal ? -cardOverlapX : 0,
+							marginTop: horizontal ? 0 : -cardOverlapY,
 							zIndex: index,
 						}}
 					/>
 				))}
 			</AIHandStyled>
-		</>
+		</AIHandContainer>
 	);
 });
 

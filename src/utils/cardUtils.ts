@@ -1,3 +1,4 @@
+
 import {
 	frontWild,
 	frontBlue,
@@ -5,18 +6,22 @@ import {
 	frontRed,
 	frontYellow,
 	drawFour,
+	drawFourBlank,
 	drawTwoBlue,
 	drawTwoGreen,
 	drawTwoRed,
 	drawTwoYellow,
+	drawTwoBlank,
 	reverseYellow,
 	reverseBlue,
 	reverseGreen,
 	reverseRed,
+	reverseBlank,
 	skipBlue,
 	skipGreen,
 	skipRed,
 	skipYellow,
+	skipBlank,
 	wild,
 } from "../components/CardImages";
 
@@ -45,6 +50,8 @@ export enum CardValue {
   Wild = "wild",
   WildDrawFour = "drawFour",
 }
+
+export type ActiveSpecialCard = CardValue.Skip | CardValue.Reverse | CardValue.DrawTwo | CardValue.WildDrawFour | CardValue.Wild;
 
 export class Card {
 	color: CardColor;
@@ -91,27 +98,35 @@ export const frontImages = {
 };
 
 export const specialImages = {
-	drawFour: drawFour,
+	drawFour: {
+		colour: drawFour, 
+		blank: drawFourBlank,
+	},
 	drawTwo: {
 		blue: drawTwoBlue,
 		green: drawTwoGreen,
 		red: drawTwoRed,
 		yellow: drawTwoYellow,
+		blank: drawTwoBlank,
 	},
 	reverse: {
 		blue: reverseBlue,
 		green: reverseGreen,
 		red: reverseRed,
 		yellow: reverseYellow,
+		blank: reverseBlank,
 	},
 	skip: {
 		blue: skipBlue,
 		green: skipGreen,
 		red: skipRed,
 		yellow: skipYellow,
+		blank: skipBlank,
 	},
 	wild: wild,
 };
 
 export const numberValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+
 

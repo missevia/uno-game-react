@@ -1,6 +1,6 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { Card, CardValue } from "../utils/cardUtils";
-import { ActiveSpecialCard } from "../utils/gameUtils";
+import { ActiveSpecialCard } from "../utils/cardUtils";
 import { RootStore } from "./RootStore";
 import { AIPlayer } from "./modules/AIPlayer";
 import { CardManager } from "./modules/CardManager";
@@ -12,7 +12,7 @@ export class GameStore {
 	playerHand: Card[] = [];
 	aiHands: Card[][] = [];
 	currentPlayer = 0;
-	activeSpecialCard: ActiveSpecialCard = ActiveSpecialCard.None;
+	activeSpecialCard: ActiveSpecialCard | null = null;
 	gameInProgress = false;
 	wildDrawFourPlayed = false;
 	direction = 1;
@@ -29,20 +29,15 @@ export class GameStore {
 		this.playerActions = new PlayerActions(this);
 	}
 
+	startGame() {
+		this.cardManager.shuffleAndDeal(3);
+	}
+
 	updateDeck(deck: Card[]) {
 		this.deck = deck;
 	}
 
-	get validMoves(): number[] {
-		return this.playerHand.reduce((validMoves, card, index) => {
-			if (this.checkValidCard(card)) {
-				validMoves.push(index);
-			}
-			return validMoves;
-		}, [] as number[]);
-        
-	}
-
+	
 	checkGameOver(): boolean {
 		if (this.playerHand.length === 0) {
 			this.endGame();
@@ -56,17 +51,26 @@ export class GameStore {
 		}    
 		return false;
 	}
-
+	
 	endGame() {
 		this.gameInProgress = false;
 		console.log("game finished");
 		// TO-DO: add more logic/ cleanup here
 	}
 
-	startGame() {
-		this.cardManager.shuffleAndDeal(3);
+	resetGame() {
+		// test if this is working properly
+		this.gameInProgress = false;
+		this.deck = [];
+		this.discardPile = [];
+		this.currentPlayer = 0;
+		this.activeSpecialCard = null;
+		this.playerHand = [];
+		this.aiHands = [];
+		this.direction = 1;
+		this.startGame();
 	}
-
+	
 	// action to draw multiple cards from the deck
 	drawCards(playerIndex: number, count: number) {
 		this.cardManager.drawCards(playerIndex, count);
@@ -76,27 +80,36 @@ export class GameStore {
 		await this.playerActions.handleDeckClick();
 	}
     
+	get validMoves(): number[] {
+		return this.playerHand.reduce((validMoves, card, index) => {
+			if (this.checkValidCard(card)) {
+				validMoves.push(index);
+			}
+			return validMoves;
+		}, [] as number[]);
+		
+	}
 	handleSpecialCard(card: Card) {
 		switch (card.value) {
 		case CardValue.WildDrawFour:
-			this.activeSpecialCard = ActiveSpecialCard.DrawFour;
+			this.activeSpecialCard = CardValue.WildDrawFour;
 			break;
 		case CardValue.DrawTwo:
-			this.activeSpecialCard = ActiveSpecialCard.DrawTwo;
+			this.activeSpecialCard = CardValue.DrawTwo;
 			break;
 		case CardValue.Reverse:
 			this.direction *= -1;
 			if (this.aiHands.length === 1) { 
-				this.activeSpecialCard = ActiveSpecialCard.Skip;
+				this.activeSpecialCard = CardValue.Skip;
 			} else {
-				this.activeSpecialCard = ActiveSpecialCard.None;
+				this.activeSpecialCard = null;
 			}
 			break;
 		case CardValue.Skip:
-			this.activeSpecialCard = ActiveSpecialCard.Skip;
+			this.activeSpecialCard = CardValue.Skip;
 			break;
 		default:
-			this.activeSpecialCard = ActiveSpecialCard.None;
+			this.activeSpecialCard = null;
 			break;
 		}
 	}
@@ -143,7 +156,7 @@ export class GameStore {
 		if (this.currentPlayer < 0) {
 			this.currentPlayer += this.aiHands.length + 1;
 		}
-		this.activeSpecialCard = ActiveSpecialCard.None;
+		this.activeSpecialCard = null;
 	}
 
 	// action to check if a card is valid to play
@@ -155,12 +168,12 @@ export class GameStore {
 		const isWild = card.value === CardValue.Wild;
 		const isWildDrawFour = card.value === CardValue.WildDrawFour;
     
-		const canPlayWild = isWild && this.activeSpecialCard !== ActiveSpecialCard.DrawTwo;
+		const canPlayWild = isWild && this.activeSpecialCard !== CardValue.DrawTwo;
 		const canPlayWildDrawFour = isWildDrawFour;
 		const canPlayOnWild = topDiscard.value === CardValue.Wild;
-		const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === ActiveSpecialCard.None;
+		const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === null;
     
-		if (this.activeSpecialCard === ActiveSpecialCard.DrawFour) {
+		if (this.activeSpecialCard === CardValue.WildDrawFour) {
 			return isWildDrawFour;
 		}
     
@@ -168,7 +181,7 @@ export class GameStore {
 			return true;
 		}
     
-		if (this.activeSpecialCard === ActiveSpecialCard.None || topDiscard.value === CardValue.Skip) {
+		if (this.activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
 			return isSameColor || isSameValue;
 		}
     

@@ -6,14 +6,17 @@
   box-sizing: inherit;
 }
 
-/* rem unit is always in relation to base font size */
-/* 1 rem will equal 10px (10px is 62.5% of 16px which is default) */
-
 html {
-  font-size: 62.5%;
+  /* font-size: 62.5%; */
+  font-size: 100%;
 }
 
 body {
   box-sizing: border-box;
   background-color: lightblue;
+}
+
+:root {
+  --cardWidthSmall: 8rem;
+  --cardWidth: 10rem;
 }

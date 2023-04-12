@@ -1,8 +1,6 @@
-// PlayerActions.ts
-import { Card } from "../../utils/cardUtils";
 import { GameStore } from "../GameStore";
 import { runInAction } from "mobx";
-import { ActiveSpecialCard } from "../../utils/gameUtils";
+import { CardValue } from "../../utils/cardUtils";
 
 export class PlayerActions {
 	constructor(private game: GameStore) {}
@@ -12,20 +10,16 @@ export class PlayerActions {
 			return; 
 		}
 		const card = this.game.playerHand[cardIndex];
-		// Implement the playCard logic here, using `this.gameStore` to access the GameStore instance.
 		if (this.game.checkValidCard(card)) {
 			runInAction(() => {
-				// if yes, push this card to the top of the discard pile
 				this.game.handleSpecialCard(card);
 				this.game.discardPile.push(card);
-    
-				// Create a new array without the played card and assign it to playerHand
 				this.game.playerHand = [
 					...this.game.playerHand.slice(0, cardIndex),
 					...this.game.playerHand.slice(cardIndex + 1),
 				];
 
-				if (this.game.activeSpecialCard === ActiveSpecialCard.Skip) {
+				if (this.game.activeSpecialCard === CardValue.Skip) {
 					this.game.skipNextPlayer();
 				} else {
 					this.game.changeTurn();
@@ -44,7 +38,6 @@ export class PlayerActions {
 	}
 
 	async handleDeckClick() {
-		// Implement the handleDeckClick logic here, using `this.gameStore` to access the GameStore instance.
 		if (!this.game.gameInProgress || this.game.currentPlayer !== 0) {
 			return;
 		}
@@ -52,12 +45,12 @@ export class PlayerActions {
 		const currentPlayer = this.game.currentPlayer;
     
 		// Handle special card cases
-		if (this.game.activeSpecialCard === ActiveSpecialCard.DrawFour) {
+		if (this.game.activeSpecialCard === CardValue.WildDrawFour) {
 			this.game.drawCards(currentPlayer, 4);
-			this.game.activeSpecialCard = ActiveSpecialCard.None;
-		} else if (this.game.activeSpecialCard === ActiveSpecialCard.DrawTwo) {
+			this.game.activeSpecialCard = null;
+		} else if (this.game.activeSpecialCard === CardValue.DrawTwo) {
 			this.game.drawCards(currentPlayer, 2);
-			this.game.activeSpecialCard = ActiveSpecialCard.None;
+			this.game.activeSpecialCard = null;
 		} else {
 			this.game.drawCards(currentPlayer, 1);
 		}

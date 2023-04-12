@@ -38,7 +38,6 @@ export class CardManager {
 	}
 
 	drawCard(): Card {
-		// Implement the drawCard logic here, using `this.gameStore` to access the GameStore instance.
 		if (this.game.deck.length === 0) {
 			throw new Error("The deck is empty");
 		}
@@ -46,7 +45,6 @@ export class CardManager {
 	}
 
 	drawCards(playerIndex: number, count: number) {
-		// Implement the drawCards logic here, using `this.gameStore` to access the GameStore instance.
 		const newCards = [];
     
 		for (let i = 0; i < count; i++) {
