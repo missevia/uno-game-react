@@ -35,7 +35,7 @@ const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style }) =
 	return (
 		<AIHandContainer horizontal={horizontal} style={style}>
 			<AIHandStyled horizontal={horizontal}>
-				{aiHand?.map((card, index) => (
+				{aiHand?.map((card) => (
 					<CardComponent
 						key={uuidv4()}
 						card={card}

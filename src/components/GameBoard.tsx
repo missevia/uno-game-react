@@ -55,9 +55,6 @@ const GameBoard:React.FC<GameBoardProps> = ({ game }) => {
 				key={uuidv4()} 
 				aiHand={game.aiHands[0]} 
 				horizontal={false} 
-				style={{
-					top: "50%"
-				}}
 			/>
 			<AIHand 
 				key={uuidv4()} 
@@ -72,8 +69,7 @@ const GameBoard:React.FC<GameBoardProps> = ({ game }) => {
 				aiHand={game.aiHands[2]} 
 				horizontal={false} 
 				style={{
-					top: "50%", 
-					right: "7.5%"
+					right: "var(--cardWidthSmall)"
 				}}
 			/>
 			<PlayerHand 
