@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { Card, CardValue } from "../utils/cardUtils";
 import { ActiveSpecialCard } from "../utils/cardUtils";
 import { RootStore } from "./RootStore";
@@ -19,6 +19,10 @@ export class GameStore {
 	aiPlayer: AIPlayer;
 	cardManager: CardManager;
 	playerActions: PlayerActions;
+	aiCardMoving = false;
+	aiPlayerIndex: number | null = null;
+	aiPlayerCardIndex: number | null = null;	
+	aiPlayerPlaying: number | null = null;
 
 	constructor(store: RootStore) {
 		makeAutoObservable(this);
@@ -36,7 +40,6 @@ export class GameStore {
 	updateDeck(deck: Card[]) {
 		this.deck = deck;
 	}
-
 	
 	checkGameOver(): boolean {
 		if (this.playerHand.length === 0) {

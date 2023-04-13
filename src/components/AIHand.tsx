@@ -29,9 +29,10 @@ interface AIHandProps {
     aiHand: Card[];
     horizontal: boolean;
 	style?: React.CSSProperties;
+	aiCardMoving: boolean;
 }
 
-const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style }) => {
+const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style, aiCardMoving }) => {
 	return (
 		<AIHandContainer horizontal={horizontal} style={style}>
 			<AIHandStyled horizontal={horizontal}>
@@ -40,6 +41,7 @@ const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style }) =
 						key={uuidv4()}
 						card={card}
 						aiHand
+						aiCardMoving={aiCardMoving}
 					/>
 				))}
 			</AIHandStyled>

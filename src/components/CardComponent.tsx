@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useGame } from "../hooks/useGameStore";
 import { observer } from "mobx-react-lite";
 import { Card, CardValue } from "../utils/cardUtils";
 import { getNumberColor, specialImages, frontImages, numberValues } from "../utils/cardUtils";
+import { useDiscardPilePosition } from "../contexts/DiscardPilePositionContext";
 
-const CardContainerStyled = styled.div<{aiHand: boolean | undefined, mainPlayerHand: boolean | undefined, highlight: boolean | undefined }>`
+const CardContainerStyled = styled.div<{aiHand: boolean | undefined, mainPlayerHand: boolean | undefined, highlight: boolean | undefined, moving: boolean | undefined }>`
 	position: absolute;
     width: ${({ aiHand }) => aiHand ? "var(--cardWidthSmall)" : "var(--cardWidth)"};
     height: ${({ aiHand }) => aiHand ? "var(--cardHeightSmall)" : "var(--cardHeight)"}; 
@@ -74,12 +75,19 @@ interface CardComponentProps {
   style?: React.CSSProperties;
   mainPlayerHand?: boolean | undefined;
   aiHand?: boolean | undefined;
+  aiCardMoving?: boolean;
+  aiPlayerIndex?: number | null;
+  aiPlayerCardIndex?: number | null;
+  currentPlayer?: number;
 }
 
 
-const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style, mainPlayerHand, aiHand }) => {
+const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style, mainPlayerHand, aiHand, aiCardMoving }) => {
 	const { game } = useGame();
+	const { position } = useDiscardPilePosition();
+	const cardRef = React.useRef<HTMLDivElement | null>(null);
 	const { color, value } = card;
+	const [moving, setMoving] = useState(false);
 	let cardFrontSrc = frontImages[color];
 	let valueSrc;
 	let blankValueSrc;
@@ -103,16 +111,27 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 			blankValueSrc = specialImages.drawFour.blank;
 		}
 	}
-  
+
 	const handleClick = () => {
-		if (cardIndex !== undefined) {
-			game.playCard(cardIndex);
+		if (cardIndex !== undefined && position && cardRef.current) {
+			setMoving(true);
+			cardRef.current.style.zIndex = "1000";
+			const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
+			const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
+  
+			cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			cardRef.current.style.transition = "transform 0.5s ease-in-out";
+			setTimeout(() => {
+				game.playCard(cardIndex);
+				setMoving(false);
+			}, 500); 
+			cardRef.current.style.zIndex = "1"; 
 		}
 	};
 
 	return (
 		<CardStyled isNumeric={isNumeric} aiHand={aiHand}>
-			<CardContainerStyled onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand}>
+			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} moving={moving} >
 				<img className="card-front" src={cardFrontSrc} alt={`${color} card`} />
 				{!isNumeric && value !== CardValue.Wild && (
 					<img className="card-value" src={valueSrc} alt={`${color} ${value}`} />
