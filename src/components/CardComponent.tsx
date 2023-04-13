@@ -84,7 +84,7 @@ interface CardComponentProps {
 
 const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style, mainPlayerHand, aiHand, aiCardMoving }) => {
 	const { game } = useGame();
-	const { position } = useDiscardPilePosition();
+	const { discardPilePosition } = useDiscardPilePosition();
 	const cardRef = React.useRef<HTMLDivElement | null>(null);
 	const { color, value } = card;
 	const [moving, setMoving] = useState(false);
@@ -113,19 +113,19 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 	}
 
 	const handleClick = () => {
-		if (cardIndex !== undefined && position && cardRef.current) {
+		if (cardIndex !== undefined && discardPilePosition && cardRef.current) {
 			setMoving(true);
-			cardRef.current.style.zIndex = "1000";
-			const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-			const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-  
-			cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			// Calculate the X and Y positions for the card to move
+			// by subtracting the card's current position from the discard pile's position
+			const positionX = discardPilePosition.x - cardRef.current.getBoundingClientRect().x;
+			const positionY = discardPilePosition.y - cardRef.current.getBoundingClientRect().y;
+			cardRef.current.style.transform = `translate(${positionX}px, ${positionY}px)`;
 			cardRef.current.style.transition = "transform 0.5s ease-in-out";
+			// timeout for the duration of the animation (0.5 seconds)
 			setTimeout(() => {
 				game.playCard(cardIndex);
 				setMoving(false);
 			}, 500); 
-			cardRef.current.style.zIndex = "1"; 
 		}
 	};
 

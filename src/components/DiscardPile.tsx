@@ -11,17 +11,17 @@ interface DiscardPileProps {
 
 const DiscardPile: React.FC<DiscardPileProps> = observer(({ topCard }) => {
 	const discardPileRef = useRef<HTMLDivElement | null>(null);
-	const { setPosition } = useDiscardPilePosition();
+	const { setDiscardPilePosition } = useDiscardPilePosition();
 
 	const updatePosition = () => {
 		if (discardPileRef.current) {
-			setPosition(discardPileRef.current.getBoundingClientRect());
+			setDiscardPilePosition(discardPileRef.current.getBoundingClientRect());
 		}
 	};
 	
 	useEffect(() => {
 		updatePosition();
-	}, [setPosition]);
+	}, [setDiscardPilePosition]);
 	
 	useEffect(() => {
 		const handleResize = () => {

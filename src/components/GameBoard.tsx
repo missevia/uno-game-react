@@ -48,7 +48,7 @@ const GameBoard:React.FC<GameBoardProps> = ({ game }) => {
 	}, [game.activeSpecialCard]);
 
 	return (
-		<DiscardPilePositionContext.Provider value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}>
+		<DiscardPilePositionContext.Provider value={{ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }}>
 			<GameBoardStyled>
 				<div className="game-info">
 					<h1>{`Current player: ${game.currentPlayer}`}</h1>

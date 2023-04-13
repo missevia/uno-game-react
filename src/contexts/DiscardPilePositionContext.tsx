@@ -1,14 +1,14 @@
 import { createContext, useContext } from "react";
 
 interface DiscardPilePositionContextValue {
-  position: DOMRect | null;
-  setPosition: (position: DOMRect | null) => void;
+    discardPilePosition: DOMRect | null;
+    setDiscardPilePosition: (position: DOMRect | null) => void;
 }
 
 const DiscardPilePositionContext = createContext<DiscardPilePositionContextValue>({
-	position: null,
+	discardPilePosition: null,
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	setPosition: () => {},
+	setDiscardPilePosition: () => {},
 });
 
 export const useDiscardPilePosition = () => useContext(DiscardPilePositionContext);
