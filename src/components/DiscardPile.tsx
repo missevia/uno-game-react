@@ -39,7 +39,7 @@ const DiscardPile: React.FC<DiscardPileProps> = observer(({ topCard }) => {
 	return (
 		<div ref={discardPileRef}>
 			{topCard ? (
-				<CardComponent card={topCard} />
+				<CardComponent card={topCard} isPile />
 			) : (
 				<p>No cards in the discard pile yet.</p>
 			)}

@@ -2,7 +2,6 @@ import React from "react";
 import CardComponent from "./CardComponent";
 import styled from "styled-components";
 import { observer } from "mobx-react-lite";
-import { v4 as uuidv4 } from "uuid";
 import { Card } from "../utils/cardUtils";
 
 interface PlayerHandStyledProps {
@@ -28,13 +27,13 @@ const PlayerHandStyled = styled.div<PlayerHandStyledProps>`
 interface PlayerHandProps {
 	isPlayerTurn: boolean;
 	validMoves: number[];
-	playerHand: Card[];
+	cards: Card[];
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMoves, playerHand }) => {
+const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMoves, cards }) => {
 	const containerMaxWidth = 50; // in vw
 	const cardWidth = 10; // in rem
-	const cardsCount = playerHand.length;
+	const cardsCount = cards.length;
 	const cardOverlap = Math.max(
 		0,
 		Math.min(
@@ -45,10 +44,10 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMov
 	);
 	return (
 		<PlayerHandContainer>
-			<PlayerHandStyled cardsCount={playerHand.length}>
-				{playerHand.map((card, index) => (
+			<PlayerHandStyled cardsCount={cards.length}>
+				{cards.map((card, index) => (
 					<CardComponent
-						key={uuidv4()}
+						key={"player" + index}
 						card={card}
 						cardIndex={index}
 						highlight={isPlayerTurn && validMoves.includes(index)}

@@ -130,3 +130,41 @@ export const numberValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 
 
+export const checkValidCard = (card: Card, activeSpecialCard: ActiveSpecialCard | null, lastDiscardPileCard: Card): boolean => {
+	const topDiscard = lastDiscardPileCard;
+
+	const isSameColor = card.color === topDiscard.color;
+	const isSameValue = card.value === topDiscard.value;
+	const isWild = card.value === CardValue.Wild;
+	const isWildDrawFour = card.value === CardValue.WildDrawFour;
+
+	const canPlayWild = isWild && activeSpecialCard !== CardValue.DrawTwo;
+	const canPlayWildDrawFour = isWildDrawFour;
+	const canPlayOnWild = topDiscard.value === CardValue.Wild;
+	const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && activeSpecialCard === null;
+
+	if (activeSpecialCard === CardValue.WildDrawFour) {
+		return isWildDrawFour;
+	}
+
+	if (canPlayOnWild || canPlayWild || canPlayWildDrawFour || canPlayOnWildDrawFour) {
+		return true;
+	}
+
+	if (activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
+		return isSameColor || isSameValue;
+	}
+
+	// When there's an active special card, only a card with the same value can be played
+	return isSameValue;
+};
+
+export const isSpecialCard = (card: Card): boolean => {
+	return [
+		CardValue.Skip,
+		CardValue.DrawTwo,
+		CardValue.Reverse,
+		CardValue.Wild,
+		CardValue.WildDrawFour,
+	].includes(card.value);
+};

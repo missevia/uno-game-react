@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useGame } from "../hooks/useGameStore";
 import { observer } from "mobx-react-lite";
@@ -6,7 +6,7 @@ import { Card, CardValue } from "../utils/cardUtils";
 import { getNumberColor, specialImages, frontImages, numberValues } from "../utils/cardUtils";
 import { useDiscardPilePosition } from "../contexts/DiscardPilePositionContext";
 
-const CardContainerStyled = styled.div<{aiHand: boolean | undefined, mainPlayerHand: boolean | undefined, highlight: boolean | undefined, moving: boolean | undefined }>`
+const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
 	position: absolute;
     width: ${({ aiHand }) => aiHand ? "var(--cardWidthSmall)" : "var(--cardWidth)"};
     height: ${({ aiHand }) => aiHand ? "var(--cardHeightSmall)" : "var(--cardHeight)"}; 
@@ -14,6 +14,8 @@ const CardContainerStyled = styled.div<{aiHand: boolean | undefined, mainPlayerH
 	filter: ${({ highlight, mainPlayerHand }) => (highlight || !mainPlayerHand) ? "contrast(1)" : "contrast(0.5)"};
     cursor: ${({ highlight }) =>
 		highlight ? "pointer" : "default"};
+	z-index: ${({ isPile }) =>
+		isPile ? "-1" : "1"};
 `;
 
 const CardStyled = styled.div<{aiHand: boolean | undefined, isNumeric: boolean}>`
@@ -74,15 +76,16 @@ interface CardComponentProps {
   highlight?: boolean;
   style?: React.CSSProperties;
   mainPlayerHand?: boolean | undefined;
-  aiHand?: boolean | undefined;
+  aiHand?: boolean;
   aiCardMoving?: boolean;
   aiPlayerIndex?: number | null;
   aiPlayerCardIndex?: number | null;
   currentPlayer?: number;
+  isPile?: boolean;
 }
 
 
-const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style, mainPlayerHand, aiHand, aiCardMoving }) => {
+const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex, highlight, style, mainPlayerHand, aiHand, aiCardMoving, isPile = false }) => {
 	const { game } = useGame();
 	const { discardPilePosition } = useDiscardPilePosition();
 	const cardRef = React.useRef<HTMLDivElement | null>(null);
@@ -131,7 +134,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 
 	return (
 		<CardStyled isNumeric={isNumeric} aiHand={aiHand}>
-			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} moving={moving} >
+			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} isPile={isPile}>
 				<img className="card-front" src={cardFrontSrc} alt={`${color} card`} />
 				{!isNumeric && value !== CardValue.Wild && (
 					<img className="card-value" src={valueSrc} alt={`${color} ${value}`} />
@@ -161,4 +164,4 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 	);
 });
 
-export default React.memo(CardComponent);
+export default CardComponent;

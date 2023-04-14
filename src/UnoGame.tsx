@@ -18,7 +18,7 @@ const UnoGame = observer(() => {
 	const { game } = useGame();
 
 	useEffect(() => {
-		if (game) {
+		if (game && !game.gameInProgress) {
 			game.startGame();
 		}
 	}, [game]);

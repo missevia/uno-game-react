@@ -3,7 +3,6 @@ import CardComponent from "./CardComponent";
 import { Card } from "../utils/cardUtils";
 import styled from "styled-components";
 import { observer } from "mobx-react-lite";
-import { v4 as uuidv4 } from "uuid";
 
 const AIHandContainer = styled.div<{horizontal: boolean}>`
   position: fixed;
@@ -33,12 +32,13 @@ interface AIHandProps {
 }
 
 const AIHand: React.FC<AIHandProps> = observer(({ aiHand, horizontal, style, aiCardMoving }) => {
+	console.log("%c⧭", "color: #733d00", aiHand, horizontal, style, aiCardMoving);
 	return (
 		<AIHandContainer horizontal={horizontal} style={style}>
 			<AIHandStyled horizontal={horizontal}>
-				{aiHand?.map((card) => (
+				{aiHand?.map((card, index) => (
 					<CardComponent
-						key={uuidv4()}
+						key={"" + index + card.value + card.color}
 						card={card}
 						aiHand
 						aiCardMoving={aiCardMoving}
