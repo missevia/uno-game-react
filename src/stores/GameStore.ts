@@ -133,9 +133,19 @@ export class GameStore {
 	}
 
 	changeTurn() {
-		this.currentPlayer = (this.currentPlayer + this.direction) % (this.aiHands.length + 1);
-		if (this.currentPlayer < 0) {
-			this.currentPlayer += this.aiHands.length + 1;
+		let nextPlayer = (this.currentPlayer + this.direction) % (this.aiHands.length + 1);
+		if (nextPlayer < 0) {
+			nextPlayer += this.aiHands.length + 1;
+		}
+	
+		if (nextPlayer === 0) {
+			// Add 2-second delay if the next player has an index of 0
+			setTimeout(() => {
+				this.currentPlayer = nextPlayer;
+			}, 800);
+		} else {
+			// If the next player is not 0, update the currentPlayer without delay
+			this.currentPlayer = nextPlayer;
 		}
 	}
 
