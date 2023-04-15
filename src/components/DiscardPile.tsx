@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
-import CardComponent from "./CardComponent";
-import { Card } from "../utils/cardUtils";
-import { observer } from "mobx-react-lite";
-import { useDiscardPilePosition } from "../contexts/DiscardPilePositionContext";
+import React, { useRef, useEffect } from 'react';
+import CardComponent from './CardComponent';
+import { Card } from '../utils/cardUtils';
+import { observer } from 'mobx-react-lite';
+import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
 
 
 interface DiscardPileProps {
@@ -28,18 +28,18 @@ const DiscardPile: React.FC<DiscardPileProps> = observer(({ topCard }) => {
 			updatePosition();
 		};
 	
-		window.addEventListener("resize", handleResize);
+		window.addEventListener('resize', handleResize);
 	
 		// Cleanup event listener when the component is unmounted
 		return () => {
-			window.removeEventListener("resize", handleResize);
+			window.removeEventListener('resize', handleResize);
 		};
 	}, [updatePosition]);
 	
 	return (
 		<div ref={discardPileRef}>
 			{topCard ? (
-				<CardComponent card={topCard} />
+				<CardComponent card={topCard} isPile/>
 			) : (
 				<p>No cards in the discard pile yet.</p>
 			)}

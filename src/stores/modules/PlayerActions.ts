@@ -1,6 +1,6 @@
-import { GameStore } from "../GameStore";
-import { runInAction } from "mobx";
-import { CardValue } from "../../utils/cardUtils";
+import { GameStore } from '../GameStore';
+import { runInAction } from 'mobx';
+import { CardValue } from '../../utils/cardUtils';
 
 export class PlayerActions {
 	constructor(private game: GameStore) {}

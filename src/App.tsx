@@ -1,10 +1,10 @@
-import React from "react";
-import { RootStoreContext } from "./hooks/useGameStore";
-import { RootStore } from "./stores/RootStore";
-import  UnoGame  from "./UnoGame";
-import styled from "styled-components";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MainMenu from "./MainMenu";
+import React from 'react';
+import { RootStoreContext } from './hooks/useGameStore';
+import { RootStore } from './stores/RootStore';
+import  UnoGame  from './UnoGame';
+import styled from 'styled-components';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainMenu from './MainMenu';
 
 const AppStyled = styled.div`
   height: 100vh;

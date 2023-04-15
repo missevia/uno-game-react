@@ -17,8 +17,12 @@ body {
 }
 
 :root {
-  --cardWidthSmall: 8rem;
+  /* --cardWidthSmall: 8rem;
   --cardWidth: 10rem;
   --cardHeightSmall: 13rem;
+  --cardHeight: 15rem; */
+  --cardWidthSmall: 10rem;
+  --cardWidth: 10rem;
+  --cardHeightSmall: 15rem;
   --cardHeight: 15rem;
 }

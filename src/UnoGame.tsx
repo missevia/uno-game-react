@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { useGame } from "./hooks/useGameStore";
-import { observer } from "mobx-react-lite";
-import GameBoard from "./components/GameBoard";
-import styled from "styled-components";
+import React, { useEffect } from 'react';
+import { useGame } from './hooks/useGameStore';
+import { observer } from 'mobx-react-lite';
+import GameBoard from './components/GameBoard';
+import styled from 'styled-components';
 
 // TO-DO
 // 2. Re-factor GameStore and move out some of the logic to other files

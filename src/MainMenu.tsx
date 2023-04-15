@@ -1,7 +1,7 @@
 // MainMenu.js
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const MainMenuStyled = styled.div`
   display: flex;
@@ -20,7 +20,7 @@ const MainMenu = () => {
 	const navigate = useNavigate();
 
 	const startGame = () => {
-		navigate("/game");
+		navigate('/game');
 	};
 
 	return (

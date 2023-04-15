@@ -1,9 +1,9 @@
-import React from "react";
-import CardComponent from "./CardComponent";
-import styled from "styled-components";
-import { observer } from "mobx-react-lite";
-import { v4 as uuidv4 } from "uuid";
-import { Card } from "../utils/cardUtils";
+import React from 'react';
+import CardComponent from './CardComponent';
+import styled from 'styled-components';
+import { observer } from 'mobx-react-lite';
+import { v4 as uuidv4 } from 'uuid';
+import { Card } from '../utils/cardUtils';
 
 interface PlayerHandStyledProps {
 	cardsCount: number;
@@ -29,20 +29,10 @@ interface PlayerHandProps {
 	isPlayerTurn: boolean;
 	validMoves: number[];
 	playerHand: Card[];
+	currentPlayer: number;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMoves, playerHand }) => {
-	const containerMaxWidth = 50; // in vw
-	const cardWidth = 10; // in rem
-	const cardsCount = playerHand.length;
-	const cardOverlap = Math.max(
-		0,
-		Math.min(
-			((cardWidth * cardsCount * window.innerWidth) / 100 - (containerMaxWidth * window.innerWidth) / 100) /
-		(cardsCount - 1),
-			(cardWidth * window.innerWidth) / 100 / 3
-		)
-	);
+const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMoves, playerHand, currentPlayer }) => {
 	return (
 		<PlayerHandContainer>
 			<PlayerHandStyled cardsCount={playerHand.length}>
@@ -53,6 +43,7 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMov
 						cardIndex={index}
 						highlight={isPlayerTurn && validMoves.includes(index)}
 						mainPlayerHand={true}
+						currentPlayer={currentPlayer}
 					/>
 				))}
 			</PlayerHandStyled>

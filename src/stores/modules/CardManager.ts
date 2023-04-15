@@ -1,8 +1,8 @@
 // CardManager.ts
-import { GameStore } from "../GameStore";
-import { Card, shuffle, CardValue, CardColor } from "../../utils/cardUtils";
-import { cardDeck } from "../../utils/cardDeck";
-import { runInAction } from "mobx";
+import { GameStore } from '../GameStore';
+import { Card, shuffle } from '../../utils/cardUtils';
+import { cardDeck } from '../../utils/cardDeck';
+import { runInAction } from 'mobx';
 
 export class CardManager {
 	constructor(private game: GameStore) {}
@@ -10,10 +10,7 @@ export class CardManager {
 	shuffleAndDeal(aiOpponents = 3): void {
 		runInAction(() => {
 			// Create a copy of the initial deck and shuffle it
-			const initialDeck: Card[] = cardDeck.deck.map(
-				(card) => new Card(card.color as CardColor, card.value as CardValue)
-			);
-			this.game.deck = shuffle(initialDeck);     
+			this.game.deck = shuffle(cardDeck);     
 			// Initialize player and AI hands
 			this.game.playerHand = [];
 			this.game.aiHands = new Array(aiOpponents).fill(0).map(() => []);
@@ -31,16 +28,13 @@ export class CardManager {
 				firstDiscardCard = this.drawCard();
 			}
 			this.game.discardPile = [firstDiscardCard];
+			this.game.firstCard = firstDiscardCard;
 			this.game.currentPlayer = 0;
 			this.game.gameInProgress = true;
-
 		});
 	}
 
 	drawCard(): Card {
-		if (this.game.deck.length === 0) {
-			throw new Error("The deck is empty");
-		}
 		return this.game.deck.pop() as Card;
 	}
 
@@ -53,7 +47,7 @@ export class CardManager {
 		}
     
 		if (playerIndex < 0 || playerIndex >= this.game.aiHands.length + 1) {
-			console.error("Invalid playerIndex:", playerIndex);
+			console.error('Invalid playerIndex:', playerIndex);
 			return;
 		}
     

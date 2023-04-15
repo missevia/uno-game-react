@@ -1,4 +1,4 @@
-import { GameStore } from "./GameStore";
+import { GameStore } from './GameStore';
 
 export class RootStore {
 	game: GameStore;
