@@ -150,7 +150,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 
 	return (
 		<CardStyled isNumeric={isNumeric} aiHand={aiHand}>
-			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={!!(game.currentPlayer === 0 && cardIndex && game.validMoves.includes(cardIndex))} mainPlayerHand={mainPlayerHand} aiHand={aiHand} isPile={isPile} >
+			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} isPile={isPile} >
 				<img className="card-front" src={cardFrontSrc} alt={`${color} card`} />
 				{!isNumeric && value !== CardValue.Wild && (
 					<img className="card-value" src={valueSrc} alt={`${color} ${value}`} />

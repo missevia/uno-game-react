@@ -154,7 +154,7 @@ export class GameStore {
 			return; 
 		}
 		// If it's an AI player's turn, automatically play a card
-		while (this.currentPlayer !== 0) {
+		while (this.currentPlayer !== 0 && this.gameInProgress) {
 			await new Promise((resolve) => {
 				setTimeout(() => {
 					this.aiPlayer.aiPlayCard(this.currentPlayer - 1);
