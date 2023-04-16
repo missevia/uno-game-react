@@ -4,6 +4,7 @@ import { useGame } from '../hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
 import { getNumberColor, specialImages, frontImages, numberValues, Card, CardValue } from '../utils/cardUtils';
 import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
+import { motion } from 'framer-motion'
 
 const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
 	position: absolute;
@@ -13,7 +14,7 @@ const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
 	filter: ${({ highlight, mainPlayerHand }) => (highlight || !mainPlayerHand) ? 'contrast(1)' : 'contrast(0.5)'};
     cursor: ${({ highlight }) =>
 		highlight ? 'pointer' : 'default'};
-	z-index: ${({ isPile }) => isPile ? '-100' : '1'};
+	z-index: ${({ isPile }) => isPile ? '-1' : '1'};
 `;
 
 const CardStyled = styled.div<{aiHand: boolean | undefined, isNumeric: boolean}>`
@@ -89,6 +90,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 	const { position } = useDiscardPilePosition();
 	const cardRef = React.useRef<HTMLDivElement | null>(null);
 	const { color, value } = card;
+	const [animationTarget, setAnimationTarget] = useState({ x: 0, y: 0 });
 	let cardFrontSrc = frontImages[color];
 	let valueSrc;
 	let blankValueSrc;
@@ -126,9 +128,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 			// const deltaY = centerY - cardRect.y - cardHeight / 2;
 			const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
 			const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
+			setAnimationTarget({ x: deltaX, y: deltaY });
 	
-			cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-			cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+			// cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			// cardRef.current.style.transition = 'transform 0.5s ease-in-out';
 		}
 	}, [game.aiPlaying, position]);
 	
@@ -138,9 +141,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 			// setMoving(true);
 			const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
 			const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-			console.log(deltaX, deltaY);
-			cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-			cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+			setAnimationTarget({ x: deltaX, y: deltaY });
+			// console.log(deltaX, deltaY);
+			// cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			// cardRef.current.style.transition = 'transform 0.5s ease-in-out';
 			setTimeout(() => {
 				game.playCard(cardIndex);
 				// setMoving(false);
@@ -149,8 +153,18 @@ const CardComponent: React.FC<CardComponentProps> = observer(({ card, cardIndex,
 	};
 
 	return (
-		<CardStyled isNumeric={isNumeric} aiHand={aiHand}>
-			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} isPile={isPile} >
+		<CardStyled 
+			isNumeric={isNumeric} 
+			aiHand={aiHand} 
+			as={motion.div}  
+			transition={{ duration: 0.5, ease: 'easeInOut' }} 
+			whileHover={
+			highlight
+			  ? { y: -40, transition: { duration: 0.3 } }
+			  : { y: 0, transition: { duration: 0.3 }}
+		  }>
+			<CardContainerStyled ref={cardRef} onClick={handleClick} style={style} highlight={highlight} mainPlayerHand={mainPlayerHand} aiHand={aiHand} isPile={isPile} as={motion.div} animate={animationTarget}
+	transition={{ duration: 0.5, ease: 'easeInOut' }} >
 				<img className="card-front" src={cardFrontSrc} alt={`${color} card`} />
 				{!isNumeric && value !== CardValue.Wild && (
 					<img className="card-value" src={valueSrc} alt={`${color} ${value}`} />
