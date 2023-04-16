@@ -37,6 +37,10 @@ export class GameStore {
 		return this.aiPlayerCard;
 	}
 
+	setGameInProgress(value: boolean) {
+		this.gameInProgress = value;
+	}
+
 	startGame() {
 		this.cardManager.shuffleAndDeal(3);
 	}
@@ -56,14 +60,14 @@ export class GameStore {
 	}
 	
 	endGame() {
-		this.gameInProgress = false;
+		this.setGameInProgress(false);
 		console.log('game finished');
 		// TO-DO: add more logic/ cleanup here
 	}
 
 	resetGame() {
 		// test if this is working properly
-		this.gameInProgress = false;
+		this.setGameInProgress(false);
 		this.deck = [];
 		this.discardPile = [];
 		this.currentPlayer = 0;
@@ -174,7 +178,11 @@ export class GameStore {
 
 	// action to check if a card is valid to play
 	checkValidCard(card: Card): boolean {
+
 		const topDiscard = this.discardPile[this.discardPile.length - 1];
+		if (topDiscard.value === CardValue.WildDrawFour) {
+			return !!(this.activeSpecialCard === null);
+		}
     
 		const isSameColor = card.color === topDiscard.color;
 		const isSameValue = card.value === topDiscard.value;
@@ -184,13 +192,13 @@ export class GameStore {
 		const canPlayWild = isWild && this.activeSpecialCard !== CardValue.DrawTwo;
 		const canPlayWildDrawFour = isWildDrawFour;
 		const canPlayOnWild = topDiscard.value === CardValue.Wild;
-		const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === null;
+		// const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === null;
     
 		if (this.activeSpecialCard === CardValue.WildDrawFour) {
 			return isWildDrawFour;
 		}
     
-		if (canPlayOnWild || canPlayWild || canPlayWildDrawFour || canPlayOnWildDrawFour) {
+		if (canPlayOnWild || canPlayWild || canPlayWildDrawFour) {
 			return true;
 		}
     

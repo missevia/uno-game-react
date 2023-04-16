@@ -30,7 +30,7 @@ export class CardManager {
 			this.game.discardPile = [firstDiscardCard];
 			this.game.firstCard = firstDiscardCard;
 			this.game.currentPlayer = 0;
-			this.game.gameInProgress = true;
+			this.game.setGameInProgress(true);
 		});
 	}
 
