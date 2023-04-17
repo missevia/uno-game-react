@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from './hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
 import GameBoard from './components/GameBoard';
@@ -16,10 +16,12 @@ const UnoGameStyled = styled.div`
 
 const UnoGame = observer(() => {
 	const { game } = useGame();
+	const initialized = useRef(false);
 
 	useEffect(() => {
-		if (game) {
+		if (game && !initialized.current) {
 			game.startGame();
+			initialized.current = true;
 		}
 	}, [game]);
 
@@ -29,10 +31,9 @@ const UnoGame = observer(() => {
 
 	return (
 		<UnoGameStyled>
-			<GameBoard game={game}/>
+			<GameBoard game={game} />
 		</UnoGameStyled>
 	);
 });
 
 export default UnoGame;
-

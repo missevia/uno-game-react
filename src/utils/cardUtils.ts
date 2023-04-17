@@ -1,4 +1,3 @@
-
 import {
 	frontWild,
 	frontBlue,
@@ -51,12 +50,17 @@ export enum CardValue {
   WildDrawFour = 'drawFour',
 }
 
-export type ActiveSpecialCard = CardValue.Skip | CardValue.Reverse | CardValue.DrawTwo | CardValue.WildDrawFour | CardValue.Wild;
+export type ActiveSpecialCard =
+  | CardValue.Skip
+  | CardValue.Reverse
+  | CardValue.DrawTwo
+  | CardValue.WildDrawFour
+  | CardValue.Wild
 
 export interface Card {
-  color: CardColor;
-  value: CardValue;
-  id: number;
+  color: CardColor
+  value: CardValue
+  id: number
 }
 
 // export class Card {
@@ -74,24 +78,24 @@ export interface Card {
 export function shuffle(deck: Card[]): Card[] {
 	const shuffledDeck = [...deck];
 	for (let i = shuffledDeck.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+		const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
 	}
 	return shuffledDeck;
 }
 
 export const getNumberColor = (color: CardColor): string => {
 	switch (color) {
-	case 'blue':
-		return '#3545F8';
-	case 'green':
-		return '#1DE544';
-	case 'red':
-		return '#F83434';
-	case 'yellow':
-		return '#F9F716';
-	default:
-		return 'white';
+		case 'blue':
+			return '#3545F8';
+		case 'green':
+			return '#1DE544';
+		case 'red':
+			return '#F83434';
+		case 'yellow':
+			return '#F9F716';
+		default:
+			return 'white';
 	}
 };
 
@@ -105,7 +109,7 @@ export const frontImages = {
 
 export const specialImages = {
 	drawFour: {
-		colour: drawFour, 
+		colour: drawFour,
 		blank: drawFourBlank,
 	},
 	drawTwo: {
@@ -134,5 +138,48 @@ export const specialImages = {
 
 export const numberValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
+export const isSpecialCard = (card: Card): boolean => {
+	return [
+		CardValue.Skip,
+		CardValue.DrawTwo,
+		CardValue.Reverse,
+		CardValue.Wild,
+		CardValue.WildDrawFour,
+	].includes(card.value);
+};
 
+export const checkValidCard = (
+	card: Card,
+	activeSpecialCard: ActiveSpecialCard | null,
+	lastDiscardPileCard: Card,
+): boolean => {
+	const topDiscard = lastDiscardPileCard;
+	if (topDiscard.value === CardValue.WildDrawFour) {
+		return !!(activeSpecialCard === null);
+	}
 
+	const isSameColor = card.color === topDiscard.color;
+	const isSameValue = card.value === topDiscard.value;
+	const isWild = card.value === CardValue.Wild;
+	const isWildDrawFour = card.value === CardValue.WildDrawFour;
+
+	const canPlayWild = isWild && activeSpecialCard !== CardValue.DrawTwo;
+	const canPlayWildDrawFour = isWildDrawFour;
+	const canPlayOnWild = topDiscard.value === CardValue.Wild;
+	// const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === null;
+
+	if (activeSpecialCard === CardValue.WildDrawFour) {
+		return isWildDrawFour;
+	}
+
+	if (canPlayOnWild || canPlayWild || canPlayWildDrawFour) {
+		return true;
+	}
+
+	if (activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
+		return isSameColor || isSameValue;
+	}
+
+	// When there's an active special card, only a card with the same value can be played
+	return isSameValue;
+};
