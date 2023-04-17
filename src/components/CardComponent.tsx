@@ -80,10 +80,10 @@ const CardStyled = styled.div<{ aiHand: boolean | undefined; isNumeric: boolean 
 interface CardComponentProps {
   card: Card
   cardIndex?: number
-  highlight?: boolean | null
+  highlight?: boolean
   style?: React.CSSProperties
-  mainPlayerHand?: boolean | undefined
-  aiHand?: boolean | undefined
+  mainPlayerHand?: boolean
+  aiHand?: boolean
   aiCardMoving?: boolean
   aiPlayerIndex?: number;
   aiPlayerCard?: Card | null
@@ -96,10 +96,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 	({
 		card,
 		cardIndex,
-		highlight,
+		highlight = false,
 		style,
-		mainPlayerHand,
-		aiHand,
+		mainPlayerHand = false,
+		aiHand = false,
 		aiCardMoving,
 		isPile,
 		aiPlayerIndex,
@@ -135,6 +135,12 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 				blankValueSrc = specialImages.drawFour.blank;
 			}
 		}
+
+		useEffect(() => {
+			if (aiPlayerIndex === 0) {
+				console.log('***AiHand', JSON.stringify(card));
+			}
+		}, [card, aiPlayerIndex]);
 
 		// useEffect(() => {
 		// 	console.log('****', [game.aiPlaying, position, aiPlayerIndex, game.currentPlayer, game.aiPlayerCard?.id, card.id]);

@@ -55,7 +55,7 @@ export type ActiveSpecialCard =
   | CardValue.Reverse
   | CardValue.DrawTwo
   | CardValue.WildDrawFour
-  | CardValue.Wild
+  // | CardValue.Wild
 
 export interface Card {
   color: CardColor
@@ -143,7 +143,7 @@ export const isSpecialCard = (card: Card): boolean => {
 		CardValue.Skip,
 		CardValue.DrawTwo,
 		CardValue.Reverse,
-		CardValue.Wild,
+		// CardValue.Wild,
 		CardValue.WildDrawFour,
 	].includes(card.value);
 };
@@ -152,27 +152,35 @@ export const checkValidCard = (
 	card: Card,
 	activeSpecialCard: ActiveSpecialCard | null,
 	lastDiscardPileCard: Card,
+	playerHand: Card[],
 ): boolean => {
 	const topDiscard = lastDiscardPileCard;
-	if (topDiscard.value === CardValue.WildDrawFour) {
-		return !!(activeSpecialCard === null);
-	}
 
 	const isSameColor = card.color === topDiscard.color;
 	const isSameValue = card.value === topDiscard.value;
 	const isWild = card.value === CardValue.Wild;
 	const isWildDrawFour = card.value === CardValue.WildDrawFour;
+	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
 
-	const canPlayWild = isWild && activeSpecialCard !== CardValue.DrawTwo;
-	const canPlayWildDrawFour = isWildDrawFour;
+	const canPlayWild = isWild && noActiveDrawCards;
+  
+	if (noActiveDrawCards && topDiscard.value === CardValue.WildDrawFour) {
+		return true;
+	}
+	const canPlayWildDrawFour = isWildDrawFour && noActiveDrawCards && playerHand.every(handCard => {
+		if (handCard.value === CardValue.WildDrawFour) {
+			return true;
+		}
+		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value);
+	});
+
 	const canPlayOnWild = topDiscard.value === CardValue.Wild;
-	// const canPlayOnWildDrawFour = topDiscard.value === CardValue.WildDrawFour && this.activeSpecialCard === null;
 
-	if (activeSpecialCard === CardValue.WildDrawFour) {
-		return isWildDrawFour;
+	if (canPlayOnWild || canPlayWild) {
+		return true;
 	}
 
-	if (canPlayOnWild || canPlayWild || canPlayWildDrawFour) {
+	if (isWildDrawFour && canPlayWildDrawFour) {
 		return true;
 	}
 
@@ -182,4 +190,58 @@ export const checkValidCard = (
 
 	// When there's an active special card, only a card with the same value can be played
 	return isSameValue;
+};
+
+
+
+
+
+
+// export const checkValidCard = (
+// 	card: Card,
+// 	activeSpecialCard: ActiveSpecialCard | null,
+// 	lastDiscardPileCard: Card,
+// 	playerHand: Card[],
+// ): boolean => {
+// 	const topDiscard = lastDiscardPileCard;
+
+// 	const isSameColor = card.color === topDiscard.color;
+// 	const isSameValue = card.value === topDiscard.value;
+// 	const isWild = card.value === CardValue.Wild;
+// 	const isWildDrawFour = card.value === CardValue.WildDrawFour;
+// 	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
+
+// 	const canPlayWild = isWild && activeSpecialCard !== CardValue.DrawTwo;
+// 	if (topDiscard.value === CardValue.WildDrawFour && noActiveDrawCards) {
+// 		return true;
+// 	}
+// 	const canPlayWildDrawFour = isWildDrawFour && noActiveDrawCards && playerHand.every(handCard => {
+// 		if (handCard.value === CardValue.WildDrawFour) {
+// 			return true;
+// 		}
+// 		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value);
+// 	});
+
+// 	const canPlayOnWild = topDiscard.value === CardValue.Wild;
+
+// 	if (canPlayOnWild || canPlayWild || canPlayWildDrawFour) {
+// 		return true;
+// 	}
+
+// 	if (activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
+// 		return isSameColor || isSameValue;
+// 	}
+
+// 	// When there's an active special card, only a card with the same value can be played
+// 	return isSameValue;
+// };
+
+export const getRandomColor = (): CardColor => {
+	const colors = [
+		CardColor.Red,
+		CardColor.Green,
+		CardColor.Blue,
+		CardColor.Yellow
+	];
+	return colors[Math.floor(Math.random() * colors.length)];
 };

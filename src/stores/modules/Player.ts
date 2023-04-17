@@ -27,7 +27,7 @@ export class Player {
 			const playerHand = this.cards;
 			const card = playerHand[cardIndex];
 
-			if (checkValidCard(card, activeSpecialCard, lastDiscardPileCard)) {
+			if (checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards)) {
 				// add this to separate function?
 				this.cards = [...playerHand.slice(0, cardIndex), ...playerHand.slice(cardIndex + 1)];
 			}
@@ -43,7 +43,7 @@ export class Player {
 
 			// checking if AI can play any card, taking into account special cards
 			const cardIndexToPlay = aiHand.findIndex((card) =>
-				checkValidCard(card, activeSpecialCard, lastDiscardPileCard),
+				checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards),
 			);
 			const cardToPlay = aiHand[cardIndexToPlay];
 

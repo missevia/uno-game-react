@@ -5,10 +5,13 @@ import {
 	checkValidCard,
 	isSpecialCard,
 	ActiveSpecialCard,
+	getRandomColor
 } from '../utils/cardUtils';
 import { RootStore } from './RootStore';
 import { CardManager } from './modules/CardManager';
 import { Player } from './modules/Player';
+
+// When mainPlayer played skip cards something weird happened - it went to 4 players
 
 export class GameStore {
 	currentPlayer = 0;
@@ -27,10 +30,11 @@ export class GameStore {
 	currentPlayerId = 0;
 
 	constructor(store: RootStore) {
-		makeAutoObservable(this);
 		this.playCard = this.playCard.bind(this);
+		this.resetGame = this.resetGame.bind(this);
 		this.handleDeckClick = this.handleDeckClick.bind(this);
 		this.cardManager = new CardManager(); 
+		makeAutoObservable(this);
 	}
 
 	startGame(aiOpponents = 3) {
@@ -107,8 +111,8 @@ export class GameStore {
 
 	endGame(playerIndex: number) {
 		runInAction(() => {
-			this.gameInProgress = false;
 			this.winner = playerIndex;
+			this.gameInProgress = false;
 		});
 		
 		console.log('game finished');
@@ -116,21 +120,33 @@ export class GameStore {
 	}
 
 	resetGame() {
-		// test if this is working properly
-		this.gameInProgress = false;
-		this.currentPlayer = 0;
-		this.activeSpecialCard = null;
-		this.direction = 1;
-		this.cardManager.clearDeck();
-		this.startGame();
-	}
+		runInAction(() => {
+		  this.currentPlayer = 0;
+		  this.activeSpecialCard = null;
+		  this.direction = 1;
+		  this.cardManager.clearDeck();
+		  this.cardManager = new CardManager;
+		  this.gameInProgress = true;
+		  this.drawTwoCount = 0;
+		  this.winner = null;
+		  this.aiCardMoving = false;
+		  this.aiPlaying = false;
+		  this.aiPlayerCard = null;
+	  
+		  // Clear out existing players
+		  this.players = [];
+	  
+		  // Start new game
+		  this.startGame();
+		});
+	  }
 
 	get validMoves(): number[] {
 		const playerHand = this.playerHand;
 		return playerHand.reduce((validMoves, card, index) => {
 			if (
 				this.cardManager.lastDiscardPileCard &&
-        checkValidCard(card, this.activeSpecialCard, this.cardManager.lastDiscardPileCard)
+        checkValidCard(card, this.activeSpecialCard, this.cardManager.lastDiscardPileCard, this.players[0].cards)
 			) {
 				validMoves.push(index);
 			}
@@ -170,6 +186,12 @@ export class GameStore {
 		  } else {
 			this.drawTwoCount = 0; // Reset the count if a non-DrawTwo card is played
 		}
+
+		// if (card.value === CardValue.Wild) {
+		// 	runInAction(() => {
+		// 		card.color = getRandomColor();
+		// 	});
+		// }
 	}
 
 	// action to play a card from the player's hand
@@ -190,6 +212,7 @@ export class GameStore {
 				this.cardManager.discardCardToPile(card);
 
 				if (this.activeSpecialCard === CardValue.Skip) {
+					console.log('skipping');
 					this.skipNextPlayer();
 				} else {
 					this.changeTurn();
@@ -256,7 +279,7 @@ export class GameStore {
 								  this.aiPlayerCard = null;
 								  this.aiPlaying = false; // set aiPlaying to false when the AI player finishes playing
 								});
-							}, 0);
+							}, 500);
 						});
 					} else {
 						runInAction(() => {
@@ -277,173 +300,8 @@ export class GameStore {
 	skipNextPlayer() {
 		this.currentPlayer = (this.currentPlayer + 2 * this.direction) % (this.players.length);
 		if (this.currentPlayer < 0) {
-			this.currentPlayer += this.players.length + 1;
+			this.currentPlayer += this.players.length;
 		}
 		this.activeSpecialCard = null;
 	}
 }
-
-// import { makeAutoObservable } from 'mobx';
-// import { Card, CardValue, ActiveSpecialCard, checkValidCard, isSpecialCard } from '../utils/cardUtils';
-// import { RootStore } from './RootStore';
-// import { AIPlayer } from './modules/AIPlayer';
-// import { CardManager } from './modules/CardManager';
-// import { PlayerActions } from './modules/PlayerActions';
-
-// export class GameStore {
-// 	deck: Card[] = [];
-// 	discardPile: Card[] = [];
-// 	playerHand: Card[] = [];
-// 	aiHands: Card[][] = [];
-// 	currentPlayer = 0;
-// 	activeSpecialCard: ActiveSpecialCard | null = null;
-// 	gameInProgress = false;
-// 	wildDrawFourPlayed = false;
-// 	direction = 1;
-// 	aiPlayer: AIPlayer;
-// 	cardManager: CardManager;
-// 	playerActions: PlayerActions;
-// 	aiCardMoving = false;
-// 	aiPlayerIndex: number | null = null;
-// 	aiPlayerCard: Card | null = null;
-// 	aiPlaying = false;
-// 	firstCard: Card | null = null;
-
-// 	constructor(store: RootStore) {
-// 		makeAutoObservable(this);
-// 		this.playCard = this.playCard.bind(this);
-// 		this.handleDeckClick = this.handleDeckClick.bind(this);
-// 		this.aiPlayer = new AIPlayer(this);
-// 		this.cardManager = new CardManager(this);
-// 		this.playerActions = new PlayerActions(this);
-// 	}
-
-// 	setGameInProgress(value: boolean) {
-// 		this.gameInProgress = value;
-// 	}
-
-// 	startGame() {
-// 		this.cardManager.shuffleAndDeal(3);
-// 	}
-
-// 	checkGameOver(): boolean {
-// 		if (this.playerHand.length === 0) {
-// 			this.endGame();
-// 			return true;
-// 		}
-// 		for (let i = 0; i < this.aiHands.length; i++) {
-// 			if (this.aiHands[i].length === 0) {
-// 				this.endGame();
-// 				return true;
-// 			}
-// 		}
-// 		return false;
-// 	}
-
-// 	endGame() {
-// 		this.setGameInProgress(false);
-// 		console.log('game finished');
-// 		// TO-DO: add more logic/ cleanup here
-// 	}
-
-// 	resetGame() {
-// 		// test if this is working properly
-// 		this.setGameInProgress(false);
-// 		this.deck = [];
-// 		this.discardPile = [];
-// 		this.currentPlayer = 0;
-// 		this.activeSpecialCard = null;
-// 		this.playerHand = [];
-// 		this.aiHands = [];
-// 		this.direction = 1;
-// 		this.startGame();
-// 	}
-
-// 	// action to draw multiple cards from the deck
-// 	drawCards(playerIndex: number, count: number) {
-// 		this.cardManager.drawCards(playerIndex, count);
-// 	}
-
-// 	async handleDeckClick() {
-// 		await this.playerActions.handleDeckClick();
-// 	}
-
-// 	get validMoves(): number[] {
-// 		return this.playerHand.reduce((validMoves, card, index) => {
-// 			if (checkValidCard(card, this.activeSpecialCard, )) {
-// 				validMoves.push(index);
-// 			}
-// 			return validMoves;
-// 		}, [] as number[]);
-
-// 	}
-// 	handleSpecialCard(card: Card) {
-// 		switch (card.value) {
-// 		case CardValue.WildDrawFour:
-// 			this.activeSpecialCard = CardValue.WildDrawFour;
-// 			break;
-// 		case CardValue.DrawTwo:
-// 			this.activeSpecialCard = CardValue.DrawTwo;
-// 			break;
-// 		case CardValue.Reverse:
-// 			this.direction *= -1;
-// 			if (this.aiHands.length === 1) {
-// 				this.activeSpecialCard = CardValue.Skip;
-// 			} else {
-// 				this.activeSpecialCard = null;
-// 			}
-// 			break;
-// 		case CardValue.Skip:
-// 			this.activeSpecialCard = CardValue.Skip;
-// 			break;
-// 		default:
-// 			this.activeSpecialCard = null;
-// 			break;
-// 		}
-// 	}
-
-// 	// action to play a card from the player's hand
-// 	async playCard(cardIndex: number) {
-// 		await this.playerActions.playCard(cardIndex);
-// 	}
-
-// 	changeTurn() {
-// 		let nextPlayer = (this.currentPlayer + this.direction) % (this.aiHands.length + 1);
-// 		if (nextPlayer < 0) {
-// 			nextPlayer += this.aiHands.length + 1;
-// 		}
-
-// 		if (nextPlayer === 0) {
-// 			// Add 2-second delay if the next player has an index of 0
-// 			setTimeout(() => {
-// 				this.currentPlayer = nextPlayer;
-// 			}, 800);
-// 		} else {
-// 			// If the next player is not 0, update the currentPlayer without delay
-// 			this.currentPlayer = nextPlayer;
-// 		}
-// 	}
-
-// 	async playAllAiTurns() {
-// 		if (!this.gameInProgress) {
-// 			return;
-// 		}
-// 		// If it's an AI player's turn, automatically play a card
-// 		while (this.currentPlayer !== 0 && this.gameInProgress) {
-// 			await new Promise((resolve) => {
-// 				setTimeout(() => {
-// 					this.aiPlayer.aiPlayCard(this.currentPlayer - 1);
-// 					resolve(null);
-// 				}, 2000); //  delay of 2 seconds between AI players' turns
-// 			});
-// 		}
-// 	}
-
-// 	skipNextPlayer() {
-// 		this.currentPlayer = (this.currentPlayer + 2 * this.direction) % (this.aiHands.length + 1);
-// 		if (this.currentPlayer < 0) {
-// 			this.currentPlayer += this.aiHands.length + 1;
-// 		}
-// 		this.activeSpecialCard = null;
-// 	}
-// }

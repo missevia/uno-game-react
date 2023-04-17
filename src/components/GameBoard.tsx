@@ -37,6 +37,7 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
 	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
+	
 
 	// TEMP console.log to check if any special card is now active (DrawTwo, DrawFour)
 	useEffect(() => {
@@ -50,17 +51,29 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	// useEffect(() => {
 	// 	console.log('aiHand', toJS(game.aiHands));
 	// }, [game.aiHands]);
+	if (!game.gameInProgress && game.winner) {
+		if (game.winner === 0) {
+			return (
+				<>
+					<button onClick={game.resetGame}>Start a new game</button>
+					<h1>You won!</h1>
+				</>
+			);
+		} else {
+			return (
+				<>
+					<button onClick={game.resetGame}>Start a new game</button>
+					<h1>{`Player number ${game.winner} won`}</h1>;
+				</>
+			);
+		}
+	} 
+
 	if (!game.gameInProgress || game.players.length === 0) {
 		return null;
 	}
 
-	if (!game.gameInProgress && game.winner) {
-		if (game.winner === 0) {
-			return <h1>You won</h1>;
-		} else {
-			return <h1>`Player number ${game.winner} won`</h1>;
-		}
-	} 
+
 
 	return (
 		<DiscardPilePositionContext.Provider
@@ -71,6 +84,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 					<h1>{`Current player: ${game.currentPlayer}`}</h1>
 					<h1>{game.gameInProgress ? 'Game in progress' : 'Game over'}</h1>
 				</div>
+				<button onClick={game.resetGame}>Reset game</button>
 
 				<AIHand
 					aiHand={game.players[1].cards}

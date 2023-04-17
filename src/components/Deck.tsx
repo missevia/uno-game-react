@@ -12,7 +12,7 @@ interface DeckProps {
 }
 
 interface DeckStyledProps {
-  highlight: boolean
+  highlight: boolean;
 }
 
 const DeckStyled = styled.div<DeckStyledProps>`

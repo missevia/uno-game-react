@@ -36,10 +36,13 @@ interface AIHandProps {
 
 const AIHand: React.FC<AIHandProps> = observer(
 	({ aiHand, horizontal, style, aiPlayerIndex, playedCardIndex }) => {
+		useEffect(() => {
+			console.log(`***AI player ${aiPlayerIndex}'s hand updated:`, JSON.stringify(aiHand));
+		  }, [aiHand, aiPlayerIndex]);
 		return (
 			<AIHandContainer horizontal={horizontal} style={style}>
 				<AIHandStyled horizontal={horizontal}>
-					{aiHand?.map((card, index) => (
+					{aiHand.map((card, index) => (
 						<CardComponent
 							key={`${card.color}-${card.value}-${index}`}
 							card={card}
