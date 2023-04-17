@@ -19,6 +19,8 @@ export class GameStore {
 	aiCardMoving = false;
 	aiPlaying = false;
 	aiPlayerCard: Card | null = null;
+	drawTwoCount = 0;
+	winner: number | null = null;
 
 
 	players: Player[] = [];
@@ -77,8 +79,9 @@ export class GameStore {
 			newCardsCount = 4;
 			this.activeSpecialCard = null;
 		} else if (this.activeSpecialCard === CardValue.DrawTwo) {
-			newCardsCount = 2;
+			newCardsCount = 2 * this.drawTwoCount; // Multiply by drawTwoCount
 			this.activeSpecialCard = null;
+			this.drawTwoCount = 0; // Reset drawTwoCount after drawing cards
 		}
 
 		const newCards = this.cardManager.drawCards(newCardsCount);
@@ -90,20 +93,24 @@ export class GameStore {
 		const playerHand = this.playerHand;
 
 		if (playerHand.length === 0) {
-			this.endGame();
+			this.endGame(0);
 			return true;
 		}
 		for (let i = 0; i < this.players.length; i++) {
 			if (this.players[i].cards.length === 0) {
-				this.endGame();
+				this.endGame(i);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	endGame() {
-		this.gameInProgress = false;
+	endGame(playerIndex: number) {
+		runInAction(() => {
+			this.gameInProgress = false;
+			this.winner = playerIndex;
+		});
+		
 		console.log('game finished');
 		// TO-DO: add more logic/ cleanup here
 	}
@@ -156,6 +163,12 @@ export class GameStore {
 		if (card.value === CardValue.Reverse) {
 			this.direction *= -1;
 			this.activeSpecialCard = this.players.length === 1 ? CardValue.Skip : null;
+		}
+
+		if (card.value === CardValue.DrawTwo) {
+			this.drawTwoCount++;
+		  } else {
+			this.drawTwoCount = 0; // Reset the count if a non-DrawTwo card is played
 		}
 	}
 
@@ -262,7 +275,7 @@ export class GameStore {
 	}
 
 	skipNextPlayer() {
-		this.currentPlayer = (this.currentPlayer + 2 * this.direction) % (this.players.length + 1);
+		this.currentPlayer = (this.currentPlayer + 2 * this.direction) % (this.players.length);
 		if (this.currentPlayer < 0) {
 			this.currentPlayer += this.players.length + 1;
 		}

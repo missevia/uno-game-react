@@ -50,7 +50,17 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	// useEffect(() => {
 	// 	console.log('aiHand', toJS(game.aiHands));
 	// }, [game.aiHands]);
-	if (!game.gameInProgress || game.players.length === 0) return null;
+	if (!game.gameInProgress || game.players.length === 0) {
+		return null;
+	}
+
+	if (!game.gameInProgress && game.winner) {
+		if (game.winner === 0) {
+			return <h1>You won</h1>;
+		} else {
+			return <h1>`Player number ${game.winner} won`</h1>;
+		}
+	} 
 
 	return (
 		<DiscardPilePositionContext.Provider
