@@ -7,14 +7,14 @@ const ModalStyled = styled.div`
     // using clamp instead of media queries
     width: clamp(50%, 700px, 90%);
     height: min(50%, 300px);
-
+    color: white;
     margin: auto;
     padding: 0 2rem;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: red;
+    background-color: #3e64a6;
 
 `;
 

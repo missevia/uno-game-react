@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Card } from '../utils/cardUtils';
-import cardBack from '../assets/cards/backside.png';
 import { observer } from 'mobx-react-lite';
 import { motion } from 'framer-motion';
 import CardComponent from './CardComponent';
@@ -24,27 +23,27 @@ const DeckStyled = styled.div<DeckStyledProps>`
 		highlight
 			? '0 0 5px 5px rgba(255, 255, 0, 0.75), 0 0 10px 2px rgba(255, 255, 0, 0.5)'
 			: 'none'};
-
-  /* .card-back {
-    width: var(--cardWidth);
-    height: var(--cardHeight);
-    background-image: url(${cardBack});
-    background-size: cover;
-    border-radius: 4px;
-    cursor: pointer;
-
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-  } */
 `;
 
 const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck }) => {
+	const deckRef = useRef<HTMLDivElement | null>(null);
+	const [deckPosition, setDeckPosition] = useState<{ x: number; y: number }>({
+		x: 0,
+		y: 0,
+	});
+
+	useEffect(() => {
+		if (deckRef.current) {
+			const rect = deckRef.current.getBoundingClientRect();
+			setDeckPosition({ x: rect.x, y: rect.y });
+		}
+	}, []);
+
 	return (
 		<DeckStyled highlight={currentPlayer === 0} as={motion.div} onClick={onClick}>
 			{deck.map((card) => {
 				// return <div className='card-back' onClick={onClick} key={card.id}></div>;
-				return <CardComponent deck key={card.id} card={card}/>;
+				return <CardComponent deck key={card.id} card={card} deckPosition={deckPosition} noShadow />;
 			})}
 		</DeckStyled>
 	);

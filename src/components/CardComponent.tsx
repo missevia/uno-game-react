@@ -14,7 +14,7 @@ import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
 import { motion } from 'framer-motion';
 import cardBack from '../assets/cards/backside.png';
 
-const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
+const CardWrapperStyled = styled.div<Partial<CardComponentProps>>`
   position: absolute;
   width: ${({ aiHand }) => (aiHand ? 'var(--cardWidthSmall)' : 'var(--cardWidth)')};
   height: ${({ aiHand }) => (aiHand ? 'var(--cardHeightSmall)' : 'var(--cardHeight)')};
@@ -25,14 +25,15 @@ const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
   z-index: ${({ isPile }) => (isPile ? '-1' : '1')};
 `;
 
-const CardStyled = styled.div<{ aiHand: boolean | undefined; isNumeric: boolean }>`
+const CardContentStyled = styled.div<{ aiHand: boolean | undefined; isNumeric: boolean, noShadow: boolean }>`
   .card-front {
     position: absolute;
     width: 100%;
     height: 100%;
     background-color: white;
     border-radius: 13px;
-    box-shadow: rgb(41, 39, 39) 0px 0px 10px;
+	// fix it
+	box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'rgb(41, 39, 39) 0px 0px 10px;')};
   }
 
   .card-value,
@@ -104,6 +105,8 @@ interface CardComponentProps {
   isPile?: boolean
   playedCardIndex?: number | null
   deck?: boolean;
+  deckPosition?: { x: number; y: number };
+  noShadow?: boolean
 }
 
 const CardComponent: React.FC<CardComponentProps> = observer(
@@ -120,13 +123,17 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		currentPlayer,
 		aiPlayerCard,
 		playedCardIndex,
+		deckPosition, 
+		noShadow = false
 	}) => {
 		const { game } = useGame();
 		const { position } = useDiscardPilePosition();
 		const cardRef = React.useRef<HTMLDivElement | null>(null);
 		const { color, value } = card;
-		const [animationTarget, setAnimationTarget] = useState({ x: 0, y: 0 });
+		// const [animationTarget, setAnimationTarget] = useState({ x: 0, y: 0 });
 		const [showBack, setShowBack] = useState(aiHand || deck);
+		const [cardClicked, setCardClicked] = useState(false);
+		// const [initialPosition, setInitialPosition] = useState<{ x: number; y: number } | null>(null);
 		let cardFrontSrc = frontImages[color];
 		let valueSrc;
 		let blankValueSrc;
@@ -155,8 +162,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		const animateToDiscardPile = () => {
 			if (position && cardRef.current) {
 			  const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-			  const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-			  setAnimationTarget({ x: deltaX, y: deltaY });
+			  const deltaY = position.y - cardRef.current.getBoundingClientRect().y - 40;
+			  cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			  cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+			  setCardClicked(false);
 			}
 		};
 
@@ -166,23 +175,10 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 			}
 		}, [card, aiPlayerIndex]);
 
-		// useEffect(() => {
-		// 	console.log('****', [game.aiPlayerCard?.id, card.id]);
-		// 	if (
-		// 		// ((aiPlayerIndex && game.aiPlaying && (aiPlayerIndex + 1 === game.currentPlayer)) || !game.aiPlaying) &&
-		// 		game.aiPlayerCard?.id === card.id &&
-		// 		game.aiPlayerCardPlayed && 
-		// 		position &&
-		// 		cardRef.current
-		// 	) {
-		// 		console.log('****', [game.aiPlayerCard?.id, card.id]);
-		// 		animateToDiscardPile();
-		// 	}
-		// }, [game.aiPlayerCard, game.aiPlayerCardPlayed, position]);
-
 
 		const handleClick = () => {
 			if (cardIndex !== undefined) {
+				setCardClicked(true);
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 500);
@@ -191,18 +187,12 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		  };
 
 		return (
-			<CardStyled
+			<CardContentStyled
 				isNumeric={isNumeric}
 				aiHand={aiHand}
-				as={motion.div}
-				transition={{ duration: 0.5, ease: 'easeInOut' }}
-				// whileHover={
-				// 	highlight
-				// 		? { y: -40, transition: { duration: 0.3 } }
-				// 		: { y: 0, transition: { duration: 0.3 } }
-				// }
+				noShadow={noShadow}
 			>
-				<CardContainerStyled
+				<CardWrapperStyled
 					ref={cardRef}
 					onClick={handleClick}
 					style={style}
@@ -211,8 +201,13 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					aiHand={aiHand}
 					isPile={isPile}
 					as={motion.div}
-					animate={animationTarget}
-					transition={{ duration: 0.5, ease: 'easeInOut' }}
+					// animate={animationTarget}
+					// transition={{ duration: 0.5, ease: 'easeInOut' }}
+					whileHover={
+						highlight
+							? { y: -40, transition: { duration: 0.3 } }
+							: { y: 0, transition: { duration: 0.3 } }
+					}
 				>
 					<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
 					{!showBack && (
@@ -244,8 +239,8 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 						</>
 					)}
 					{showBack && <div className="card-back" />}
-				</CardContainerStyled>
-			</CardStyled>
+				</CardWrapperStyled>
+			</CardContentStyled>
 		);
 	},
 );
@@ -253,5 +248,36 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 export default React.memo(CardComponent);
 
 // current bug: the currentPlayer is changed before the animation is complete
+
+// const animateToPlayerFromDiscardPile = () => {
+// 	if (cardRef.current && position) {
+// 	  const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
+// 	  const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
+// 	  cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+// 	  cardRef.current.style.transition = 'transform 0.6s ease-in-out';
+	  
+// 	  setTimeout(() => {
+// 			if (cardRef.current) {
+// 				cardRef.current.style.transform = '';
+// 				cardRef.current.style.transition = '';
+// 			}
+// 	  }, 600);
+// 	}
+//   };
+
+// useEffect(() => {
+// 	console.log('****', [game.aiPlayerCard?.id, card.id]);
+// 	if (
+// 		// ((aiPlayerIndex && game.aiPlaying && (aiPlayerIndex + 1 === game.currentPlayer)) || !game.aiPlaying) &&
+// 		game.aiPlayerCard?.id === card.id &&
+// 		game.aiPlayerCardPlayed && 
+// 		position &&
+// 		cardRef.current
+// 	) {
+// 		console.log('****', [game.aiPlayerCard?.id, card.id]);
+// 		animateToDiscardPile();
+// 	}
+// }, [game.aiPlayerCard, game.aiPlayerCardPlayed, position]);
+
 
 

@@ -23,6 +23,8 @@ export class GameStore {
 	aiPlayerCard: Card | null = null;
 	drawTwoCount = 0;
 	winner: number | null = null;
+	drawingCards = false;
+	cardsDrawn: Card[] | null = null;
 
 
 	players: Player[] = [];
@@ -87,9 +89,16 @@ export class GameStore {
 			this.drawTwoCount = 0; // Reset drawTwoCount after drawing cards
 		}
 
-		const newCards = this.cardManager.drawCards(newCardsCount);
-
-		this.players[playerIndex].cards.push(...newCards);
+		runInAction(() => {
+			const newCards = this.cardManager.drawCards(newCardsCount);
+			this.cardsDrawn = newCards;
+			this.drawingCards = true;
+			this.players[playerIndex].cards.push(...newCards);
+			setTimeout(() => {
+				this.drawingCards = false;
+				this.cardsDrawn = null;
+			}, 600);
+		});
 	}
 
 	checkGameOver(): boolean {
