@@ -12,6 +12,7 @@ import {
 } from '../utils/cardUtils';
 import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
 import { motion } from 'framer-motion';
+import cardBack from '../assets/cards/backside.png';
 
 const CardContainerStyled = styled.div<Partial<CardComponentProps>>`
   position: absolute;
@@ -52,6 +53,19 @@ const CardStyled = styled.div<{ aiHand: boolean | undefined; isNumeric: boolean 
     font-family: sans-serif;
   }
 
+  .card-back {
+    width: 100%;
+    height: 100%;
+    background-image: url(${cardBack});
+    background-size: cover;
+    border-radius: 4px;
+    cursor: pointer;
+
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+  }
+
   .card-corner {
     position: absolute;
     font-size: 2.8rem;
@@ -89,6 +103,7 @@ interface CardComponentProps {
   currentPlayer?: number
   isPile?: boolean
   playedCardIndex?: number | null
+  deck?: boolean;
 }
 
 const CardComponent: React.FC<CardComponentProps> = observer(
@@ -99,6 +114,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		style,
 		mainPlayerHand = false,
 		aiHand = false,
+		deck = false,
 		isPile,
 		aiPlayerIndex,
 		currentPlayer,
@@ -110,6 +126,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		const cardRef = React.useRef<HTMLDivElement | null>(null);
 		const { color, value } = card;
 		const [animationTarget, setAnimationTarget] = useState({ x: 0, y: 0 });
+		const [showBack, setShowBack] = useState(aiHand || deck);
 		let cardFrontSrc = frontImages[color];
 		let valueSrc;
 		let blankValueSrc;
@@ -198,29 +215,35 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					transition={{ duration: 0.5, ease: 'easeInOut' }}
 				>
 					<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
-					{!isNumeric && value !== CardValue.Wild && (
-						<img className='card-value' src={valueSrc} alt={`${color} ${value}`} />
-					)}
-					{isNumeric && (
-						<div className='card-number' style={{ color: getNumberColor(color) }}>
-							<span>{value}</span>
-						</div>
-					)}
-					{isNumeric ? (
+					{!showBack && (
 						<>
-							<div className='card-corner top-left' style={{ color: 'white' }}>
-								<span>{value}</span>
-							</div>
-							<div className='card-corner bottom-right' style={{ color: 'white' }}>
-								<span>{value}</span>
-							</div>
-						</>
-					) : (
-						<>
-							<img className={'card-corner card-corner-image top-left'} src={blankValueSrc} />
-							<img className={'card-corner card-corner-image bottom-right'} src={blankValueSrc} />
+							<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
+							{!isNumeric && value !== CardValue.Wild && (
+								<img className='card-value' src={valueSrc} alt={`${color} ${value}`} />
+							)}
+							{isNumeric && (
+								<div className='card-number' style={{ color: getNumberColor(color) }}>
+									<span>{value}</span>
+								</div>
+							)}
+							{isNumeric ? (
+								<>
+									<div className='card-corner top-left' style={{ color: 'white' }}>
+										<span>{value}</span>
+									</div>
+									<div className='card-corner bottom-right' style={{ color: 'white' }}>
+										<span>{value}</span>
+									</div>
+								</>
+							) : (
+								<>
+									<img className={'card-corner card-corner-image top-left'} src={blankValueSrc} />
+									<img className={'card-corner card-corner-image bottom-right'} src={blankValueSrc} />
+								</>
+							)}
 						</>
 					)}
+					{showBack && <div className="card-back" />}
 				</CardContainerStyled>
 			</CardStyled>
 		);
