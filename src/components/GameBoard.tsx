@@ -8,6 +8,9 @@ import styled from 'styled-components';
 import { GameStore } from '../stores/GameStore';
 import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
 import { toJS } from 'mobx';
+import { AnimatePresence, motion } from 'framer-motion';
+import Modal from './Modal/Modal';
+
 
 const GameBoardStyled = styled.div`
   height: 100vh;
@@ -37,6 +40,10 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
 	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
+	const [modalOpen, setModalOpen] = useState(false);
+
+	const close = () => setModalOpen(false);
+	const open = () => setModalOpen(true);
 	
 
 	// TEMP console.log to check if any special card is now active (DrawTwo, DrawFour)
@@ -46,27 +53,36 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 		}
 	}, [game.activeSpecialCard]);
 
+	useEffect(() => {
+		if (!game.gameInProgress && game.winner) {
+			open();
+		}
+	}, [game.gameInProgress, game.winner]);
+
 	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
 
 	// useEffect(() => {
 	// 	console.log('aiHand', toJS(game.aiHands));
 	// }, [game.aiHands]);
 	if (!game.gameInProgress && game.winner) {
-		if (game.winner === 0) {
-			return (
-				<>
-					<button onClick={game.resetGame}>Start a new game</button>
-					<h1>You won!</h1>
-				</>
-			);
-		} else {
-			return (
-				<>
-					<button onClick={game.resetGame}>Start a new game</button>
-					<h1>{`Player number ${game.winner} won`}</h1>;
-				</>
-			);
-		}
+		return (
+			<>
+				{/* <motion.button
+					whileHover={{ scale: 1.1 }}
+					whileTap={{ scale: 0.9 }}
+					onClick={() => (modalOpen ? close() : open())}
+				>
+		Launch modal
+				</motion.button> */}
+				<AnimatePresence
+					initial={false}
+					mode="wait"
+				>
+					{modalOpen && <Modal handleClose={close} text={`Player number ${game.winner} won!!`} />}
+				</AnimatePresence>
+			</>
+		);
+
 	} 
 
 	if (!game.gameInProgress || game.players.length === 0) {

@@ -5,7 +5,6 @@ export class Player {
 	id = 0;
 	isPlayer = false;
 	cards: Card[] = [];
-	aiPlaying = false;
 	// ai player card that is currently played
 	// player settings
 	validMovesForPlayer = [];
@@ -36,9 +35,6 @@ export class Player {
 
 			return card;
 		} else {
-			runInAction(() => {
-				this.aiPlaying = true; // set aiPlaying to true when the AI player starts playing
-			});
 			const aiHand = this.cards;
 
 			// checking if AI can play any card, taking into account special cards

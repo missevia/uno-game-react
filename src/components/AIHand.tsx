@@ -50,7 +50,6 @@ const AIHand: React.FC<AIHandProps> = observer(
 							aiPlayerIndex={aiPlayerIndex}
 							cardIndex={index}
 							playedCardIndex={playedCardIndex}
-							// aiCardMoving={index === aiPlayedCardIndex}
 							// aiPlayedCard={aiPlayedCard}
 						/>
 					))}

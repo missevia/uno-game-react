@@ -19,8 +19,7 @@ export class GameStore {
 	gameInProgress = false;
 	direction = 1;
 	cardManager: CardManager;
-	aiCardMoving = false;
-	aiPlaying = false;
+	aiPlayerCardPlayed = false;
 	aiPlayerCard: Card | null = null;
 	drawTwoCount = 0;
 	winner: number | null = null;
@@ -129,8 +128,7 @@ export class GameStore {
 		  this.gameInProgress = true;
 		  this.drawTwoCount = 0;
 		  this.winner = null;
-		  this.aiCardMoving = false;
-		  this.aiPlaying = false;
+		  this.aiPlayerCardPlayed = false;
 		  this.aiPlayerCard = null;
 	  
 		  // Clear out existing players
@@ -259,7 +257,7 @@ export class GameStore {
 					if (cardToPlay) {
 						runInAction(() => {
 			
-							this.aiPlaying = true; // set aiPlaying to true when the AI player starts playing
+							 // set aiPlaying to true when the AI player starts playing
 							this.aiPlayerCard = cardToPlay;
 							// setting the right ActiveSpecial card if current card is a special card
 							this.handleSpecialCard(cardToPlay);
@@ -274,10 +272,11 @@ export class GameStore {
 							} else {
 								this.changeTurn();
 							}
+							this.aiPlayerCardPlayed = true; 
 							setTimeout(() => {
 								runInAction(() => {
+									this.aiPlayerCardPlayed = false;
 								  this.aiPlayerCard = null;
-								  this.aiPlaying = false; // set aiPlaying to false when the AI player finishes playing
 								});
 							}, 500);
 						});

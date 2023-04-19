@@ -30,7 +30,8 @@
         "quotes": ["error", "single"],
         "no-duplicate-imports": "error", 
         "indent": ["error", "tab", { "SwitchCase": 1 }], 
-        "semi": "error"
+        "semi": "error", 
+        "react/prop-types": "off"
     }, 
     "settings": {
         "import/resolver": {

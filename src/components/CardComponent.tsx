@@ -84,7 +84,6 @@ interface CardComponentProps {
   style?: React.CSSProperties
   mainPlayerHand?: boolean
   aiHand?: boolean
-  aiCardMoving?: boolean
   aiPlayerIndex?: number;
   aiPlayerCard?: Card | null
   currentPlayer?: number
@@ -100,7 +99,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		style,
 		mainPlayerHand = false,
 		aiHand = false,
-		aiCardMoving,
 		isPile,
 		aiPlayerIndex,
 		currentPlayer,
@@ -121,6 +119,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		} else if (numberValues.includes(card.value)) {
 			isNumeric = true;
 		} else {
+			// move this to separate utils function
 			if (value === CardValue.DrawTwo) {
 				valueSrc = specialImages.drawTwo[color as keyof typeof specialImages.drawTwo];
 				blankValueSrc = specialImages.drawTwo.blank;
@@ -136,6 +135,14 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 			}
 		}
 
+		const animateToDiscardPile = () => {
+			if (position && cardRef.current) {
+			  const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
+			  const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
+			  setAnimationTarget({ x: deltaX, y: deltaY });
+			}
+		};
+
 		useEffect(() => {
 			if (aiPlayerIndex === 0) {
 				console.log('***AiHand', JSON.stringify(card));
@@ -143,30 +150,28 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		}, [card, aiPlayerIndex]);
 
 		// useEffect(() => {
-		// 	console.log('****', [game.aiPlaying, position, aiPlayerIndex, game.currentPlayer, game.aiPlayerCard?.id, card.id]);
+		// 	console.log('****', [game.aiPlayerCard?.id, card.id]);
 		// 	if (
-		// 		((aiPlayerIndex && game.aiPlaying && (aiPlayerIndex + 1 === game.currentPlayer)) || !game.aiPlaying) &&
+		// 		// ((aiPlayerIndex && game.aiPlaying && (aiPlayerIndex + 1 === game.currentPlayer)) || !game.aiPlaying) &&
 		// 		game.aiPlayerCard?.id === card.id &&
+		// 		game.aiPlayerCardPlayed && 
 		// 		position &&
 		// 		cardRef.current
 		// 	) {
-		// 		const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-		// 		const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-		// 		setAnimationTarget({ x: deltaX, y: deltaY });
+		// 		console.log('****', [game.aiPlayerCard?.id, card.id]);
+		// 		animateToDiscardPile();
 		// 	}
-		// }, [game.aiPlaying, position, aiPlayerIndex, game.currentPlayer, game.aiPlayerCard]);
+		// }, [game.aiPlayerCard, game.aiPlayerCardPlayed, position]);
+
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && position && cardRef.current) {
-				setTimeout(() => {
+			if (cardIndex !== undefined) {
+			  setTimeout(() => {
 					game.playCard(cardIndex);
-				}, 500);
-
-				const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-				const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-				setAnimationTarget({ x: deltaX, y: deltaY });
+			  }, 500);
+			  animateToDiscardPile();
 			}
-		};
+		  };
 
 		return (
 			<CardStyled

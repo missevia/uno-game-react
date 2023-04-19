@@ -22,7 +22,7 @@ import {
 	skipYellow,
 	skipBlank,
 	wild,
-} from '../components/CardImages';
+} from './CardImages';
 
 export enum CardColor {
   Red = 'red',
@@ -160,18 +160,30 @@ export const checkValidCard = (
 	const isSameValue = card.value === topDiscard.value;
 	const isWild = card.value === CardValue.Wild;
 	const isWildDrawFour = card.value === CardValue.WildDrawFour;
+	const isSkip = card.value === CardValue.Skip;
 	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
-
 	const canPlayWild = isWild && noActiveDrawCards;
-  
+
+	// make sure player can't play skip cardon active skip card
+
+	// shorten the logic
+
+	// check if this is working
+
+	if ((isWildDrawFour && activeSpecialCard === CardValue.WildDrawFour) || (isSkip && activeSpecialCard === CardValue.Skip)) {
+		return false;
+	}
+
 	if (noActiveDrawCards && topDiscard.value === CardValue.WildDrawFour) {
 		return true;
 	}
+
+	// add here condition about the wild card
 	const canPlayWildDrawFour = isWildDrawFour && noActiveDrawCards && playerHand.every(handCard => {
 		if (handCard.value === CardValue.WildDrawFour) {
 			return true;
 		}
-		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value);
+		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value || handCard.value === CardValue.Wild);
 	});
 
 	const canPlayOnWild = topDiscard.value === CardValue.Wild;
