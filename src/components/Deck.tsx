@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Card } from '../utils/cardUtils';
 import { observer } from 'mobx-react-lite';
 import { motion } from 'framer-motion';
-import CardComponent from './CardComponent';
+import CardComponent from './Card/Card';
 
 interface DeckProps {
   deck: Card[]
@@ -19,10 +19,7 @@ const DeckStyled = styled.div<DeckStyledProps>`
   display: inline-block;
   margin-left: 15rem;
   position: relative;
-  box-shadow: ${({ highlight }) =>
-		highlight
-			? '0 0 5px 5px rgba(255, 255, 0, 0.75), 0 0 10px 2px rgba(255, 255, 0, 0.5)'
-			: 'none'};
+  filter: ${({ highlight }) => highlight && 'drop-shadow(white 0px 0px 10px)'};
 `;
 
 const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck }) => {

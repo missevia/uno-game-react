@@ -3,19 +3,44 @@ import styled from 'styled-components';
 import Backdrop from './Backdrop';
 
 const ModalStyled = styled.div`
-    // add gradient
-    // using clamp instead of media queries
     width: clamp(50%, 700px, 90%);
     height: min(50%, 300px);
     color: white;
     margin: auto;
-    padding: 0 2rem;
+    padding: 7rem 6rem 2rem 6rem;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #3e64a6;
+	justify-content: space-between;
+    background: linear-gradient(10deg, #ffaa00, #ff6a00);
 
+	p {
+		font-weight: bold;
+		font-family: "Montserrat", sans-serif;
+		font-size: 1.25rem;
+		letter-spacing: 1.25px;
+	}
+
+	.button-container {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	button {
+		width: auto;
+		padding: 1rem;
+		height: auto;
+		border: none;
+		outline: none;
+		border-radius: 4px;
+		font-weight: 600;
+		font-size: 1.25rem;
+		letter-spacing: 1.25px;
+		cursor: pointer;
+		font-family: "Montserrat", sans-serif;
+	}
 `;
 
 const dropIn = {
@@ -39,13 +64,14 @@ const dropIn = {
 };
 
 interface ModalProps {
-    handleClose: () => void;
+    startNewGame: () => void;
+	goToMainMenu: () => void;
     text: string;
 }
   
-const Modal: React.FC<ModalProps> = ({ handleClose, text }) => {
+const Modal: React.FC<ModalProps> = ({ startNewGame, goToMainMenu, text }) => {
 	return (
-		<Backdrop onClick={handleClose}>
+		<Backdrop>
 			<ModalStyled
 				as={motion.div}
 				// event bubbling; prevent clicks on modal from bubbling to backdrop
@@ -56,7 +82,10 @@ const Modal: React.FC<ModalProps> = ({ handleClose, text }) => {
 				exit='exit'
 			>
 				<p>{text}</p>
-				<button onClick={handleClose}>Close</button>
+				<div className='button-container'>
+					<button onClick={startNewGame}>New game</button>
+					<button onClick={goToMainMenu}>Main menu</button>
+				</div>
 			</ModalStyled>
 		</Backdrop>
 	);

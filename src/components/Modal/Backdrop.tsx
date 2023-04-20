@@ -15,15 +15,13 @@ const BackdropStyled = styled.div`
 
 interface BackdropProps {
 	children: React.ReactNode;
-	onClick: () => void;
 }
 
-const Backdrop: React.FC<BackdropProps> = ({ children, onClick }) => {
+const Backdrop: React.FC<BackdropProps> = ({ children }) => {
 	return (
 		<BackdropStyled
 			as={motion.div}
 			className="backdrop"
-			onClick={onClick}
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}

@@ -5,8 +5,6 @@ export class Player {
 	id = 0;
 	isPlayer = false;
 	cards: Card[] = [];
-	// ai player card that is currently played
-	// player settings
 	validMovesForPlayer = [];
 
 	constructor(id: number, cards: Card[], isPlayer: boolean) {

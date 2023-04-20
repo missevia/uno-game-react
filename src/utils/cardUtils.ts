@@ -55,25 +55,12 @@ export type ActiveSpecialCard =
   | CardValue.Reverse
   | CardValue.DrawTwo
   | CardValue.WildDrawFour
-  // | CardValue.Wild
 
 export interface Card {
   color: CardColor
   value: CardValue
   id: number
 }
-
-// export class Card {
-// 	color: CardColor;
-// 	value: CardValue;
-
-// 	constructor(color: CardColor, value: CardValue) {
-// 		this.color = color;
-// 		this.value = value;
-// 	}
-// }
-
-// shuffling the cards using Fisher-Yates shuffle algorithm
 
 export function shuffle(deck: Card[]): Card[] {
 	const shuffledDeck = [...deck];
@@ -160,93 +147,51 @@ export const checkValidCard = (
 	const isSameValue = card.value === topDiscard.value;
 	const isWild = card.value === CardValue.Wild;
 	const isWildDrawFour = card.value === CardValue.WildDrawFour;
-	const isSkip = card.value === CardValue.Skip;
 	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
-	const canPlayWild = isWild && noActiveDrawCards;
 
-	// make sure player can't play skip cardon active skip card
+	console.log('Real active special card', activeSpecialCard);
+  
+	// Wild card can be played on any card if there are no active special cards
+	if (isWild && noActiveDrawCards) {
+		return true;
+	}
 
-	// shorten the logic
+	// You can play any card on the wild card
+	if (topDiscard.value === CardValue.Wild) {
+		return true;
+	}
 
-	// check if this is working
-
-	if ((isWildDrawFour && activeSpecialCard === CardValue.WildDrawFour) || (isSkip && activeSpecialCard === CardValue.Skip)) {
+	if (isWildDrawFour && activeSpecialCard === CardValue.WildDrawFour) {
 		return false;
 	}
 
-	if (noActiveDrawCards && topDiscard.value === CardValue.WildDrawFour) {
-		return true;
-	}
-
-	// add here condition about the wild card
-	const canPlayWildDrawFour = isWildDrawFour && noActiveDrawCards && playerHand.every(handCard => {
-		if (handCard.value === CardValue.WildDrawFour) {
+	// You can play wildDrawFour card on any card if there are no active special cards and only if you have no other options available
+	if (isWildDrawFour && noActiveDrawCards) {
+		const hasPlayableCard = playerHand.some(handCard => {
+			return handCard.color === topDiscard.color || handCard.value === topDiscard.value || handCard.value === CardValue.Wild;
+		});
+		if (!hasPlayableCard) {
 			return true;
 		}
-		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value || handCard.value === CardValue.Wild);
-	});
+	}
 
-	const canPlayOnWild = topDiscard.value === CardValue.Wild;
+	// If there is active DrawTwo card, you can only play DrawTwo on top
+	if (activeSpecialCard === CardValue.DrawTwo) {
+		return card.value === CardValue.DrawTwo;
+	}
 
-	if (canPlayOnWild || canPlayWild) {
+	// If there is Active Skip card, you cannot play any cards on top of it
+	if (activeSpecialCard === CardValue.Skip) {
+		return false;
+	}
+
+	// On wild draw four, you can play any card if WildDrawFour is not an active special card. Otherwise, you can play any card.
+	if (topDiscard.value === CardValue.WildDrawFour && activeSpecialCard !== CardValue.WildDrawFour) {
 		return true;
 	}
 
-	if (isWildDrawFour && canPlayWildDrawFour) {
-		return true;
-	}
-
-	if (activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
-		return isSameColor || isSameValue;
-	}
-
-	// When there's an active special card, only a card with the same value can be played
-	return isSameValue;
+	return isSameColor || isSameValue;
 };
-
-
-
-
-
-
-// export const checkValidCard = (
-// 	card: Card,
-// 	activeSpecialCard: ActiveSpecialCard | null,
-// 	lastDiscardPileCard: Card,
-// 	playerHand: Card[],
-// ): boolean => {
-// 	const topDiscard = lastDiscardPileCard;
-
-// 	const isSameColor = card.color === topDiscard.color;
-// 	const isSameValue = card.value === topDiscard.value;
-// 	const isWild = card.value === CardValue.Wild;
-// 	const isWildDrawFour = card.value === CardValue.WildDrawFour;
-// 	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
-
-// 	const canPlayWild = isWild && activeSpecialCard !== CardValue.DrawTwo;
-// 	if (topDiscard.value === CardValue.WildDrawFour && noActiveDrawCards) {
-// 		return true;
-// 	}
-// 	const canPlayWildDrawFour = isWildDrawFour && noActiveDrawCards && playerHand.every(handCard => {
-// 		if (handCard.value === CardValue.WildDrawFour) {
-// 			return true;
-// 		}
-// 		return !(handCard.color === topDiscard.color || handCard.value === topDiscard.value);
-// 	});
-
-// 	const canPlayOnWild = topDiscard.value === CardValue.Wild;
-
-// 	if (canPlayOnWild || canPlayWild || canPlayWildDrawFour) {
-// 		return true;
-// 	}
-
-// 	if (activeSpecialCard === null || topDiscard.value === CardValue.Skip) {
-// 		return isSameColor || isSameValue;
-// 	}
-
-// 	// When there's an active special card, only a card with the same value can be played
-// 	return isSameValue;
-// };
 
 export const getRandomColor = (): CardColor => {
 	const colors = [

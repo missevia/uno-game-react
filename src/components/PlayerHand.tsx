@@ -1,22 +1,22 @@
-import React from 'react';
-import CardComponent from './CardComponent';
+import React, { useState, useEffect } from 'react';
+import CardComponent from './Card/Card';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import { v4 as uuidv4 } from 'uuid';
 import { Card } from '../utils/cardUtils';
 
 interface PlayerHandStyledProps {
   cardsCount: number
 }
 
-const PlayerHandContainer = styled.div`
+const PlayerHandContainer = styled.div<{isPlayerTurn: boolean, width: number}>`
   position: fixed;
   bottom: 20%;
-  left: 50%;
+  left: 45%;
   transform: translateX(-50%);
-  width: 50vw;
+  width: ${({ width }) => `${width}vw`};
   display: flex;
   justify-content: center;
+  filter: ${({ isPlayerTurn }) => isPlayerTurn && 'drop-shadow(white 0px 0px 10px)'};
 `;
 
 const PlayerHandStyled = styled.div<PlayerHandStyledProps>`
@@ -29,18 +29,29 @@ interface PlayerHandProps {
   isPlayerTurn: boolean
   validMoves: number[]
   cards: Card[]
-  // remove this
-  currentPlayer: number
+  currentPlayer: number, 
+  cardsCount: number | null;
 }
 
 const PlayerHand: React.FC<PlayerHandProps> = observer(
-	({ isPlayerTurn, validMoves, cards, currentPlayer }) => {
+	({ isPlayerTurn, validMoves, cards, currentPlayer, cardsCount }) => {
+		const [containerWidth, setContainerWidth] = useState(50);
+
+		useEffect(() => {
+			if (cardsCount && cardsCount < 7) {
+				console.log('cards length', cardsCount);
+				setContainerWidth(50 - (7 - cardsCount) * 8.5);
+			} else {
+				setContainerWidth(50);
+			}
+		}, [cardsCount]);
+
 		return (
-			<PlayerHandContainer>
+			<PlayerHandContainer isPlayerTurn={isPlayerTurn} width={containerWidth}>
 				<PlayerHandStyled cardsCount={cards.length}>
 					{cards.map((card, index) => (
 						<CardComponent
-							key={uuidv4()}
+							key={card.id}
 							card={card}
 							cardIndex={index}
 							highlight={isPlayerTurn && validMoves.includes(index)}

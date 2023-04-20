@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import CardComponent from './CardComponent';
+import CardComponent from './Card/Card';
 import { Card } from '../utils/cardUtils';
 import { observer } from 'mobx-react-lite';
 import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';

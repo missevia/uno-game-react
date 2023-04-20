@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import PlayerHand from './PlayerHand';
-import AIHand from './AIHand';
+import AIHandContainer from './AIHand/AiHandContainer';
 import DiscardPile from './DiscardPile';
 import Deck from './Deck';
 import styled from 'styled-components';
@@ -41,6 +42,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
 	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
 	const [modalOpen, setModalOpen] = useState(false);
+	const navigate = useNavigate();
 
 	const close = () => setModalOpen(false);
 	const open = () => setModalOpen(true);
@@ -50,6 +52,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	useEffect(() => {
 		if (game.activeSpecialCard) {
 			console.log('ACTIVE SPECIAL CARD', game.activeSpecialCard);
+		} else {
+			console.log('ACTIVE SPECIAL CARD IS NULL');
 		}
 	}, [game.activeSpecialCard]);
 
@@ -59,37 +63,36 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 		}
 	}, [game.gameInProgress, game.winner]);
 
+	const startNewGame = () => {
+		close();
+		game.resetGame();
+		navigate('/game');
+	};
+
+	const goToMainMenu = () => {
+		close();
+		game.resetGame();
+		navigate('/main-menu');
+	};
+
 	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
 
-	// useEffect(() => {
-	// 	console.log('aiHand', toJS(game.aiHands));
-	// }, [game.aiHands]);
 	if (!game.gameInProgress && game.winner) {
 		return (
 			<>
-				{/* <motion.button
-					whileHover={{ scale: 1.1 }}
-					whileTap={{ scale: 0.9 }}
-					onClick={() => (modalOpen ? close() : open())}
-				>
-		Launch modal
-				</motion.button> */}
 				<AnimatePresence
-					initial={false}
+					initial={true}
 					mode="wait"
 				>
-					{modalOpen && <Modal handleClose={close} text={`Player number ${game.winner} won!!`} />}
+					{modalOpen && <Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={`Player number ${game.winner} won!!`} />}
 				</AnimatePresence>
 			</>
 		);
-
-	} 
+	}
 
 	if (!game.gameInProgress || game.players.length === 0) {
 		return null;
 	}
-
-
 
 	return (
 		<DiscardPilePositionContext.Provider
@@ -100,17 +103,16 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 					<h1>{`Current player: ${game.currentPlayer}`}</h1>
 					<h1>{game.gameInProgress ? 'Game in progress' : 'Game over'}</h1>
 				</div>
-				<button onClick={game.resetGame}>Reset game</button>
-
-				<AIHand
+				<AIHandContainer
 					aiHand={game.players[1].cards}
 					horizontal={false}
 					aiPlayerIndex={0}
 					// remove this
 					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[1]}
 				/>
 
-				<AIHand
+				<AIHandContainer
 					aiHand={game.players[2].cards}
 					horizontal={true}
 					style={{
@@ -118,8 +120,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 					}}
 					aiPlayerIndex={1}
 					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[2]}
 				/>
-				<AIHand
+				<AIHandContainer
 					aiHand={game.players[3].cards}
 					horizontal={false}
 					style={{
@@ -127,11 +130,13 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 					}}
 					aiPlayerIndex={2}
 					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[3]}
 				/>
 				<PlayerHand
 					isPlayerTurn={game.currentPlayer === 0}
 					validMoves={game.validMoves}
-					cards={game.playerHand}
+					cards={game.players[0].cards}
+					cardsCount={game.playerHandsLengths[0]}
 					// playerHand={game.playerHand}
 					// remove this
 					currentPlayer={game.currentPlayer}

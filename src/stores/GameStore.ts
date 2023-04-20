@@ -1,17 +1,16 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import {
 	Card,
 	CardValue,
 	checkValidCard,
 	isSpecialCard,
 	ActiveSpecialCard,
-	getRandomColor
 } from '../utils/cardUtils';
 import { RootStore } from './RootStore';
 import { CardManager } from './modules/CardManager';
 import { Player } from './modules/Player';
 
-// When mainPlayer played skip cards something weird happened - it went to 4 players
+// Bug - when mainPlayer played skip cards something weird happened - it went to 5 players
 
 export class GameStore {
 	currentPlayer = 0;
@@ -40,7 +39,8 @@ export class GameStore {
 
 	startGame(aiOpponents = 3) {
 		console.log('startGame');
-		runInAction(() => {
+		 runInAction(() => {
+			// this.cardManager = new CardManager;
 			this.cardManager.initialiseDeck();
 
 			// Initialize main player
@@ -63,6 +63,12 @@ export class GameStore {
 			this.gameInProgress = true;
 		});
 	}
+	get playerHandsLengths() {
+		const lengths: (number | null)[] = [];
+		const players = this.players;
+		players.map(player => lengths.push(player.cards.length));
+		return lengths;
+	}
 
 	get playerHand() {
 		return this.players.find((player) => player.isPlayer)!.cards;
@@ -70,10 +76,8 @@ export class GameStore {
 
 	// this is not used anywhere
 
-	updatePlayerCards(cards: Card[]) {
-		const playerIndex = this.players.findIndex((player) => player.isPlayer);
-
-		this.players[playerIndex].cards = cards;
+	updatePlayerCards(cards: Card[], playerIndex: number) {
+		this.players[playerIndex].cards.push(...cards);
 	}
 
 	drawCardsToPlayer(playerIndex: number) {
@@ -93,7 +97,8 @@ export class GameStore {
 			const newCards = this.cardManager.drawCards(newCardsCount);
 			this.cardsDrawn = newCards;
 			this.drawingCards = true;
-			this.players[playerIndex].cards.push(...newCards);
+			this.updatePlayerCards(newCards, playerIndex);
+			// this.players[playerIndex].cards.push(...newCards);
 			setTimeout(() => {
 				this.drawingCards = false;
 				this.cardsDrawn = null;
@@ -102,7 +107,7 @@ export class GameStore {
 	}
 
 	checkGameOver(): boolean {
-		const playerHand = this.playerHand;
+		const playerHand = this.players[0].cards;
 
 		if (playerHand.length === 0) {
 			this.endGame(0);
@@ -193,17 +198,10 @@ export class GameStore {
 		  } else {
 			this.drawTwoCount = 0; // Reset the count if a non-DrawTwo card is played
 		}
-
-		// if (card.value === CardValue.Wild) {
-		// 	runInAction(() => {
-		// 		card.color = getRandomColor();
-		// 	});
-		// }
 	}
 
 	// action to play a card from the player's hand
 	async playCard(cardIndex: number) {
-		// await this.playerActions.playCard(cardIndex);
 
 		const card =
       this.cardManager.lastDiscardPileCard &&
@@ -265,17 +263,16 @@ export class GameStore {
 
 					if (cardToPlay) {
 						runInAction(() => {
-			
+							if (this.checkGameOver()) {
+								return;
+							}
 							 // set aiPlaying to true when the AI player starts playing
 							this.aiPlayerCard = cardToPlay;
 							// setting the right ActiveSpecial card if current card is a special card
 							this.handleSpecialCard(cardToPlay);
 							// adding the card to discard pile
 							this.cardManager.discardCardToPile(cardToPlay);
-							// amending the AI's hand
-							if (this.checkGameOver()) {
-								return;
-							}
+
 							if (this.activeSpecialCard === CardValue.Skip) {
 								this.skipNextPlayer();
 							} else {
