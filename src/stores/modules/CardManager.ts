@@ -1,66 +1,68 @@
-// CardManager.ts
-import { GameStore } from "../GameStore";
-import { Card, shuffle, CardValue, CardColor } from "../../utils/cardUtils";
-import { cardDeck } from "../../utils/cardDeck";
-import { runInAction } from "mobx";
+import { Card, shuffle, isSpecialCard } from '../../utils/cardUtils';
+import { cardDeck } from '../../utils/cardDeck';
+import { runInAction, makeAutoObservable } from 'mobx';
 
 export class CardManager {
-	constructor(private game: GameStore) {}
+	discardPile: Card[] = [];
+	deck: Card[] = [];
+	lastDiscardPileCard?: Card;
 
-	shuffleAndDeal(aiOpponents = 3): void {
-		runInAction(() => {
-			// Create a copy of the initial deck and shuffle it
-			const initialDeck: Card[] = cardDeck.deck.map(
-				(card) => new Card(card.color as CardColor, card.value as CardValue)
-			);
-			this.game.deck = shuffle(initialDeck);     
-			// Initialize player and AI hands
-			this.game.playerHand = [];
-			this.game.aiHands = new Array(aiOpponents).fill(0).map(() => []);
-          
-			// deal cards to the player and AI opponents
-			this.drawCards(0, 7);
-			for (let i = 0; i < aiOpponents; i++) {
-				this.drawCards(i + 1, 7);
-			}
-			// Draw the first card from the deck and place it in the discard pile
-			let firstDiscardCard = this.drawCard();
-			while (this.game.isSpecialCard(firstDiscardCard)) {
-				this.game.deck.push(firstDiscardCard);
-				this.game.deck = shuffle(this.game.deck);
-				firstDiscardCard = this.drawCard();
-			}
-			this.game.discardPile = [firstDiscardCard];
-			this.game.currentPlayer = 0;
-			this.game.gameInProgress = true;
-
-		});
+	constructor() {
+		makeAutoObservable(this);
+		this.initialiseDeck();
+		this.getFirstDiscardCard();
 	}
 
-	drawCard(): Card {
-		if (this.game.deck.length === 0) {
-			throw new Error("The deck is empty");
+	initialiseDeck() {
+		this.deck = shuffle(cardDeck);
+	}
+
+	discardCardToPile(card: Card) {
+		// Draw the first card from the deck and place it in the discard pile
+		this.discardPile.push(card);
+		this.lastDiscardPileCard = card;
+	}
+
+	// change to setFirstDiscardCard ?
+
+	getFirstDiscardCard() {
+		let firstDiscardCard = this.drawOneCard();
+
+		while (isSpecialCard(firstDiscardCard)) {
+			this.discardCardToPile(firstDiscardCard);
+			this.deck = shuffle(this.deck);
+			firstDiscardCard = this.drawOneCard();
 		}
-		return this.game.deck.pop() as Card;
+
+		this.lastDiscardPileCard = firstDiscardCard;
 	}
 
-	drawCards(playerIndex: number, count: number) {
-		const newCards = [];
-    
+	removeCardsFromDeck(cards: number) {
+		this.deck.splice(0, cards);
+	}
+
+	drawOneCard(): Card {
+		if (this.deck.length === 0) {
+			throw new Error('The deck is empty');
+		}
+		return this.deck.pop() as Card;
+	}
+
+	drawCards(count: number): Card[] {
+		const newCards: Card[] = [];
+
 		for (let i = 0; i < count; i++) {
-			const newCard = this.drawCard();
+			if (this.deck.length === 0) {
+				return newCards;
+			}
+			const newCard = this.drawOneCard();
 			newCards.push(newCard);
 		}
-    
-		if (playerIndex < 0 || playerIndex >= this.game.aiHands.length + 1) {
-			console.error("Invalid playerIndex:", playerIndex);
-			return;
-		}
-    
-		if (playerIndex === 0) {
-			this.game.playerHand.push(...newCards);
-		} else {
-			this.game.aiHands[playerIndex - 1].push(...newCards);
-		}
+		return newCards;
+	}
+
+	clearDeck() {
+		this.deck = [];
+		this.discardPile = [];
 	}
 }

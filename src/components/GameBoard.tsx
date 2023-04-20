@@ -1,95 +1,157 @@
-import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
-import PlayerHand from "./PlayerHand";
-import AIHand from "./AIHand";
-import DiscardPile from "./DiscardPile";
-import Deck from "./Deck";
-import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
-import { GameStore } from "../stores/GameStore";
-import DiscardPilePositionContext from "../contexts/DiscardPilePositionContext";
+import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import PlayerHand from './PlayerHand';
+import AIHandContainer from './AIHand/AiHandContainer';
+import DiscardPile from './DiscardPile';
+import Deck from './Deck';
+import styled from 'styled-components';
+import { GameStore } from '../stores/GameStore';
+import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
+import { toJS } from 'mobx';
+import { AnimatePresence, motion } from 'framer-motion';
+import Modal from './Modal/Modal';
+
 
 const GameBoardStyled = styled.div`
-    height: 100vh;
-    max-width: 100vw;
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
+  height: 100vh;
+  max-width: 100vw;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 
-    .game-info {
-        position: absolute; 
-		top: 30%; 
-        left: 40%;
-    }
+  .game-info {
+    position: absolute;
+    top: 30%;
+    left: 40%;
+  }
 
-    .deck-discard {
-        position: absolute;
-        top: 40%;
-        left: 40%;
-        width: 200px;
-    }
+  .deck-discard {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    width: 200px;
+  }
 `;
 
 interface GameBoardProps {
-	game: GameStore;
+  game: GameStore
 }
 
-
-const GameBoard:React.FC<GameBoardProps> = ({ game }) => {
-
+const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
+	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
+	const [modalOpen, setModalOpen] = useState(false);
+	const navigate = useNavigate();
+
+	const close = () => setModalOpen(false);
+	const open = () => setModalOpen(true);
+	
 
 	// TEMP console.log to check if any special card is now active (DrawTwo, DrawFour)
 	useEffect(() => {
 		if (game.activeSpecialCard) {
-			console.log("ACTIVE SPECIAL CARD", game.activeSpecialCard);
+			console.log('ACTIVE SPECIAL CARD', game.activeSpecialCard);
+		} else {
+			console.log('ACTIVE SPECIAL CARD IS NULL');
 		}
-
 	}, [game.activeSpecialCard]);
 
+	useEffect(() => {
+		if (!game.gameInProgress && game.winner) {
+			open();
+		}
+	}, [game.gameInProgress, game.winner]);
+
+	const startNewGame = () => {
+		close();
+		game.resetGame();
+		navigate('/game');
+	};
+
+	const goToMainMenu = () => {
+		close();
+		game.resetGame();
+		navigate('/main-menu');
+	};
+
+	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
+
+	if (!game.gameInProgress && game.winner) {
+		return (
+			<>
+				<AnimatePresence
+					initial={true}
+					mode="wait"
+				>
+					{modalOpen && <Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={`Player number ${game.winner} won!!`} />}
+				</AnimatePresence>
+			</>
+		);
+	}
+
+	if (!game.gameInProgress || game.players.length === 0) {
+		return null;
+	}
+
 	return (
-		<DiscardPilePositionContext.Provider value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}>
+		<DiscardPilePositionContext.Provider
+			value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}
+		>
 			<GameBoardStyled>
-				<div className="game-info">
+				<div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer}`}</h1>
-					<h1>{game.gameInProgress ? "Game in progress" : "Game over"}</h1>
+					<h1>{game.gameInProgress ? 'Game in progress' : 'Game over'}</h1>
 				</div>
-				<AIHand 
-					key={uuidv4()} 
-					aiHand={game.aiHands[0]} 
-					horizontal={false} 
-					aiCardMoving={game.aiCardMoving}
+				<AIHandContainer
+					aiHand={game.players[1].cards}
+					horizontal={false}
+					aiPlayerIndex={0}
+					// remove this
+					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[1]}
 				/>
-				<AIHand 
-					key={uuidv4()} 
-					aiHand={game.aiHands[1]} 
-					horizontal={true}  
+
+				<AIHandContainer
+					aiHand={game.players[2].cards}
+					horizontal={true}
 					style={{
-						left: "50%"
+						left: '50%',
 					}}
-					aiCardMoving={game.aiCardMoving}
+					aiPlayerIndex={1}
+					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[2]}
 				/>
-				<AIHand 
-					key={uuidv4()} 
-					aiHand={game.aiHands[2]} 
-					horizontal={false} 
+				<AIHandContainer
+					aiHand={game.players[3].cards}
+					horizontal={false}
 					style={{
-						right: "var(--cardWidthSmall)"
+						right: 'var(--cardWidthSmall)',
 					}}
-					aiCardMoving={game.aiCardMoving}
+					aiPlayerIndex={2}
+					playedCardIndex={aiPlayedCardIndex}
+					cardsCount={game.playerHandsLengths[3]}
 				/>
-				<PlayerHand 
-					isPlayerTurn={game.currentPlayer === 0} 
-					validMoves={game.validMoves} 
-					playerHand={game.playerHand}
+				<PlayerHand
+					isPlayerTurn={game.currentPlayer === 0}
+					validMoves={game.validMoves}
+					cards={game.players[0].cards}
+					cardsCount={game.playerHandsLengths[0]}
+					// playerHand={game.playerHand}
+					// remove this
+					currentPlayer={game.currentPlayer}
 				/>
 				<div className='deck-discard'>
-					<DiscardPile topCard={game.discardPile[game.discardPile.length - 1]} />
-					<Deck deck={game.deck} onClick={game.handleDeckClick} currentPlayer={game.currentPlayer}/>
+					<DiscardPile topCard={game.cardManager.lastDiscardPileCard} />
+					<Deck
+						deck={game.cardManager.deck}
+						onClick={game.handleDeckClick}
+						currentPlayer={game.currentPlayer}
+					/>
 				</div>
 			</GameBoardStyled>
-
 		</DiscardPilePositionContext.Provider>
-	);};
+	);
+};
 
 export default observer(GameBoard);

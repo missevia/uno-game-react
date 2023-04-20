@@ -1,63 +1,68 @@
-import React from "react";
-import CardComponent from "./CardComponent";
-import styled from "styled-components";
-import { observer } from "mobx-react-lite";
-import { v4 as uuidv4 } from "uuid";
-import { Card } from "../utils/cardUtils";
+import React, { useState, useEffect } from 'react';
+import CardComponent from './Card/Card';
+import styled from 'styled-components';
+import { observer } from 'mobx-react-lite';
+import { Card } from '../utils/cardUtils';
 
 interface PlayerHandStyledProps {
-	cardsCount: number;
+  cardsCount: number
 }
 
-const PlayerHandContainer = styled.div`
+const PlayerHandContainer = styled.div<{isPlayerTurn: boolean, width: number}>`
   position: fixed;
   bottom: 20%;
-  left: 50%;
+  left: 45%;
   transform: translateX(-50%);
-  width: 50vw;
+  width: ${({ width }) => `${width}vw`};
   display: flex;
   justify-content: center;
+  filter: ${({ isPlayerTurn }) => isPlayerTurn && 'drop-shadow(white 0px 0px 10px)'};
 `;
 
 const PlayerHandStyled = styled.div<PlayerHandStyledProps>`
-	display: flex;
-  	justify-content: space-between;
-  	width: 100%;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 interface PlayerHandProps {
-	isPlayerTurn: boolean;
-	validMoves: number[];
-	playerHand: Card[];
+  isPlayerTurn: boolean
+  validMoves: number[]
+  cards: Card[]
+  currentPlayer: number, 
+  cardsCount: number | null;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = observer(({ isPlayerTurn, validMoves, playerHand }) => {
-	const containerMaxWidth = 50; // in vw
-	const cardWidth = 10; // in rem
-	const cardsCount = playerHand.length;
-	const cardOverlap = Math.max(
-		0,
-		Math.min(
-			((cardWidth * cardsCount * window.innerWidth) / 100 - (containerMaxWidth * window.innerWidth) / 100) /
-		(cardsCount - 1),
-			(cardWidth * window.innerWidth) / 100 / 3
-		)
-	);
-	return (
-		<PlayerHandContainer>
-			<PlayerHandStyled cardsCount={playerHand.length}>
-				{playerHand.map((card, index) => (
-					<CardComponent
-						key={uuidv4()}
-						card={card}
-						cardIndex={index}
-						highlight={isPlayerTurn && validMoves.includes(index)}
-						mainPlayerHand={true}
-					/>
-				))}
-			</PlayerHandStyled>
-		</PlayerHandContainer>
-	);
-});
+const PlayerHand: React.FC<PlayerHandProps> = observer(
+	({ isPlayerTurn, validMoves, cards, currentPlayer, cardsCount }) => {
+		const [containerWidth, setContainerWidth] = useState(50);
+
+		useEffect(() => {
+			if (cardsCount && cardsCount < 7) {
+				console.log('cards length', cardsCount);
+				setContainerWidth(50 - (7 - cardsCount) * 8.5);
+			} else {
+				setContainerWidth(50);
+			}
+		}, [cardsCount]);
+
+		return (
+			<PlayerHandContainer isPlayerTurn={isPlayerTurn} width={containerWidth}>
+				<PlayerHandStyled cardsCount={cards.length}>
+					{cards.map((card, index) => (
+						<CardComponent
+							key={card.id}
+							card={card}
+							cardIndex={index}
+							highlight={isPlayerTurn && validMoves.includes(index)}
+							mainPlayerHand={true}
+							currentPlayer={currentPlayer}
+						/>
+					))}
+				</PlayerHandStyled>
+			</PlayerHandContainer>
+		);
+	},
+);
 
 export default PlayerHand;

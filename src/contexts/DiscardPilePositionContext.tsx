@@ -1,8 +1,8 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
 interface DiscardPilePositionContextValue {
-  position: DOMRect | null;
-  setPosition: (position: DOMRect | null) => void;
+  position: DOMRect | null
+  setPosition: (position: DOMRect | null) => void
 }
 
 const DiscardPilePositionContext = createContext<DiscardPilePositionContextValue>({
