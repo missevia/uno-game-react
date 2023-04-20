@@ -21,11 +21,6 @@ const Menu = styled.div`
 	align-items: center;
 	flex-direction: column;
 	padding-top: 12rem;
-  /* display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  flex-direction: column; */
 `;
 
 const StartGameButton = styled.button`
@@ -43,10 +38,7 @@ const UnoLogo = styled.img`
 `;
 
 const GameRulesText = styled.p`
-  /* position: absolute; */
-  /* bottom: 5rem; */
   font-size: 1.2rem;
-  /* left: 20rem; */
   cursor: pointer;
   color: #fff;
   text-decoration: underline;

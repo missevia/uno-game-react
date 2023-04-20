@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import React from 'react';
 
 const BackdropStyled = styled.div`
     position: absolute;
