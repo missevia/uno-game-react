@@ -39,7 +39,6 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(
 
 		useEffect(() => {
 			if (cardsCount && cardsCount < 7) {
-				console.log('cards length', cardsCount);
 				setContainerWidth(50 - (7 - cardsCount) * 8.5);
 			} else {
 				setContainerWidth(50);

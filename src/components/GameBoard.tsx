@@ -8,8 +8,7 @@ import Deck from './Deck';
 import styled from 'styled-components';
 import { GameStore } from '../stores/GameStore';
 import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
-import { toJS } from 'mobx';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Modal from './Modal/Modal';
 
 
@@ -146,6 +145,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 						deck={game.cardManager.deck}
 						onClick={game.handleDeckClick}
 						currentPlayer={game.currentPlayer}
+						previousPlayer={game.previousPlayer}
+						numberOfCardsToDraw={game.numberOfCardsToDraw}
 					/>
 				</div>
 			</GameBoardStyled>

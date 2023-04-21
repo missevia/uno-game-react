@@ -10,8 +10,6 @@ import { RootStore } from './RootStore';
 import { CardManager } from './modules/CardManager';
 import { Player } from './modules/Player';
 
-// Bug - when mainPlayer played skip cards something weird happened - it went to 5 players
-
 export class GameStore {
 	currentPlayer = 0;
 	activeSpecialCard: ActiveSpecialCard | null = null;
@@ -24,6 +22,8 @@ export class GameStore {
 	winner: number | null = null;
 	drawingCards = false;
 	cardsDrawn: Card[] | null = null;
+	numberOfCardsToDraw: number | null = null;
+	previousPlayer = 0;
 
 
 	players: Player[] = [];
@@ -80,8 +80,13 @@ export class GameStore {
 		this.players[playerIndex].cards.push(...cards);
 	}
 
+	setNumberOfCardsToDraw(value: number | null) {
+		this.numberOfCardsToDraw = value;
+	}
+
 	drawCardsToPlayer(playerIndex: number) {
 		console.log('%c⧭', 'color: #00bf00', playerIndex);
+		this.drawingCards = true;
 		let newCardsCount = 1;
 
 		if (this.activeSpecialCard === CardValue.WildDrawFour) {
@@ -92,18 +97,15 @@ export class GameStore {
 			this.activeSpecialCard = null;
 			this.drawTwoCount = 0; // Reset drawTwoCount after drawing cards
 		}
+		this.setNumberOfCardsToDraw(newCardsCount);
 
-		runInAction(() => {
-			const newCards = this.cardManager.drawCards(newCardsCount);
-			this.cardsDrawn = newCards;
-			this.drawingCards = true;
-			this.updatePlayerCards(newCards, playerIndex);
-			// this.players[playerIndex].cards.push(...newCards);
-			setTimeout(() => {
-				this.drawingCards = false;
-				this.cardsDrawn = null;
-			}, 600);
-		});
+		setTimeout(() => {
+			runInAction(() => {
+				const newCards = this.cardManager.drawCards(newCardsCount);
+				this.updatePlayerCards(newCards, playerIndex);
+				this.setNumberOfCardsToDraw(null);
+			});
+		}, 1000);
 	}
 
 	checkGameOver(): boolean {
@@ -173,7 +175,6 @@ export class GameStore {
 
 		// Handle special card cases
 		this.drawCardsToPlayer(this.currentPlayer);
-
 		this.changeTurn();
 		this.checkGameOver();
 
@@ -217,7 +218,6 @@ export class GameStore {
 				this.cardManager.discardCardToPile(card);
 
 				if (this.activeSpecialCard === CardValue.Skip) {
-					console.log('skipping');
 					this.skipNextPlayer();
 				} else {
 					this.changeTurn();
@@ -238,11 +238,16 @@ export class GameStore {
 
 	changeTurn() {
 		runInAction(() => {
+			this.previousPlayer = this.currentPlayer;
 			this.currentPlayer = (this.currentPlayer + this.direction) % this.players.length;
 			if (this.currentPlayer < 0) {
 				this.currentPlayer += this.players.length;
 			}
 		});
+	}
+
+	setAiPlayerCard(card: Card | null) {
+		this.aiPlayerCard = card;
 	}
 
 	async playAllAiTurns() {
@@ -253,50 +258,55 @@ export class GameStore {
 		while (this.currentPlayer !== 0) {
 			await new Promise((resolve) => {
 				setTimeout(() => {
-					const cardToPlay =
-            this.cardManager.lastDiscardPileCard &&
-            this.players[this.currentPlayer].playCard(
-            	this.activeSpecialCard,
-            	this.cardManager.lastDiscardPileCard,
-            	0,
-            );
+					runInAction(() => {
+						const playableCard = this.cardManager.lastDiscardPileCard &&
+						this.players[this.currentPlayer].getAiPlayableCard(
+							this.activeSpecialCard,
+							this.cardManager.lastDiscardPileCard
+						);
+						if (playableCard) {
+							this.setAiPlayerCard(playableCard);
+						}	
+					});
 
-					if (cardToPlay) {
-						runInAction(() => {
-							if (this.checkGameOver()) {
-								return;
-							}
-							 // set aiPlaying to true when the AI player starts playing
-							this.aiPlayerCard = cardToPlay;
-							// setting the right ActiveSpecial card if current card is a special card
-							this.handleSpecialCard(cardToPlay);
-							// adding the card to discard pile
-							this.cardManager.discardCardToPile(cardToPlay);
-
-							if (this.activeSpecialCard === CardValue.Skip) {
-								this.skipNextPlayer();
-							} else {
+					setTimeout(() => {
+						const cardToPlay =
+						this.cardManager.lastDiscardPileCard &&
+						this.players[this.currentPlayer].playCard(
+							this.activeSpecialCard,
+							this.cardManager.lastDiscardPileCard,
+							0,
+						);
+						if (cardToPlay) {
+							runInAction(() => {
+								if (this.checkGameOver()) {
+									return;
+								}
+								// setting the right ActiveSpecial card if current card is a special card
+								this.handleSpecialCard(cardToPlay);
+								// adding the card to discard pile
+								this.cardManager.discardCardToPile(cardToPlay);
+	
+								if (this.activeSpecialCard === CardValue.Skip) {
+									this.skipNextPlayer();
+								} else {
+									this.changeTurn();
+								}
+							});
+						} else {
+							runInAction(() => {
+								// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.
+								if (this.cardManager.deck.length !== 0) {
+									this.drawCardsToPlayer(this.currentPlayer);
+								}
+	
 								this.changeTurn();
-							}
-							this.aiPlayerCardPlayed = true; 
-							setTimeout(() => {
-								runInAction(() => {
-									this.aiPlayerCardPlayed = false;
-								  this.aiPlayerCard = null;
-								});
-							}, 500);
-						});
-					} else {
-						runInAction(() => {
-							// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.
-							if (this.cardManager.deck.length !== 0) {
-								this.drawCardsToPlayer(this.currentPlayer);
-							}
-
-							this.changeTurn();
-						});
-					}
-					resolve(null);
+							});
+						}
+						resolve(null);
+						this.setAiPlayerCard(null);
+			
+					}, 500);
 				}, 2000); //  delay of 2 seconds between AI players' turns
 			});
 		}

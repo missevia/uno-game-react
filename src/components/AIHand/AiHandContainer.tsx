@@ -34,7 +34,6 @@ const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 
 		useEffect(() => {
 			if (cardsCount && cardsCount < 7) {
-				console.log('cards length', cardsCount);
 				if (horizontal) {
 					setContainerWidth(width - ( 7 - cardsCount) * 8);
 				} else {
@@ -48,11 +47,6 @@ const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 				}	
 			}
 		}, [cardsCount]);
-
-		
-		useEffect(() => {
-			console.log(`***AI player ${aiPlayerIndex}'s hand updated:`, JSON.stringify(aiHand));
-		  }, [aiHand, aiPlayerIndex]);
 
 
 		return (
