@@ -1,15 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import PlayerHand from './PlayerHand';
-import AIHandContainer from './AIHand/AiHandContainer';
-import DiscardPile from './DiscardPile';
-import Deck from './Deck';
 import styled from 'styled-components';
-import { GameStore } from '../stores/GameStore';
-import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
-import { AnimatePresence } from 'framer-motion';
-import Modal from './Modal/Modal';
+import { GameStore } from '../../stores/GameStore';
+import DiscardPilePositionContext from '../../contexts/DiscardPilePositionContext';
+import GameArea from './GameArea';
+import ModalRender from '../Modal/ModalRender';
 
 
 const GameBoardStyled = styled.div`
@@ -18,6 +14,8 @@ const GameBoardStyled = styled.div`
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  /* background:  linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+  z-index: -2; */
 
   .game-info {
     position: absolute;
@@ -88,65 +86,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 				<div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer === 0 ? 'You' : `Bot number ${game.currentPlayer}`}`}</h1>
 				</div>
-				<AIHandContainer
-					aiHand={game.players[1].cards}
-					horizontal={false}
-					aiPlayerIndex={0}
-					// remove this
-					playedCardIndex={aiPlayedCardIndex}
-					cardsCount={game.playerHandsLengths[1]}
-				/>
-
-				<AIHandContainer
-					aiHand={game.players[2].cards}
-					horizontal={true}
-					style={{
-						left: '50%',
-					}}
-					aiPlayerIndex={1}
-					playedCardIndex={aiPlayedCardIndex}
-					cardsCount={game.playerHandsLengths[2]}
-				/>
-				<AIHandContainer
-					aiHand={game.players[3].cards}
-					horizontal={false}
-					style={{
-						right: 'var(--cardWidth)',
-					}}
-					aiPlayerIndex={2}
-					playedCardIndex={aiPlayedCardIndex}
-					cardsCount={game.playerHandsLengths[3]}
-				/>
-				<PlayerHand
-					isPlayerTurn={game.currentPlayer === 0}
-					validMoves={game.validMoves}
-					cards={game.players[0].cards}
-					cardsCount={game.playerHandsLengths[0]}
-					// playerHand={game.playerHand}
-					// remove this
-					currentPlayer={game.currentPlayer}
-				/>
-				<div className='deck-and-discard'>
-					<DiscardPile topCard={game.cardManager.lastDiscardPileCard} />
-					<Deck
-						deck={game.cardManager.deck}
-						onClick={game.handleDeckClick}
-						currentPlayer={game.currentPlayer}
-						previousPlayer={game.previousPlayer}
-						numberOfCardsToDraw={game.numberOfCardsToDraw}
-					/>
-				</div>
+				<GameArea game={game} aiPlayedCardIndex={aiPlayedCardIndex}/>
 			</GameBoardStyled>
-			{modalOpen && (
-				<>
-					<AnimatePresence
-						initial={true}
-						mode="wait"
-					>
-						{modalOpen && <Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={`Player number ${game.winner} won!!`} />}
-					</AnimatePresence>
-				</>
-			)}
+			{modalOpen && <ModalRender startNewGame={startNewGame} goToMainMenu={goToMainMenu} winner={game.winner} />}
 		</DiscardPilePositionContext.Provider>
 	);
 };

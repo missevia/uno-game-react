@@ -33,6 +33,7 @@ const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 		const [containerHeight, setContainerHeight] = useState(height);
 
 		useEffect(() => {
+			console.log('width', width, 'height', height, 'cardsCount', cardsCount);
 			if (cardsCount && cardsCount < 7) {
 				if (horizontal) {
 					setContainerWidth(width - ( 7 - cardsCount) * 8);

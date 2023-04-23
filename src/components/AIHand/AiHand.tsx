@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '../../utils/cardUtils';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import CardComponent from '../Card/Card';
+import CardComponent from '../card/Card';
 
 const AIHandStyled = styled.div<{ horizontal: boolean }>`
   display: flex;

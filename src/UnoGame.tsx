@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useGame } from './hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
-import GameBoard from './components/GameBoard';
+import GameBoard from './components/game/GameBoard';
 import styled from 'styled-components';
 
 const UnoGameStyled = styled.div`
@@ -20,11 +20,11 @@ const UnoGame = observer(() => {
 		}
 	}, [game]);
 
-	useEffect(() => {
-		if (game.gameInProgress) {
-			game.resetGame();
-		}
-	}, [game.gameInProgress]);
+	// useEffect(() => {
+	// 	if (game.gameInProgress) {
+	// 		game.resetGame();
+	// 	}
+	// }, [game.gameInProgress]);
 
 	if (!game) {
 		return null;

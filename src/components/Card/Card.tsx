@@ -12,6 +12,8 @@ import {
 import { useDiscardPilePosition } from '../../contexts/DiscardPilePositionContext';
 import { motion } from 'framer-motion';
 import { CardStyled } from './CardStyled';
+import AudioPlayer from '../../utils/audioPlayer';
+import sound from '../../assets/audio/play.mp3';
 
 interface CardComponentProps {
   card: Card
@@ -48,6 +50,9 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		const { color, value } = card;
 		const [hovered, setHovered] = useState(false);
 		const [showBack, setShowBack] = useState(aiHand || deck);
+		const [playAiSound, setPlayAiSound] = useState(false);
+		const [playSound, setPlaySound] = useState(false);
+
 		let cardFrontSrc = frontImages[color];
 		let valueSrc;
 		let blankValueSrc;
@@ -73,32 +78,52 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 			}
 		}
 
+		// move to another file - create a class Audio
+
 		const animateToDiscardPile = (aiPlayer: boolean) => {
 			if (position && cardRef.current) {
+				aiPlayer && setPlayAiSound(true);
+				console.log('position:', position, 'cardRef.current:', cardRef.current);
 				const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
 				const deltaY = aiPlayer
 					? position.y - cardRef.current.getBoundingClientRect().y
 					: position.y - cardRef.current.getBoundingClientRect().y - 40;
 				cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 				cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+				const handleTransitionEnd = () => {
+					cardRef.current?.remove();
+					cardRef.current?.removeEventListener('transitionend', handleTransitionEnd);
+					aiPlayer && setPlayAiSound(false);
+				  };
+			  
+				  cardRef.current.addEventListener('transitionend', handleTransitionEnd);
 			}
+			
 		};
 
 		useEffect(() => {
 			if (game.aiPlayerCard === card) {
+				console.log('game.aiPlayerCard:', JSON.stringify(game.aiPlayerCard), 'card:', JSON.stringify(card));
 				animateToDiscardPile(true);
 			}
-		}, [game.aiPlayerCard]);
+		}, [game.aiPlayerCard, card]);
 
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && !aiHand) {
+			if (cardIndex !== undefined && !aiHand && highlight) {
+				// setPlaySound(true);
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 500);
 			  animateToDiscardPile(false);
 			}
 		  };
+
+		//   useEffect(() => {
+		// 	if (playSound) {
+		// 	  animateToDiscardPile(false);
+		// 	}
+		//   }, [playSound]);
 
 		return (
 			<div>
@@ -151,6 +176,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 							</>
 						)}
 						{showBack && <div className="card-back" />}
+						{/* <AudioPlayer audioFile={sound} play={playSound || playAiSound} />  */}
 					</div>
 		
 				</CardStyled>

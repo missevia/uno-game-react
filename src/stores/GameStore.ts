@@ -40,7 +40,6 @@ export class GameStore {
 	startGame(aiOpponents = 3) {
 		console.log('startGame');
 		 runInAction(() => {
-			// this.cardManager = new CardManager;
 			this.cardManager.initialiseDeck();
 
 			// Initialize main player
@@ -63,6 +62,8 @@ export class GameStore {
 			this.gameInProgress = true;
 		});
 	}
+
+	// this is used in GameBoard to get up-to-date card counts to visualise the stacking of cards correctly
 	get playerHandsLengths() {
 		const lengths: (number | null)[] = [];
 		const players = this.players;
@@ -71,7 +72,8 @@ export class GameStore {
 	}
 
 	get playerHand() {
-		return this.players.find((player) => player.isPlayer)!.cards;
+		const mainPlayer = this.players.find((player) => player.isPlayer);
+		return mainPlayer ? mainPlayer.cards : [];
 	}
 
 	// this is not used anywhere
@@ -140,13 +142,9 @@ export class GameStore {
 		  this.activeSpecialCard = null;
 		  this.direction = 1;
 		  this.cardManager.clearDeck();
-		  this.cardManager = new CardManager;
 		  this.gameInProgress = true;
 		  this.drawTwoCount = 0;
 		  this.winner = null;
-		  this.aiPlayerCardPlayed = false;
-		  this.aiPlayerCard = null;
-	  
 		  // Clear out existing players
 		  this.players = [];
 	  
@@ -157,6 +155,7 @@ export class GameStore {
 
 	get validMoves(): number[] {
 		const playerHand = this.playerHand;
+		console.log('activeSpecialCard before calling checkValidCard', this.activeSpecialCard);
 		return playerHand.reduce((validMoves, card, index) => {
 			if (
 				this.cardManager.lastDiscardPileCard &&
@@ -217,14 +216,14 @@ export class GameStore {
 				this.handleSpecialCard(card);
 				this.cardManager.discardCardToPile(card);
 
+				if (this.checkGameOver()) {
+					return;
+				  }
+
 				if (this.activeSpecialCard === CardValue.Skip) {
 					this.skipNextPlayer();
 				} else {
 					this.changeTurn();
-				}
-
-				if (this.checkGameOver()) {
-					return;
 				}
 			});
 
@@ -255,7 +254,7 @@ export class GameStore {
 			return;
 		}
 		// If it's an AI player's turn, automatically play a card
-		while (this.currentPlayer !== 0) {
+		while (this.currentPlayer !== 0 && this.gameInProgress) {
 			await new Promise((resolve) => {
 				setTimeout(() => {
 					runInAction(() => {

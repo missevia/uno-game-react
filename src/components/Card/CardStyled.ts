@@ -14,8 +14,8 @@ interface CardStyledProps {
 export const CardStyled = styled.div<Partial<CardStyledProps>>`
   .wrapper {
     position: absolute;
-    width: ${({ aiHand }) => (aiHand ? 'var(--cardWidthSmall)' : 'var(--cardWidth)')};
-    height: ${({ aiHand }) => (aiHand ? 'var(--cardHeightSmall)' : 'var(--cardHeight)')};
+    width: var(--cardWidth);
+    height: var(--cardHeight);;
     display: inline-block;
     filter: ${({ highlight, mainPlayerHand }) =>
 		highlight || !mainPlayerHand ? 'contrast(1)' : 'contrast(0.5)'};
@@ -30,6 +30,7 @@ export const CardStyled = styled.div<Partial<CardStyledProps>>`
     height: 100%;
     background-color: white;
     border-radius: 13px;
+    // remove this??
     box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'rgb(41, 39, 39) 0px 0px 10px;')};
   }
 
@@ -52,11 +53,12 @@ export const CardStyled = styled.div<Partial<CardStyledProps>>`
   }
 
   .card-back {
-    width: 100%;
-    height: 100%;
+    width: var(--cardWidth);
+    height: var(--cardHeight);
+    box-shadow: rgb(41, 39, 39) 0px 0px 10px;
     background-image: url(${cardBack});
     background-size: cover;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
 
     position: absolute; 

@@ -17,10 +17,10 @@ body {
 }
 
 :root {
-  --cardWidthSmall: 10.9rem;
   --cardWidth: 10.9rem;
-  --cardHeightSmall: 15.8rem;
+  --cardWidthBigger: 12.5rem;
   --cardHeight: 15.8rem;
+  --cardHeightBigger: 17.9rem;
 }
 
 @media screen and (max-width: 1727px) {

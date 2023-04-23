@@ -27,7 +27,8 @@ const DeckStyled = styled.div<DeckStyledProps>`
     height: var(--cardHeight);
     background-image: url(${cardBack});
     background-size: cover;
-    border-radius: 4px;
+	box-shadow: rgb(41, 39, 39) 0px 0px 10px;
+    border-radius: 8px;
     cursor: pointer;
   }
 
