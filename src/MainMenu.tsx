@@ -48,10 +48,15 @@ const GameRulesText = styled.p`
   }
 `;
 
-const MainMenu = () => {
+interface MainMenuProps {
+	playMusic: () => void;
+}
+
+const MainMenu: React.FC<MainMenuProps> = ({ playMusic }) => {
 	const navigate = useNavigate();
 
 	const startGame = () => {
+		playMusic();
 		navigate('/game');
 	};
 

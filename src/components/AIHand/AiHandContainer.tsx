@@ -7,7 +7,7 @@ import AIHand from './AiHand';
 const AIHandContainerStyled = styled.div<{ horizontal: boolean, width: number, height: number }>`
   position: fixed;
   top: ${({ horizontal }) => (horizontal ? 'auto' : '50%')};
-  width: ${({ horizontal, width }) => (horizontal ? `${width}vh` : 'auto')};
+  width: ${({ horizontal, width }) => (horizontal ? `${width}vw` : 'auto')};
   height: ${({ horizontal, height }) => (horizontal ? 'auto' : `${height}vh`)};
   transform: ${({ horizontal }) => (horizontal ? 'translateX(-63%)' : 'translateY(-70%)')};
   display: flex;

@@ -29,7 +29,7 @@ export const CardStyled = styled.div<Partial<CardStyledProps>>`
     width: 100%;
     height: 100%;
     background-color: white;
-    border-radius: 13px;
+    border-radius: 0.8rem;
     box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'rgb(41, 39, 39) 0px 0px 10px;')};
   }
 
