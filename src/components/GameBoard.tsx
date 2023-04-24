@@ -35,10 +35,11 @@ const GameBoardStyled = styled.div`
 `;
 
 interface GameBoardProps {
-  game: GameStore
+  game: GameStore, 
+  initialized: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
 	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
 	const [modalOpen, setModalOpen] = useState(false);
@@ -77,7 +78,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 
 	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
 
-	if (game.players.length === 0) {
+	if (game.players.length === 0 && !initialized) {
 		return null;
 	}
 
@@ -86,9 +87,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 			value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}
 		>
 			<GameBoardStyled>
-				{/* <div className='game-info'>
+				<div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer === 0 ? 'You' : `Bot number ${game.currentPlayer}`}`}</h1>
-				</div> */}
+				</div>
 				<AIHandContainer
 					aiHand={game.players[1].cards}
 					horizontal={false}

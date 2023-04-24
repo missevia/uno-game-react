@@ -11,7 +11,7 @@ const RulesContainer = styled.div`
   background-color: rgb(54, 70, 118);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  min-height: calc(100vh - 4rem); // Change this line
+  min-height: 100vh;
 `;
 
 const RuleList = styled.ol`

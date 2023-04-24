@@ -20,7 +20,6 @@ export class GameStore {
 	aiPlayerCard: Card | null = null;
 	drawTwoCount = 0;
 	winner: number | null = null;
-	drawingCards = false;
 	cardsDrawn: Card[] | null = null;
 	numberOfCardsToDraw: number | null = null;
 	previousPlayer = 0;
@@ -48,21 +47,65 @@ export class GameStore {
 			const player = new Player(0, cards, true);
 			this.players.push(player);
 
-			// Initialize AI opponents
+			const aiPlayers = [];
 			for (let i = 0; i < aiOpponents; i++) {
 				const aiCards = this.cardManager.drawCards(7);
 				const aiPlayer = new Player(i + 1, aiCards, false);
-				this.players.push(aiPlayer);
+				aiPlayers.push(aiPlayer);
 			}
 
-			this.players.forEach((player) => {
-				console.log(`Player ${player.id} isPlayer: ${player.isPlayer}`);
-			});
+			this.players = [player, ...aiPlayers];
+
+			// this.players.forEach((player) => {
+			// 	console.log(`Player ${player.id} isPlayer: ${player.isPlayer}`);
+			// });
 
 			this.currentPlayer = 0;
 			this.gameInProgress = true;
 		});
 	}
+
+	// startGame(aiOpponents = 3) {
+	// 	console.log('startGame');
+	// 	runInAction(() => {
+	// 		// Reset the game state
+	// 		this.currentPlayer = 0;
+	// 		this.activeSpecialCard = null;
+	// 		this.direction = 1;
+	// 		this.cardManager.clearDeck();
+	// 		this.cardManager = new CardManager;
+	// 		this.gameInProgress = true;
+	// 		this.drawTwoCount = 0;
+	// 		this.winner = null;
+	// 		this.aiPlayerCardPlayed = false;
+	// 		this.aiPlayerCard = null;
+	
+	// 		// Clear out existing players
+	// 		this.players = [];
+	
+	// 		// Initialize the deck and players
+	// 		this.cardManager.initialiseDeck();
+	
+	// 		// Initialize main player
+	// 		const cards = this.cardManager.drawCards(7);
+	// 		const player = new Player(0, cards, true);
+	// 		this.players.push(player);
+	
+	// 		// Initialize AI opponents
+	// 		for (let i = 0; i < aiOpponents; i++) {
+	// 			const aiCards = this.cardManager.drawCards(7);
+	// 			const aiPlayer = new Player(i + 1, aiCards, false);
+	// 			this.players.push(aiPlayer);
+	// 		}
+	
+	// 		this.players.forEach((player) => {
+	// 			console.log(`Player ${player.id} isPlayer: ${player.isPlayer}`);
+	// 		});
+	
+	// 		this.currentPlayer = 0;
+	// 		this.gameInProgress = true;
+	// 	});
+	// }
 	get playerHandsLengths() {
 		const lengths: (number | null)[] = [];
 		const players = this.players;
@@ -77,7 +120,14 @@ export class GameStore {
 	// this is not used anywhere
 
 	updatePlayerCards(cards: Card[], playerIndex: number) {
-		this.players[playerIndex].cards.push(...cards);
+		console.log('***Cards', JSON.stringify(cards));
+		console.log('***playerIndex', playerIndex);
+		runInAction(() => {
+			console.log('******', JSON.stringify(this.players[playerIndex].cards));
+			const playerCards = this.players[playerIndex].cards;
+			const updatedCards = [...playerCards, ...cards];
+			this.players[playerIndex].setCards(updatedCards);
+		});
 	}
 
 	setNumberOfCardsToDraw(value: number | null) {
@@ -86,7 +136,6 @@ export class GameStore {
 
 	drawCardsToPlayer(playerIndex: number) {
 		console.log('%c⧭', 'color: #00bf00', playerIndex);
-		this.drawingCards = true;
 		let newCardsCount = 1;
 
 		if (this.activeSpecialCard === CardValue.WildDrawFour) {
@@ -102,6 +151,8 @@ export class GameStore {
 		setTimeout(() => {
 			runInAction(() => {
 				const newCards = this.cardManager.drawCards(newCardsCount);
+				console.log('cards to draw', newCards);
+				console.log('count of cards to draw', newCardsCount);
 				this.updatePlayerCards(newCards, playerIndex);
 				this.setNumberOfCardsToDraw(null);
 			});
@@ -140,7 +191,7 @@ export class GameStore {
 		  this.activeSpecialCard = null;
 		  this.direction = 1;
 		  this.cardManager.clearDeck();
-		  this.cardManager = new CardManager;
+			//   this.cardManager = new CardManager;
 		  this.gameInProgress = true;
 		  this.drawTwoCount = 0;
 		  this.winner = null;
@@ -300,7 +351,8 @@ export class GameStore {
 						} else {
 							runInAction(() => {
 								// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.
-								if (this.cardManager.deck.length !== 0) {
+								if (this.cardManager.deck.length !== 0 && this.gameInProgress) {
+									console.log(`DRAWING CARDS FOR PLAYER NUMBER ${this.currentPlayer}`);
 									this.drawCardsToPlayer(this.currentPlayer);
 								}
 	

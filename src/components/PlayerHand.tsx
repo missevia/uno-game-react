@@ -10,13 +10,14 @@ interface PlayerHandStyledProps {
 
 const PlayerHandContainer = styled.div<{isPlayerTurn: boolean, width: number}>`
   position: fixed;
-  bottom: 20%;
+  bottom: calc(var(--cardHeight) - 3.5rem);
   left: 45%;
   transform: translateX(-50%);
   width: ${({ width }) => `${width}vw`};
   display: flex;
   justify-content: center;
   filter: ${({ isPlayerTurn }) => isPlayerTurn && 'drop-shadow(white 0px 0px 10px)'};
+  transition: width 0.3s ease;
 `;
 
 const PlayerHandStyled = styled.div<PlayerHandStyledProps>`

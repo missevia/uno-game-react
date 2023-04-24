@@ -14,6 +14,7 @@ const AIHandContainerStyled = styled.div<{ horizontal: boolean, width: number, h
   align-content: center;
   flex-direction: column;
   justify-content: center;
+  transition: width 0.3s ease, height 0.3s ease;
 `;
 
 interface AIHandContainerProps {
@@ -27,7 +28,7 @@ interface AIHandContainerProps {
 
 const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 	({ aiHand, horizontal, style, aiPlayerIndex, cardsCount }) => {
-		const width = 50;
+		const width = 45;
 		const height = 50;
 		const [containerWidth, setContainerWidth] = useState(width);
 		const [containerHeight, setContainerHeight] = useState(height);
