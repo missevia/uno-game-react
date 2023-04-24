@@ -217,6 +217,10 @@ export class GameStore {
 				this.handleSpecialCard(card);
 				this.cardManager.discardCardToPile(card);
 
+				if (this.checkGameOver()) {
+					return;
+				}
+
 				if (this.activeSpecialCard === CardValue.Skip) {
 					this.skipNextPlayer();
 				} else {
@@ -307,7 +311,7 @@ export class GameStore {
 						this.setAiPlayerCard(null);
 			
 					}, 500);
-				}, 2000); //  delay of 2 seconds between AI players' turns
+				}, 1600); //  delay of 2 seconds between AI players' turns
 			});
 		}
 	}

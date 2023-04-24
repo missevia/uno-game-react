@@ -76,12 +76,18 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		const animateToDiscardPile = (aiPlayer: boolean) => {
 			if (position && cardRef.current) {
 				const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-				const deltaY = aiPlayer
-					? position.y - cardRef.current.getBoundingClientRect().y
-					: position.y - cardRef.current.getBoundingClientRect().y - 40;
+				const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
 				cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 				cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+
+				const handleTransitionEnd = () => {
+					cardRef.current?.remove();
+					cardRef.current?.removeEventListener('transitionend', handleTransitionEnd);
+				  };
+			  
+				cardRef.current.addEventListener('transitionend', handleTransitionEnd);
 			}
+
 		};
 
 		useEffect(() => {
@@ -92,7 +98,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && !aiHand) {
+			if (cardIndex !== undefined && !aiHand && highlight) {
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 500);
@@ -101,7 +107,13 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		  };
 
 		return (
-			<div>
+			<motion.div
+				whileHover={
+					highlight
+						? { y: -40, transition: { duration: 0.3 } }
+						: { y: 0, transition: { duration: 0.3 } }
+				}
+			>
 				<CardStyled
 					ref={cardRef}
 					onClick={handleClick}
@@ -110,15 +122,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					aiHand={aiHand}
 					isPile={isPile}
 					noShadow={noShadow}
-					as={motion.div}
-					hovered={hovered}
-					onHoverStart={() => setHovered(true)}
-					onHoverEnd={() => setHovered(false)} 
-					whileHover={
-						highlight
-							? { y: -40, transition: { duration: 0.3 } }
-							: { y: 0, transition: { duration: 0.3 } }
-					}
 				>	
 					<div className='wrapper'>
 						<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
@@ -154,7 +157,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					</div>
 		
 				</CardStyled>
-			</div>
+			</motion.div>
 		);
 	},
 );

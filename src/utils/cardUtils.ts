@@ -150,8 +150,8 @@ export const checkValidCard = (
 	const noActiveDrawCards = activeSpecialCard !== CardValue.DrawTwo && activeSpecialCard !== CardValue.WildDrawFour;
   
 	// Wild card can be played on any card if there are no active special cards
-	if (isWild && noActiveDrawCards) {
-		return true;
+	if (isWild) {
+		return activeSpecialCard === null;
 	}
 
 	// You can play any card on the wild card
