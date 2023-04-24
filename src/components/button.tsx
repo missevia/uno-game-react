@@ -20,7 +20,8 @@ const StyledButton = styled.button`
   }
   span {
 	color: white;
-	-webkit-text-stroke: 1px black; /* for Safari/WebKit-based browsers */
+	-webkit-text-stroke: 0.07rem black; /* for Safari/WebKit-based browsers */
+    font-family: 'Bangers';
      /* text-stroke: 2px black;  */
 	/* Add transition effect for hover state */
   }
@@ -31,7 +32,7 @@ interface ButtonProps {
     onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps>  = ({text, onClick}) => {
+const Button: React.FC<ButtonProps>  = ({ text, onClick }) => {
 	return (
 		<StyledButton onClick={onClick}>
 			<span>

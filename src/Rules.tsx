@@ -20,6 +20,7 @@ const RuleList = styled.ol`
     font-size: 1.5rem;
     line-height: 2.5rem;
     color: #fff;
+    -webkit-text-stroke: 0.07rem black; 
   }
 `;
 
@@ -28,6 +29,7 @@ const Header = styled.h1`
   font-size: 3rem;
   color: #fff;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+	-webkit-text-stroke: 0.07rem black; 
 `;
 
 const Rules = () => {
