@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import unoLogo from './assets/cards/uno-logo.png';
+import Button from './components/button';
 
 const MenuContainer = styled.div`
   display: flex;
@@ -21,13 +22,8 @@ const Menu = styled.div`
 	align-items: center;
 	flex-direction: column;
 	padding-top: 12rem;
-`;
-
-const StartGameButton = styled.button`
-  font-size: 2.4rem;
-  padding: 1rem 2rem;
-  height: 5rem;
-  cursor: pointer;
+	box-shadow: rgb(41, 39, 39) 0px 0px 10px;
+	border-radius: 6px;
 `;
 
 const UnoLogo = styled.img`
@@ -61,7 +57,7 @@ const MainMenu = () => {
 		<MenuContainer>
 			<Menu>
 				<UnoLogo src={unoLogo} alt='uno-logo' />
-				<StartGameButton onClick={startGame}>Start Game</StartGameButton>
+				<Button onClick={startGame} text={'Start game'} />
 				<GameRulesText onClick={goToRules}>Click here to read game rules</GameRulesText>
 			</Menu>
 		</MenuContainer>

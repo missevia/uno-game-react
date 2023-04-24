@@ -14,6 +14,24 @@ export class Player {
 		makeAutoObservable(this);
 	}
 
+	getAiPlayableCard(
+		activeSpecialCard: ActiveSpecialCard | null,
+		lastDiscardPileCard: Card,
+	): Card | null {
+	
+		const aiHand = this.cards;
+		// checking if AI can play any card, taking into account special cards
+		const cardIndexToPlay = aiHand.findIndex((card) =>
+			checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards),
+		);
+		const cardToPlay = aiHand[cardIndexToPlay];
+		return cardToPlay;
+	}
+
+	setCards(newCards: Card[]) {
+		this.cards = newCards;
+	}
+
 	playCard(
 		activeSpecialCard: ActiveSpecialCard | null,
 		lastDiscardPileCard: Card,
@@ -26,7 +44,7 @@ export class Player {
 
 			if (checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards)) {
 				// add this to separate function?
-				this.cards = [...playerHand.slice(0, cardIndex), ...playerHand.slice(cardIndex + 1)];
+				this.setCards([...playerHand.slice(0, cardIndex), ...playerHand.slice(cardIndex + 1)]);
 			}
 			console.log(`Player ${this.id} card to play:`, JSON.stringify(card));
 			console.log(`Player ${this.id} cards after playing:`, JSON.stringify(this.cards));
@@ -43,9 +61,8 @@ export class Player {
 
 			if (cardToPlay) {
 				// amending the AI's hand
-				aiHand.splice(cardIndexToPlay, 1);
 				runInAction(() => {
-					this.cards = aiHand;
+					this.cards = aiHand.filter((item, index) => index !== cardIndexToPlay);
 				});
 			}
 			console.log(`Player ${this.id} card to play:`, JSON.stringify(cardToPlay));

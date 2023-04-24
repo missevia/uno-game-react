@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CardComponent from './Card/Card';
+import CardComponent from './card/Card';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../utils/cardUtils';
@@ -39,7 +39,6 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(
 
 		useEffect(() => {
 			if (cardsCount && cardsCount < 7) {
-				console.log('cards length', cardsCount);
 				setContainerWidth(50 - (7 - cardsCount) * 8.5);
 			} else {
 				setContainerWidth(50);

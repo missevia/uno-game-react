@@ -8,9 +8,7 @@ import Deck from './Deck';
 import styled from 'styled-components';
 import { GameStore } from '../stores/GameStore';
 import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
-import { toJS } from 'mobx';
-import { AnimatePresence, motion } from 'framer-motion';
-import Modal from './Modal/Modal';
+import ModalRender from './Modal/ModalRender';
 
 
 const GameBoardStyled = styled.div`
@@ -58,7 +56,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 	}, [game.activeSpecialCard]);
 
 	useEffect(() => {
-		if (!game.gameInProgress && game.winner) {
+		if (!game.gameInProgress && game.winner !== null) {
 			open();
 		}
 	}, [game.gameInProgress, game.winner]);
@@ -77,20 +75,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 
 	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
 
-	if (!game.gameInProgress && game.winner) {
-		return (
-			<>
-				<AnimatePresence
-					initial={true}
-					mode="wait"
-				>
-					{modalOpen && <Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={`Player number ${game.winner} won!!`} />}
-				</AnimatePresence>
-			</>
-		);
-	}
-
-	if (!game.gameInProgress || game.players.length === 0) {
+	if (game.players.length === 0) {
 		return null;
 	}
 
@@ -146,9 +131,12 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 						deck={game.cardManager.deck}
 						onClick={game.handleDeckClick}
 						currentPlayer={game.currentPlayer}
+						previousPlayer={game.previousPlayer}
+						numberOfCardsToDraw={game.numberOfCardsToDraw}
 					/>
 				</div>
 			</GameBoardStyled>
+			{modalOpen && <ModalRender startNewGame={startNewGame} goToMainMenu={goToMainMenu} winner={game.winner} />}
 		</DiscardPilePositionContext.Provider>
 	);
 };

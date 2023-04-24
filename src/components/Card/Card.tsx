@@ -40,11 +40,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		aiHand = false,
 		deck = false,
 		isPile,
-		aiPlayerIndex,
-		// currentPlayer,
-		// aiPlayerCard,
-		// playedCardIndex,
-		// deckPosition, 
 		noShadow = false
 	}) => {
 		const { game } = useGame();
@@ -52,10 +47,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		const cardRef = React.useRef<HTMLDivElement | null>(null);
 		const { color, value } = card;
 		const [hovered, setHovered] = useState(false);
-		// const [animationTarget, setAnimationTarget] = useState({ x: 0, y: 0 });
 		const [showBack, setShowBack] = useState(aiHand || deck);
-		// const [cardClicked, setCardClicked] = useState(false);
-		// const [initialPosition, setInitialPosition] = useState<{ x: number; y: number } | null>(null);
 		let cardFrontSrc = frontImages[color];
 		let valueSrc;
 		let blankValueSrc;
@@ -81,33 +73,47 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 			}
 		}
 
-		const animateToDiscardPile = () => {
+		const animateToDiscardPile = (aiPlayer: boolean) => {
 			if (position && cardRef.current) {
-			  const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-			  const deltaY = position.y - cardRef.current.getBoundingClientRect().y - 40;
-			  cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-			  cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+				const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
+				const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
+				cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+				cardRef.current.style.transition = 'transform 0.5s ease-in-out';
+
+				const handleTransitionEnd = () => {
+					cardRef.current?.remove();
+					cardRef.current?.removeEventListener('transitionend', handleTransitionEnd);
+				  };
+			  
+				cardRef.current.addEventListener('transitionend', handleTransitionEnd);
 			}
+
 		};
 
 		useEffect(() => {
-			if (aiPlayerIndex === 0) {
-				console.log('***AiHand', JSON.stringify(card));
+			if (game.aiPlayerCard === card) {
+				animateToDiscardPile(true);
 			}
-		}, [card, aiPlayerIndex]);
+		}, [game.aiPlayerCard]);
 
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && !aiHand) {
+			if (cardIndex !== undefined && !aiHand && highlight) {
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 500);
-			  animateToDiscardPile();
+			  animateToDiscardPile(false);
 			}
 		  };
 
 		return (
-			<div>
+			<motion.div
+				whileHover={
+					highlight
+						? { y: -40, transition: { duration: 0.3 } }
+						: { y: 0, transition: { duration: 0.3 } }
+				}
+			>
 				<CardStyled
 					ref={cardRef}
 					onClick={handleClick}
@@ -116,17 +122,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					aiHand={aiHand}
 					isPile={isPile}
 					noShadow={noShadow}
-					as={motion.div}
-					hovered={hovered}
-					onHoverStart={() => setHovered(true)}
-					onHoverEnd={() => setHovered(false)} 
-					// animate={animationTarget}
-					// transition={{ duration: 0.5, ease: 'easeInOut' }}
-					whileHover={
-						highlight
-							? { y: -40, transition: { duration: 0.3 } }
-							: { y: 0, transition: { duration: 0.3 } }
-					}
 				>	
 					<div className='wrapper'>
 						<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
@@ -162,7 +157,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					</div>
 		
 				</CardStyled>
-			</div>
+			</motion.div>
 		);
 	},
 );
