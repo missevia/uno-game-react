@@ -6,7 +6,7 @@ import Button from '../button';
 
 const ModalStyled = styled.div`
     width: clamp(60%, 700px, 90%);
-    height: min(50%, 25rem);
+    height: min(50%, 30rem);
     color: white;
     margin: auto;
     padding: 7rem 6rem 2rem 6rem;
@@ -16,11 +16,21 @@ const ModalStyled = styled.div`
     align-items: center;
 	justify-content: space-between;
     background-color: rgba(41, 56, 105, 0.8);
+	text-align: center;
 
 	p {
 		font-weight: bold;
 		font-size: 1.25rem;
 		letter-spacing: 1.25px;
+		-webkit-text-stroke: 0.07rem black;
+	}
+
+	#status {
+		font-size: 4rem;
+	}
+
+	#message {
+		font-size: 1.8rem;
 	}
 
 	.button-container {
@@ -82,11 +92,11 @@ const Modal: React.FC<ModalProps> = ({ startNewGame, goToMainMenu, text }) => {
 				animate='visible'
 				exit='exit'
 			>
-				<p>{text[0]}</p>
-				<p>{text[1]}</p>
+				<p id='status'>{text[0]}</p>
+				<p id='message'>{text[1]}</p>
 				<div className='button-container'>
-					<Button onClick={startNewGame} text='New game' />
-					<Button onClick={goToMainMenu} text='Main menu' />
+					<Button onClick={startNewGame} text='New game' fontSize={2.2} />
+					<Button onClick={goToMainMenu} text='Main menu' fontSize={2.2} />
 				</div>
 			</ModalStyled>
 		</Backdrop>

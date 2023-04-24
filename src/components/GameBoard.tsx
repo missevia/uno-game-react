@@ -17,6 +17,8 @@ const GameBoardStyled = styled.div`
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  background: linear-gradient(to top, #09203f 0%, #537895 100%);
+  z-index: 0;
 
   .game-info {
     position: absolute;
@@ -84,9 +86,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 			value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}
 		>
 			<GameBoardStyled>
-				<div className='game-info'>
+				{/* <div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer === 0 ? 'You' : `Bot number ${game.currentPlayer}`}`}</h1>
-				</div>
+				</div> */}
 				<AIHandContainer
 					aiHand={game.players[1].cards}
 					horizontal={false}

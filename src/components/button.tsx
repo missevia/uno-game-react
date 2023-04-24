@@ -2,14 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{fontSize: number}>`
   background-color: #F8DB22;
   border: none;
   border-radius: 5px;
   letter-spacing: 0.3rem;
   box-shadow: rgb(41, 39, 39) 0px 0px 10px;
   font-weight: 800;
-  font-size: 2.4rem;
+  /* font-size: 2.4rem; */
   padding: 1rem 2rem;
   height: 5rem;
   transition: all 0.3s ease-in-out; 
@@ -20,6 +20,7 @@ const StyledButton = styled.button`
   }
   span {
 	color: white;
+    font-size: ${({ fontSize }) => `${fontSize}rem`};;
 	-webkit-text-stroke: 0.07rem black; /* for Safari/WebKit-based browsers */
     font-family: 'Bangers';
      /* text-stroke: 2px black;  */
@@ -30,11 +31,12 @@ const StyledButton = styled.button`
 interface ButtonProps {
     text: string;
     onClick?: () => void;
+    fontSize: number;
 }
 
-const Button: React.FC<ButtonProps>  = ({ text, onClick }) => {
+const Button: React.FC<ButtonProps>  = ({ text, onClick, fontSize }) => {
 	return (
-		<StyledButton onClick={onClick}>
+		<StyledButton onClick={onClick} fontSize={fontSize}>
 			<span>
 				{text}
 			</span>

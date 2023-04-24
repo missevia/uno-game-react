@@ -10,12 +10,13 @@ const MenuContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+  background-image: linear-gradient(to right, rgb(116, 235, 213), rgb(159, 172, 230));
 `;
 
 const Menu = styled.div`
 	width: 55rem;
 	height: 35rem;
-	background-color: #1e0e6f46;
+	background-color: rgb(54, 70, 118);
 	display: flex;
 	position: relative;
 	justify-content: flex-end;
@@ -34,12 +35,17 @@ const UnoLogo = styled.img`
 `;
 
 const GameRulesText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   color: #fff;
   text-decoration: underline;
   margin-top: 9rem;
   margin-bottom: 4rem;
+  transition: all 0.3s ease-in-out; 
+  &:hover {
+    transform: scale(1.09); /* Increase size of button by 5% */
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2); /* Add a more dramatic box-shadow */
+  }
 `;
 
 const MainMenu = () => {
@@ -57,8 +63,8 @@ const MainMenu = () => {
 		<MenuContainer>
 			<Menu>
 				<UnoLogo src={unoLogo} alt='uno-logo' />
-				<Button onClick={startGame} text={'Start game'} />
-				<GameRulesText onClick={goToRules}>Click here to read game rules</GameRulesText>
+				<Button onClick={startGame} text={'Start game'} fontSize={3}/>
+				<GameRulesText onClick={goToRules}>Game rules</GameRulesText>
 			</Menu>
 		</MenuContainer>
 	);
