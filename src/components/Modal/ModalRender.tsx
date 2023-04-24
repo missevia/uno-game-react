@@ -9,10 +9,12 @@ interface ModalRenderProps {
 }
 
 const ModalRender: React.FC<ModalRenderProps> = ({ startNewGame, goToMainMenu, winner }) => {
+
+	const winMessage = winner === 0 ? 'You won! :)' : 'You lost! :(';
 	return (
 		<>
 			<AnimatePresence initial={true} mode="wait">
-				<Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={`Player number ${winner} won!!`} />
+				<Modal startNewGame={startNewGame} goToMainMenu={goToMainMenu} text={winMessage} />
 			</AnimatePresence>
 		</>
 	);

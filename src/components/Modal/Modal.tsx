@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import Backdrop from './Backdrop';
+import Button from '../button';
 
 const ModalStyled = styled.div`
     width: clamp(50%, 700px, 90%);
@@ -84,8 +85,8 @@ const Modal: React.FC<ModalProps> = ({ startNewGame, goToMainMenu, text }) => {
 			>
 				<p>{text}</p>
 				<div className='button-container'>
-					<button onClick={startNewGame}>New game</button>
-					<button onClick={goToMainMenu}>Main menu</button>
+					<Button onClick={startNewGame} text='New game' />
+					<Button onClick={goToMainMenu} text='Main menu' />
 				</div>
 			</ModalStyled>
 		</Backdrop>

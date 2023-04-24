@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from './components/button';
 
 const RulesContainer = styled.div`
   display: flex;
@@ -8,7 +9,7 @@ const RulesContainer = styled.div`
   align-items: center;
   padding: 2rem 6rem;
   margin: 10rem;
-  background-color: rgba(30, 14, 111, 0.7);
+  background-color: rgba(30, 14, 111, 0.275);
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
@@ -29,21 +30,6 @@ const Header = styled.h1`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 `;
 
-const ReturnButton = styled.button`
-  font-size: 1.5rem;
-  color: #fff;
-  background-color: #537895;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 1rem 2rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #09203f;
-  }
-`;
-
 const Rules = () => {
 	const navigate = useNavigate();
 
@@ -53,7 +39,7 @@ const Rules = () => {
 
 	return (
 		<RulesContainer>
-			<Header>GAME RULES</Header>
+			<Header>UNO GAME RULES</Header>
 			<RuleList>
 				<li>Objective: Be the first player to get rid of all your cards.</li>
 				<li>In this version of the game, you will play against 3 bots.</li>
@@ -63,7 +49,7 @@ const Rules = () => {
 				<li>Special cards: Skip, Reverse, Draw Two, Wild, Wild Draw Four.</li>
 				<li>Winning: The first player to play all their cards wins the round. The game can be played for a predetermined number of rounds or until a player wins a certain number of rounds (e.g., best of 5 or best of 7).</li>
 			</RuleList>
-			<ReturnButton onClick={handleClick}>Return to main menu</ReturnButton>
+			<Button onClick={handleClick} text='Return to main menu'/>
 		</RulesContainer>
 	);
 };
