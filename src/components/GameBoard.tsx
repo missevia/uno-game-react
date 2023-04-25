@@ -85,9 +85,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 			value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}
 		>
 			<GameBoardStyled>
-				<div className='game-info'>
+				{/* <div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer === 0 ? 'You' : `Bot number ${game.currentPlayer}`}`}</h1>
-				</div>
+				</div> */}
 				<AIHandContainer
 					aiHand={game.players[1].cards}
 					horizontal={false}
