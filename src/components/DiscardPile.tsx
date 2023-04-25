@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import CardComponent from './card/Card';
-import { Card } from '../utils/cardUtils';
+import CardComponent from './card/cardComponent';
+import { Card, CardType } from '../utils/cardUtils';
 import { observer } from 'mobx-react-lite';
 import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
 
@@ -37,7 +37,7 @@ const DiscardPile: React.FC<DiscardPileProps> = observer(({ topCard }) => {
 
 	return (
 		<div ref={discardPileRef} style={{zIndex: -20}}>
-			{topCard ? <CardComponent card={topCard} isPile /> : <p>No cards in the discard pile yet.</p>}
+			{topCard ? <CardComponent card={topCard} cardType={CardType.Pile} /> : <p>No cards in the discard pile yet.</p>}
 		</div>
 	);
 });

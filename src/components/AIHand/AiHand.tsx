@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card } from '../../utils/cardUtils';
+import { Card, CardType } from '../../utils/cardUtils';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import CardComponent from '../card/Card';
+import CardComponent from '../card/cardComponent';
 
 const AIHandStyled = styled.div<{ horizontal: boolean }>`
   display: flex;
@@ -16,21 +16,18 @@ interface AIHandProps {
   aiHand: Card[]
   horizontal: boolean
   aiPlayerIndex: number
-  playedCardIndex?: number | null
 }
 
 const AIHand: React.FC<AIHandProps> = observer(
-	({ aiHand, horizontal, aiPlayerIndex, playedCardIndex }) => {
+	({ aiHand, horizontal, aiPlayerIndex}) => {
 		return (
 			<AIHandStyled horizontal={horizontal}>
 				{aiHand.map((card, index) => (
 					<CardComponent
-						key={`${card.color}-${card.value}-${index}`}
+						key={card.id}
 						card={card}
-						aiHand
-						aiPlayerIndex={aiPlayerIndex}
+						cardType={CardType.AiHand}
 						cardIndex={index}
-						playedCardIndex={playedCardIndex}
 					/>
 				))}
 			</AIHandStyled>

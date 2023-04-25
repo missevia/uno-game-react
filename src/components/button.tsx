@@ -7,7 +7,7 @@ const StyledButton = styled.button<{fontSize: number}>`
   border: none;
   border-radius: 5px;
   letter-spacing: 0.3rem;
-  box-shadow: rgb(41, 39, 39) 0px 0px 10px;
+  box-shadow: var(--boxShadow);;
   font-weight: 800;
   /* font-size: 2.4rem; */
   padding: 1rem 2rem;

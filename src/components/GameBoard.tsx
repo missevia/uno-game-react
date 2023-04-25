@@ -25,15 +25,13 @@ const GameBoardStyled = styled.div`
     top: 30%;
     left: 40%;
   }
-
-  .deck-discard {
-    position: absolute;
-    top: 40%;
-    left: 40%;
-    width: 200px;
-  }
 `;
 
+const DiscardPileContainer = styled.div`
+	position: absolute;
+    top: 40%;
+    left: 40%;
+`;
 interface GameBoardProps {
   game: GameStore, 
   initialized: boolean;
@@ -87,9 +85,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 			value={{ position: discardPilePosition, setPosition: setDiscardPilePosition }}
 		>
 			<GameBoardStyled>
-				<div className='game-info'>
+				{/* <div className='game-info'>
 					<h1>{`Current player: ${game.currentPlayer === 0 ? 'You' : `Bot number ${game.currentPlayer}`}`}</h1>
-				</div>
+				</div> */}
 				<AIHandContainer
 					aiHand={game.players[1].cards}
 					horizontal={false}
@@ -113,7 +111,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 					aiHand={game.players[3].cards}
 					horizontal={false}
 					style={{
-						right: 'var(--cardWidthSmall)',
+						right: 'var(--cardWidth)',
 					}}
 					aiPlayerIndex={2}
 					playedCardIndex={aiPlayedCardIndex}
@@ -124,11 +122,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 					validMoves={game.validMoves}
 					cards={game.players[0].cards}
 					cardsCount={game.playerHandsLengths[0]}
-					// playerHand={game.playerHand}
-					// remove this
-					currentPlayer={game.currentPlayer}
 				/>
-				<div className='deck-discard'>
+				<DiscardPileContainer>
 					<DiscardPile topCard={game.cardManager.lastDiscardPileCard} />
 					<Deck
 						deck={game.cardManager.deck}
@@ -137,7 +132,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 						previousPlayer={game.previousPlayer}
 						numberOfCardsToDraw={game.numberOfCardsToDraw}
 					/>
-				</div>
+				</DiscardPileContainer>
 			</GameBoardStyled>
 			{modalOpen && <ModalRender startNewGame={startNewGame} goToMainMenu={goToMainMenu} winner={game.winner} />}
 		</DiscardPilePositionContext.Provider>
