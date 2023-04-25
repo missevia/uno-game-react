@@ -14,19 +14,14 @@ export class GameStore {
 	currentPlayer = 0;
 	activeSpecialCard: ActiveSpecialCard | null = null;
 	gameInProgress = false;
-	direction = 1;
+	private direction = 1;
 	cardManager: CardManager;
-	aiPlayerCardPlayed = false;
 	aiPlayerCard: Card | null = null;
-	drawTwoCount = 0;
+	private drawTwoCount = 0;
 	winner: number | null = null;
-	cardsDrawn: Card[] | null = null;
 	numberOfCardsToDraw: number | null = null;
 	previousPlayer = 0;
-
-
 	players: Player[] = [];
-	currentPlayerId = 0;
 
 	constructor(store: RootStore) {
 		this.playCard = this.playCard.bind(this);
@@ -39,10 +34,9 @@ export class GameStore {
 	startGame(aiOpponents = 3) {
 		console.log('startGame');
 		 runInAction(() => {
-			// this.cardManager = new CardManager;
 			this.cardManager.initialiseDeck();
+			this.cardManager.setFirstDiscardCard();
 
-			// Initialize main player
 			const cards = this.cardManager.drawCards(7);
 			const player = new Player(0, cards, true);
 			this.players.push(player);
@@ -58,72 +52,6 @@ export class GameStore {
 			this.currentPlayer = 0;
 			this.gameInProgress = true;
 		});
-	}
-
-	get playerHandsLengths() {
-		const lengths: (number | null)[] = [];
-		const players = this.players;
-		players.map(player => lengths.push(player.cards.length));
-		return lengths;
-	}
-
-	get playerHand() {
-		return this.players.find((player) => player.isPlayer)!.cards;
-	}
-
-	// this is not used anywhere
-
-	updatePlayerCards(cards: Card[], playerIndex: number) {
-		runInAction(() => {
-			const playerCards = this.players[playerIndex].cards;
-			const updatedCards = [...playerCards, ...cards];
-			this.players[playerIndex].setCards(updatedCards);
-		});
-	}
-
-	setNumberOfCardsToDraw(value: number | null) {
-		this.numberOfCardsToDraw = value;
-	}
-
-	drawCardsToPlayer(playerIndex: number) {
-		console.log('%c⧭', 'color: #00bf00', playerIndex);
-		let newCardsCount = 1;
-
-		if (this.activeSpecialCard === CardValue.WildDrawFour) {
-			newCardsCount = 4;
-			this.activeSpecialCard = null;
-		} else if (this.activeSpecialCard === CardValue.DrawTwo) {
-			newCardsCount = 2 * this.drawTwoCount; // Multiply by drawTwoCount
-			this.activeSpecialCard = null;
-			this.drawTwoCount = 0; // Reset drawTwoCount after drawing cards
-		}
-		this.setNumberOfCardsToDraw(newCardsCount);
-
-		setTimeout(() => {
-			runInAction(() => {
-				const newCards = this.cardManager.drawCards(newCardsCount);
-				console.log('cards to draw', newCards);
-				console.log('count of cards to draw', newCardsCount);
-				this.updatePlayerCards(newCards, playerIndex);
-				this.setNumberOfCardsToDraw(null);
-			});
-		}, 1000);
-	}
-
-	checkGameOver(): boolean {
-		const playerHand = this.players[0].cards;
-
-		if (playerHand.length === 0) {
-			this.endGame(0);
-			return true;
-		}
-		for (let i = 0; i < this.players.length; i++) {
-			if (this.players[i].cards.length === 0) {
-				this.endGame(i);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	endGame(playerIndex: number) {
@@ -142,7 +70,6 @@ export class GameStore {
 		  this.gameInProgress = true;
 		  this.drawTwoCount = 0;
 		  this.winner = null;
-		  this.aiPlayerCardPlayed = false;
 		  this.aiPlayerCard = null;
 	  
 		  // Clear out existing players
@@ -151,7 +78,34 @@ export class GameStore {
 		  // Start new game
 		  this.startGame();
 		});
-	  }
+	}
+
+	checkGameOver(): boolean {
+		const playerHand = this.players[0].cards;
+
+		if (playerHand.length === 0) {
+			this.endGame(0);
+			return true;
+		}
+		for (let i = 0; i < this.players.length; i++) {
+			if (this.players[i].cards.length === 0) {
+				this.endGame(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	get playerHandsLengths() {
+		const lengths: (number | null)[] = [];
+		const players = this.players;
+		players.map(player => lengths.push(player.cards.length));
+		return lengths;
+	}
+
+	get playerHand() {
+		return this.players.find((player) => player.isPlayer)?.cards || [];
+	}
 
 	get validMoves(): number[] {
 		const playerHand = this.playerHand;
@@ -166,11 +120,45 @@ export class GameStore {
 		}, [] as number[]);
 	}
 
+	updatePlayerCards(cards: Card[], playerIndex: number) {
+		runInAction(() => {
+			const playerCards = this.players[playerIndex].cards;
+			const updatedCards = [...playerCards, ...cards];
+			this.players[playerIndex].setCards(updatedCards);
+		});
+	}
+
+	// required for animations
+	setNumberOfCardsToDraw(value: number | null) {
+		this.numberOfCardsToDraw = value;
+	}
+
+	drawCardsToPlayer(playerIndex: number) {
+		let newCardsCount = 1;
+
+		if (this.activeSpecialCard === CardValue.WildDrawFour) {
+			newCardsCount = 4;
+			this.activeSpecialCard = null;
+		} else if (this.activeSpecialCard === CardValue.DrawTwo) {
+			newCardsCount = 2 * this.drawTwoCount; 
+			this.activeSpecialCard = null;
+			this.drawTwoCount = 0; // Reset drawTwoCount after drawing cards
+		}
+		this.setNumberOfCardsToDraw(newCardsCount);
+
+		setTimeout(() => {
+			runInAction(() => {
+				const newCards = this.cardManager.drawCards(newCardsCount);
+				this.updatePlayerCards(newCards, playerIndex);
+				this.setNumberOfCardsToDraw(null);
+			});
+		}, 1000);
+	}
+
 	async handleDeckClick() {
 		if (!this.gameInProgress || this.currentPlayer !== 0) {
 			return;
 		}
-
 		// Handle special card cases
 		this.drawCardsToPlayer(this.currentPlayer);
 		this.changeTurn();
@@ -201,14 +189,11 @@ export class GameStore {
 
 	// action to play a card from the player's hand
 	async playCard(cardIndex: number) {
-
-		const card =
-      this.cardManager.lastDiscardPileCard &&
-      this.players[this.currentPlayer].playCard(
-      	this.activeSpecialCard,
-      	this.cardManager.lastDiscardPileCard,
-      	cardIndex,
-      );
+		const card = this.cardManager.lastDiscardPileCard && this.players[this.currentPlayer].playCard(
+      		this.activeSpecialCard,
+      		this.cardManager.lastDiscardPileCard,
+      		cardIndex,
+      	);
 
 		if (card) {
 			runInAction(() => {
@@ -218,13 +203,11 @@ export class GameStore {
 				if (this.checkGameOver()) {
 					return;
 				}
-
 				if (this.activeSpecialCard === CardValue.Skip) {
 					this.skipNextPlayer();
 				} else {
 					this.changeTurn();
 				}
-
 				if (this.checkGameOver()) {
 					return;
 				}
@@ -310,7 +293,7 @@ export class GameStore {
 						this.setAiPlayerCard(null);
 			
 					}, 500);
-				}, 1600); //  delay of 2 seconds between AI players' turns
+				}, 1600); //  delay of 1.6 seconds between AI players' turns
 			});
 		}
 	}

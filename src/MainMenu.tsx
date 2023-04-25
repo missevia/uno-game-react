@@ -1,4 +1,3 @@
-// MainMenu.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,20 +9,20 @@ const MenuContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: linear-gradient(to right, rgb(116, 235, 213), rgb(159, 172, 230));
+  background-image: var(--bluePurpleGradient);
 `;
 
 const Menu = styled.div`
 	width: 55rem;
 	height: 35rem;
-	background-color: rgb(54, 70, 118);
+	background-color: var(--deepBlue);
 	display: flex;
 	position: relative;
 	justify-content: flex-end;
 	align-items: center;
 	flex-direction: column;
 	padding-top: 12rem;
-	box-shadow: rgb(41, 39, 39) 0px 0px 10px;
+	box-shadow: var(--boxShadow);
 	border-radius: 6px;
 `;
 

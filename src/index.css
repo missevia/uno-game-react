@@ -6,22 +6,30 @@
   box-sizing: inherit;
 }
 
+:root {
+  --cardWidthSmall: 10.9rem;
+  --cardWidth: 10.9rem;
+  --cardHeightSmall: 15.8rem;
+  --cardHeight: 15.8rem;
+  --blue: #3545F8;
+  --green: #1DE544;
+  --red: #F83434;
+  --yellow: #F9F716;
+  --white: #FFFFFF;
+  --bluePurpleGradient: linear-gradient(to right, rgb(116, 235, 213), rgb(159, 172, 230));
+  --deepBlue: rgb(54, 70, 118);
+  --lightGreen: #74e48b;
+  --boxShadow: rgb(41, 39, 39) 0px 0px 10px;
+}
+
 html {
-  /* font-size: 62.5%; */
   font-size: 100%;
 }
 
 body {
   box-sizing: border-box;
   font-family: 'Bangers';
-  background-image: linear-gradient(to right, rgb(116, 235, 213), rgb(159, 172, 230));
-}
-
-:root {
-  --cardWidthSmall: 10.9rem;
-  --cardWidth: 10.9rem;
-  --cardHeightSmall: 15.8rem;
-  --cardHeight: 15.8rem;
+  background-image: var(--bluePurpleGradient);
 }
 
 @media screen and (max-width: 1790px) {

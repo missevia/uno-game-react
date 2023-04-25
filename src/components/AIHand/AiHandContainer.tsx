@@ -33,6 +33,7 @@ const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 		const [containerWidth, setContainerWidth] = useState(width);
 		const [containerHeight, setContainerHeight] = useState(height);
 
+		// Making card container change width and height depending on number of cards in player's hand
 		useEffect(() => {
 			if (cardsCount && cardsCount < 7) {
 				if (horizontal) {

@@ -3,15 +3,14 @@ import { useGame } from '../../hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
 import {
 	getNumberColor,
-	specialImages,
-	frontImages,
-	numberValues,
 	Card,
 	CardValue,
+	CardType
 } from '../../utils/cardUtils';
-import { useDiscardPilePosition } from '../../contexts/DiscardPilePositionContext';
 import { motion } from 'framer-motion';
-import { CardStyled } from './CardStyled';
+import { StyledCard } from './styledCardComponent';
+import { getCardImageInfo } from '../../utils/imageUtils';
+import { useAnimateToDiscardPile } from '../../hooks/useAnimateToDiscardPile';
 
 interface CardComponentProps {
   card: Card
@@ -35,7 +34,6 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		card,
 		cardIndex,
 		highlight = false,
-		// style,
 		mainPlayerHand = false,
 		aiHand = false,
 		deck = false,
@@ -43,52 +41,11 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		noShadow = false
 	}) => {
 		const { game } = useGame();
-		const { position } = useDiscardPilePosition();
 		const cardRef = React.useRef<HTMLDivElement | null>(null);
 		const { color, value } = card;
-		const [hovered, setHovered] = useState(false);
-		const [showBack, setShowBack] = useState(aiHand || deck);
-		let cardFrontSrc = frontImages[color];
-		let valueSrc;
-		let blankValueSrc;
-		let isNumeric = false;
-		if (card.value === CardValue.Wild) {
-			cardFrontSrc = specialImages.wild;
-		} else if (numberValues.includes(card.value)) {
-			isNumeric = true;
-		} else {
-			// move this to separate utils function
-			if (value === CardValue.DrawTwo) {
-				valueSrc = specialImages.drawTwo[color as keyof typeof specialImages.drawTwo];
-				blankValueSrc = specialImages.drawTwo.blank;
-			} else if (value === CardValue.Reverse) {
-				valueSrc = specialImages.reverse[color as keyof typeof specialImages.reverse];
-				blankValueSrc = specialImages.reverse.blank;
-			} else if (value === CardValue.Skip) {
-				valueSrc = specialImages.skip[color as keyof typeof specialImages.skip];
-				blankValueSrc = specialImages.skip.blank;
-			} else if (value === CardValue.WildDrawFour) {
-				valueSrc = specialImages.drawFour.colour;
-				blankValueSrc = specialImages.drawFour.blank;
-			}
-		}
-
-		const animateToDiscardPile = (aiPlayer: boolean) => {
-			if (position && cardRef.current) {
-				const deltaX = position.x - cardRef.current.getBoundingClientRect().x;
-				const deltaY = position.y - cardRef.current.getBoundingClientRect().y;
-				cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-				cardRef.current.style.transition = 'transform 0.5s ease-in-out';
-
-				const handleTransitionEnd = () => {
-					cardRef.current?.remove();
-					cardRef.current?.removeEventListener('transitionend', handleTransitionEnd);
-				  };
-			  
-				cardRef.current.addEventListener('transitionend', handleTransitionEnd);
-			}
-
-		};
+		const showBack = aiHand || deck;
+		const { cardFrontSrc, valueSrc, blankValueSrc, isNumeric } = getCardImageInfo(card);
+		const animateToDiscardPile = useAnimateToDiscardPile(cardRef);
 
 		useEffect(() => {
 			if (game.aiPlayerCard === card) {
@@ -114,7 +71,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 						: { y: 0, transition: { duration: 0.3 } }
 				}
 			>
-				<CardStyled
+				<StyledCard
 					ref={cardRef}
 					onClick={handleClick}
 					highlight={highlight}
@@ -153,7 +110,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 						</>
 						{showBack && <div className="card-back" />}
 					</div>
-				</CardStyled>
+				</StyledCard>
 			</motion.div>
 		);
 	},

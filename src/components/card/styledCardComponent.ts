@@ -11,7 +11,7 @@ interface CardStyledProps {
     hovered: boolean;
 }
 
-export const CardStyled = styled.div<Partial<CardStyledProps>>`
+export const StyledCard = styled.div<Partial<CardStyledProps>>`
   .wrapper {
     position: absolute;
     width: ${({ aiHand }) => (aiHand ? 'var(--cardWidthSmall)' : 'var(--cardWidth)')};
@@ -24,13 +24,17 @@ export const CardStyled = styled.div<Partial<CardStyledProps>>`
     transition: z-index 0.3s;
   }
 
+  .card-front-hidden {
+    visibility: hidden;
+  } 
+
   .card-front {
     position: absolute;
     width: 100%;
     height: 100%;
     background-color: white;
     border-radius: 0.8rem;
-    box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'rgb(41, 39, 39) 0px 0px 10px;')};
+    box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'var(--boxShadow)')};
   }
 
   .card-value,

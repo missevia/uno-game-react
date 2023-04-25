@@ -8,7 +8,7 @@ const RulesContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 2rem 6rem;
-  background-color: rgb(54, 70, 118);
+  background-color: var(--deepBlue);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   min-height: 100vh;
@@ -27,7 +27,7 @@ const RuleList = styled.ol`
 const Header = styled.h1`
   margin-bottom: 1.4rem;
   font-size: 5rem;
-  color: #74e48b;
+  color: var(--lightGreen);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 	-webkit-text-stroke: 0.07rem black; 
 `;

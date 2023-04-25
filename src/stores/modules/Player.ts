@@ -2,10 +2,9 @@ import { Card, checkValidCard, ActiveSpecialCard } from '../../utils/cardUtils';
 import { makeAutoObservable, runInAction } from 'mobx';
 
 export class Player {
-	id = 0;
+	private id = 0;
 	isPlayer = false;
 	cards: Card[] = [];
-	validMovesForPlayer = [];
 
 	constructor(id: number, cards: Card[], isPlayer: boolean) {
 		this.id = id;
@@ -14,36 +13,36 @@ export class Player {
 		makeAutoObservable(this);
 	}
 
+	// Get an AI playable card, considering any active special card
 	getAiPlayableCard(
 		activeSpecialCard: ActiveSpecialCard | null,
 		lastDiscardPileCard: Card,
 	): Card | null {
-	
-		const aiHand = this.cards;
 		// checking if AI can play any card, taking into account special cards
-		const cardIndexToPlay = aiHand.findIndex((card) =>
+		const cardIndexToPlay = this.cards.findIndex((card) =>
 			checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards),
 		);
-		const cardToPlay = aiHand[cardIndexToPlay];
+		const cardToPlay = this.cards[cardIndexToPlay];
 		return cardToPlay;
 	}
 
+	// Set new cards for the player
 	setCards(newCards: Card[]) {
 		this.cards = newCards;
 	}
 
+	// Play a card from the player's hand
 	playCard(
 		activeSpecialCard: ActiveSpecialCard | null,
 		lastDiscardPileCard: Card,
 		cardIndex: number,
-	): Card | undefined {
+	): Card | null {
 		console.log(`Player ${this.id} cards before playing:`, JSON.stringify(this.cards));
 		if (this.isPlayer) {
 			const playerHand = this.cards;
 			const card = playerHand[cardIndex];
 
 			if (checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards)) {
-				// add this to separate function?
 				this.setCards([...playerHand.slice(0, cardIndex), ...playerHand.slice(cardIndex + 1)]);
 			}
 			console.log(`Player ${this.id} card to play:`, JSON.stringify(card));
@@ -53,16 +52,11 @@ export class Player {
 		} else {
 			const aiHand = this.cards;
 
-			// checking if AI can play any card, taking into account special cards
-			const cardIndexToPlay = aiHand.findIndex((card) =>
-				checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards),
-			);
-			const cardToPlay = aiHand[cardIndexToPlay];
+			const cardToPlay = this.getAiPlayableCard(activeSpecialCard, lastDiscardPileCard);
 
 			if (cardToPlay) {
-				// amending the AI's hand
 				runInAction(() => {
-					this.cards = aiHand.filter((item, index) => index !== cardIndexToPlay);
+					this.cards = aiHand.filter((item) => item !== cardToPlay);
 				});
 			}
 			console.log(`Player ${this.id} card to play:`, JSON.stringify(cardToPlay));

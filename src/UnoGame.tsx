@@ -22,12 +22,6 @@ const UnoGame = observer(() => {
 		}
 	}, [game]);
 
-	// useEffect(() => {
-	// 	if (game.gameInProgress) {
-	// 		game.resetGame();
-	// 	}
-	// }, [game.gameInProgress]);
-
 	if (!game) {
 		return null;
 	}

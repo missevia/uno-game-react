@@ -27,7 +27,7 @@ const SpinnerContainer = styled.div`
 
 const rootStore = new RootStore();
 
-function App() {
+const App = () => {
 	const [playBgMusic, setPlayBgMusic] = useState(false);
 	const [assetsLoaded, setAssetsLoaded] = useState(false);
 
@@ -36,12 +36,17 @@ function App() {
 	};
 
 	useEffect(() => {
-		preloadImages(allImages)
-		  .then(() => {
+		const preloadImagesAsync = async () => {
+		  try {
+				await preloadImages(allImages);
 				console.log('All images preloaded.');
 				setAssetsLoaded(true);
-		  })
-		  .catch((err) => console.error(err));
+		  } catch (err) {
+				console.error(err);
+		  }
+		};
+	  
+		preloadImagesAsync();
 	  }, []);
 
 	  return assetsLoaded ? (
@@ -63,6 +68,6 @@ function App() {
 			<Spinner /> 
 		</SpinnerContainer>
 	  );
-}
+};
 
 export default App;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CardComponent from './card/Card';
+import CardComponent from './card/cardComponent';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../utils/cardUtils';
