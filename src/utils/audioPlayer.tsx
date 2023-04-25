@@ -11,6 +11,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioFile, play, onEnd, loop 
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 
 	useEffect(() => {
+        
 		const handleEnded = () => {
 			if (audioRef.current && onEnd) {
 				onEnd();
