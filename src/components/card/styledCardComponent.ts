@@ -6,7 +6,6 @@ interface CardStyledProps {
     mainPlayerHand?: boolean
     aiHand?: boolean
     isPile?: boolean
-    noShadow?: boolean
     isNumeric: boolean;
     hovered: boolean;
 }
@@ -14,13 +13,13 @@ interface CardStyledProps {
 export const StyledCard = styled.div<Partial<CardStyledProps>>`
   .wrapper {
     position: absolute;
-    width: ${({ aiHand }) => (aiHand ? 'var(--cardWidthSmall)' : 'var(--cardWidth)')};
-    height: ${({ aiHand }) => (aiHand ? 'var(--cardHeightSmall)' : 'var(--cardHeight)')};
+    width: ${({ isPile }) => (isPile ? 'var(--cardWidthBigger)' : 'var(--cardWidth)')};
+    height: ${({ isPile }) => (isPile ? 'var(--cardHeightBigger)' : 'var(--cardHeight)')};
     display: inline-block;
     filter: ${({ highlight, mainPlayerHand }) =>
 		highlight || !mainPlayerHand ? 'contrast(1)' : 'contrast(0.5)'};
     cursor: ${({ highlight }) => (highlight ? 'pointer' : 'default')};
-    z-index: ${({ isPile, aiHand, highlight }) => (isPile ? '-1' : aiHand ? '1' : highlight ? 'auto' : '0')};
+    z-index: ${({ isPile, aiHand, highlight }) => (isPile ? '-100' : aiHand ? '100' : highlight ? 'auto' : '0')};
     transition: z-index 0.3s;
   }
 
@@ -34,7 +33,7 @@ export const StyledCard = styled.div<Partial<CardStyledProps>>`
     height: 100%;
     background-color: white;
     border-radius: 0.8rem;
-    box-shadow: ${({ noShadow }) => (noShadow ? 'none' : 'var(--boxShadow)')};
+    box-shadow: var(--boxShadow);
   }
 
   .card-value,

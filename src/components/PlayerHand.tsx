@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CardComponent from './card/cardComponent';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import { Card } from '../utils/cardUtils';
+import { Card, CardType } from '../utils/cardUtils';
 
 interface PlayerHandStyledProps {
   cardsCount: number
@@ -30,12 +30,11 @@ interface PlayerHandProps {
   isPlayerTurn: boolean
   validMoves: number[]
   cards: Card[]
-  currentPlayer: number, 
   cardsCount: number | null;
 }
 
 const PlayerHand: React.FC<PlayerHandProps> = observer(
-	({ isPlayerTurn, validMoves, cards, currentPlayer, cardsCount }) => {
+	({ isPlayerTurn, validMoves, cards, cardsCount }) => {
 		const [containerWidth, setContainerWidth] = useState(50);
 
 		useEffect(() => {
@@ -55,8 +54,7 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(
 							card={card}
 							cardIndex={index}
 							highlight={isPlayerTurn && validMoves.includes(index)}
-							mainPlayerHand={true}
-							currentPlayer={currentPlayer}
+							cardType={CardType.MainPlayerHand}
 						/>
 					))}
 				</PlayerHandStyled>

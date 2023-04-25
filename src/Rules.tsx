@@ -8,24 +8,24 @@ const RulesContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 2rem 6rem;
-  background-color: var(--deepBlue);
+  background-image: var(--bluePurpleGradient);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   min-height: 100vh;
 `;
 
 const RuleList = styled.ol`
-  margin-bottom: 1.6rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin-bottom: 2.6rem;
   li {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     line-height: 2.4rem;
-    color: #fff;
-    -webkit-text-stroke: 0.09rem black; 
+    color: black;
   }
 `;
 
 const Header = styled.h1`
-  margin-bottom: 1.4rem;
+  margin-bottom: 2.7rem;
   font-size: 5rem;
   color: var(--lightGreen);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);

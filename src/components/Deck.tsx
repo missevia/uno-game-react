@@ -20,11 +20,11 @@ const DeckStyled = styled.div<DeckStyledProps>`
   display: inline-block;
   margin-left: 15rem;
   position: relative;
-  filter: ${({ highlight }) => highlight && 'drop-shadow(white 0px 0px 10px)'};
+  filter: ${({ highlight }) => highlight && 'drop-shadow(white 0px 0px 1.5rem)'};
   .card-back {
     position: absolute;
-    width: var(--cardWidth);
-    height: var(--cardHeight);
+    width: 11.2rem;
+    height: 16.1rem;
     background-image: url(${cardBack});
     background-size: cover;
     border-radius: 4px;

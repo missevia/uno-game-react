@@ -7,10 +7,10 @@
 }
 
 :root {
-  --cardWidthSmall: 10.9rem;
   --cardWidth: 10.9rem;
-  --cardHeightSmall: 15.8rem;
   --cardHeight: 15.8rem;
+  --cardWidthBigger: 11.1rem;
+  --cardHeightBigger: 16rem;
   --blue: #3545F8;
   --green: #1DE544;
   --red: #F83434;

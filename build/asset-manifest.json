@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.61abaf0c.css",
-    "main.js": "/static/js/main.579cd1fc.js",
+    "main.css": "/static/css/main.8ed90466.css",
+    "main.js": "/static/js/main.817b5e0b.js",
     "static/media/bg-music.mp3": "/static/media/bg-music.f6865b44ba4d73fc677b.mp3",
     "static/media/uno-logo.png": "/static/media/uno-logo.cc839a66b1114e4473ce.png",
     "static/media/drawFour-blank.png": "/static/media/drawFour-blank.6d4e31d7d15bb8f3210d.png",
@@ -29,11 +29,11 @@
     "static/media/front-green.png": "/static/media/front-green.fb79ec3139c56486704b.png",
     "static/media/front-yellow.png": "/static/media/front-yellow.3ddbe1c83e0b56179ef1.png",
     "index.html": "/index.html",
-    "main.61abaf0c.css.map": "/static/css/main.61abaf0c.css.map",
-    "main.579cd1fc.js.map": "/static/js/main.579cd1fc.js.map"
+    "main.8ed90466.css.map": "/static/css/main.8ed90466.css.map",
+    "main.817b5e0b.js.map": "/static/js/main.817b5e0b.js.map"
   },
   "entrypoints": [
-    "static/css/main.61abaf0c.css",
-    "static/js/main.579cd1fc.js"
+    "static/css/main.8ed90466.css",
+    "static/js/main.817b5e0b.js"
   ]
 }

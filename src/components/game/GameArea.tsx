@@ -49,7 +49,6 @@ const GameArea: React.FC<GameAreaProps> = ({ game, aiPlayedCardIndex, cardsCount
 				validMoves={game.validMoves}
 				cards={game.players[0].cards}
 				cardsCount={cardsCount[0]}
-				currentPlayer={game.currentPlayer}
 			/>
 			<div className="deck-and-discard">
 				<DiscardPile topCard={game.cardManager.lastDiscardPileCard} />

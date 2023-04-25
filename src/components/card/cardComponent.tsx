@@ -17,16 +17,7 @@ interface CardComponentProps {
   cardIndex?: number
   highlight?: boolean
   style?: React.CSSProperties
-  mainPlayerHand?: boolean
-  aiHand?: boolean
-  aiPlayerIndex?: number;
-  aiPlayerCard?: Card | null
-  currentPlayer?: number
-  isPile?: boolean
-  playedCardIndex?: number | null
-  deck?: boolean;
-  deckPosition?: { x: number; y: number };
-  noShadow?: boolean
+  cardType?: CardType;
 }
 
 const CardComponent: React.FC<CardComponentProps> = observer(
@@ -34,16 +25,12 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 		card,
 		cardIndex,
 		highlight = false,
-		mainPlayerHand = false,
-		aiHand = false,
-		deck = false,
-		isPile,
-		noShadow = false
+		cardType = CardType.MainPlayerHand,
 	}) => {
 		const { game } = useGame();
 		const cardRef = React.useRef<HTMLDivElement | null>(null);
 		const { color, value } = card;
-		const showBack = aiHand || deck;
+		const showBack = cardType === CardType.AiHand || cardType === CardType.Deck;
 		const { cardFrontSrc, valueSrc, blankValueSrc, isNumeric } = getCardImageInfo(card);
 		const animateToDiscardPile = useAnimateToDiscardPile(cardRef);
 
@@ -55,7 +42,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && !aiHand && highlight) {
+			if (cardIndex !== undefined && cardType !== CardType.AiHand && highlight) {
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 450);
@@ -75,10 +62,9 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					ref={cardRef}
 					onClick={handleClick}
 					highlight={highlight}
-					mainPlayerHand={mainPlayerHand}
-					aiHand={aiHand}
-					isPile={isPile}
-					noShadow={noShadow}
+					mainPlayerHand={cardType === CardType.MainPlayerHand}
+					aiHand={cardType === CardType.AiHand}
+					isPile={cardType === CardType.Pile}
 				>
 					<div className='wrapper'>
 						<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
