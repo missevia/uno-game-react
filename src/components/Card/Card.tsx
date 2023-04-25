@@ -101,7 +101,7 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 			if (cardIndex !== undefined && !aiHand && highlight) {
 			  setTimeout(() => {
 					game.playCard(cardIndex);
-			  }, 500);
+			  }, 450);
 			  animateToDiscardPile(false);
 			}
 		  };

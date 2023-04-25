@@ -5,8 +5,8 @@ import Backdrop from './Backdrop';
 import Button from '../button';
 
 const ModalStyled = styled.div`
-    width: clamp(50%, 700px, 90%);
-    height: min(50%, 300px);
+    width: clamp(60%, 700px, 90%);
+    height: min(50%, 30rem);
     color: white;
     margin: auto;
     padding: 7rem 6rem 2rem 6rem;
@@ -15,13 +15,22 @@ const ModalStyled = styled.div`
     flex-direction: column;
     align-items: center;
 	justify-content: space-between;
-    background: linear-gradient(10deg, #ffaa00, #ff6a00);
+    background-color: rgba(41, 56, 105, 0.8);
+	text-align: center;
 
 	p {
 		font-weight: bold;
-		font-family: "Montserrat", sans-serif;
 		font-size: 1.25rem;
 		letter-spacing: 1.25px;
+		-webkit-text-stroke: 0.07rem black;
+	}
+
+	#status {
+		font-size: 4rem;
+	}
+
+	#message {
+		font-size: 1.8rem;
 	}
 
 	.button-container {
@@ -41,7 +50,7 @@ const ModalStyled = styled.div`
 		font-size: 1.25rem;
 		letter-spacing: 1.25px;
 		cursor: pointer;
-		font-family: "Montserrat", sans-serif;
+		font-family: 'Bangers';
 	}
 `;
 
@@ -68,7 +77,7 @@ const dropIn = {
 interface ModalProps {
     startNewGame: () => void;
 	goToMainMenu: () => void;
-    text: string;
+    text: string[];
 }
   
 const Modal: React.FC<ModalProps> = ({ startNewGame, goToMainMenu, text }) => {
@@ -83,10 +92,11 @@ const Modal: React.FC<ModalProps> = ({ startNewGame, goToMainMenu, text }) => {
 				animate='visible'
 				exit='exit'
 			>
-				<p>{text}</p>
+				<p id='status'>{text[0]}</p>
+				<p id='message'>{text[1]}</p>
 				<div className='button-container'>
-					<Button onClick={startNewGame} text='New game' />
-					<Button onClick={goToMainMenu} text='Main menu' />
+					<Button onClick={startNewGame} text='New game' fontSize={2.2} />
+					<Button onClick={goToMainMenu} text='Main menu' fontSize={2.2} />
 				</div>
 			</ModalStyled>
 		</Backdrop>

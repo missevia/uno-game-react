@@ -13,7 +13,7 @@ html {
 
 body {
   box-sizing: border-box;
-  background: linear-gradient(to top, #09203f 0%, #537895 100%);
+  font-family: 'Bangers';
 }
 
 :root {
@@ -23,9 +23,9 @@ body {
   --cardHeight: 15.8rem;
 }
 
-@media screen and (max-width: 1727px) {
+@media screen and (max-width: 1790px) {
   html {
-    font-size: 90%; /* Adjust this value to the desired font size */
+    font-size: 90%; 
   }
 }
 
@@ -47,34 +47,60 @@ body {
   }
 }
 
-@media screen and (max-width: 820px) {
+@media screen and (max-width: 750px) {
+  html {
+    font-size: 52%;
+  }
+}
+
+@media screen and (max-width: 675px) {
   html {
     font-size: 50%;
   }
 }
 
-@media screen and (max-width: 668px) {
+@media screen and (max-width: 548px) {
   html {
-    font-size: 40%;
+    font-size: 47%;
   }
 }
 
-@media screen and (max-width: 516px) {
+@media screen and (max-width: 512px) {
   html {
-    font-size: 30%;
+    font-size: 42%;
   }
 }
 
-@media screen and (max-width: 364px) {
+
+@media screen and (max-width: 449px) {
   html {
-    font-size: 30%;
+    font-size: 36%;
   }
 }
 
-@media screen and (max-width: 212px) {
+@media screen and (max-width: 358px) {
   html {
-    font-size: 20%;
+    font-size: 33%;
   }
 }
+
+@media screen and (max-width: 358px) {
+  html {
+    font-size: 33%;
+  }
+}
+
+/* for smaller screens make the deck and discard vertical */
+
+@media screen and (max-width: 225px) {
+  html {
+    font-size: 27%;
+  }
+}
+
+
+
+
+
 
 

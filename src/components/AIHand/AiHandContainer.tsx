@@ -7,13 +7,14 @@ import AIHand from './AiHand';
 const AIHandContainerStyled = styled.div<{ horizontal: boolean, width: number, height: number }>`
   position: fixed;
   top: ${({ horizontal }) => (horizontal ? 'auto' : '50%')};
-  width: ${({ horizontal, width }) => (horizontal ? `${width}vh` : 'auto')};
+  width: ${({ horizontal, width }) => (horizontal ? `${width}vw` : 'auto')};
   height: ${({ horizontal, height }) => (horizontal ? 'auto' : `${height}vh`)};
   transform: ${({ horizontal }) => (horizontal ? 'translateX(-63%)' : 'translateY(-70%)')};
   display: flex;
   align-content: center;
   flex-direction: column;
   justify-content: center;
+  transition: width 0.3s ease, height 0.3s ease;
 `;
 
 interface AIHandContainerProps {
@@ -27,7 +28,7 @@ interface AIHandContainerProps {
 
 const AIHandContainer: React.FC<AIHandContainerProps> = observer(
 	({ aiHand, horizontal, style, aiPlayerIndex, cardsCount }) => {
-		const width = 50;
+		const width = 45;
 		const height = 50;
 		const [containerWidth, setContainerWidth] = useState(width);
 		const [containerHeight, setContainerHeight] = useState(height);

@@ -17,6 +17,8 @@ const GameBoardStyled = styled.div`
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  background: linear-gradient(to top, #09203f 0%, #537895 100%);
+  z-index: 0;
 
   .game-info {
     position: absolute;
@@ -33,10 +35,11 @@ const GameBoardStyled = styled.div`
 `;
 
 interface GameBoardProps {
-  game: GameStore
+  game: GameStore, 
+  initialized: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ game, initialized }) => {
 	const [discardPilePosition, setDiscardPilePosition] = useState<DOMRect | null>(null);
 	const [aiPlayedCardIndex, setAiPlayedCardIndex] = useState<number>();
 	const [modalOpen, setModalOpen] = useState(false);
@@ -75,7 +78,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ game }) => {
 
 	// const context = useMemo(() => ({ discardPilePosition: discardPilePosition, setDiscardPilePosition: setDiscardPilePosition }), [discardPilePosition]);
 
-	if (game.players.length === 0) {
+	if (game.players.length === 0 && !initialized) {
 		return null;
 	}
 

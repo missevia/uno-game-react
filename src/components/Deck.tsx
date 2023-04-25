@@ -40,58 +40,62 @@ const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck, numb
 
 	const renderAnimatedCards = (count: number) => {
 		return Array.from({ length: count }, (_, index) => {
-			const cardRef = React.createRef<HTMLDivElement>();
-			const animationDelay = index * 100;
-			let deltaX = 0;
-			let deltaY = 0;
-
-			setTimeout(() => {
-				if (cardRef.current) {
-					switch (previousPlayer) {
-						case 0:
-							deltaX = 0;
-							deltaY = window.innerHeight * 0.4;
-							break;
-						case 1:
-							deltaX = -window.innerWidth * 0.4;
-							deltaY = 0;
-							break;
-						case 2:
-							deltaX = 0;
-							deltaY = -window.innerHeight * 0.4;
-							break;
-						default:
-							// currentPlayer === 3
-							deltaX = window.innerWidth * 0.4;
-							deltaY = 0;
-							break;
-					}
-					cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-					cardRef.current.style.transition = 'transform 1s ease-in-out';
-
-					const onTransitionEnd = () => {
+		  const cardRef = React.createRef<HTMLDivElement>();
+		  const animationDelay = index * 100;
+	  
+		  const animateCard = () => {
+		  	if (cardRef.current) {
+			  let deltaX = 0;
+			  let deltaY = 0;
+	  
+			  switch (previousPlayer) {
+			  	case 0:
+				  deltaX = 0;
+				  deltaY = window.innerHeight * 0.4;
+			    break;
+			    case 1:
+				  deltaX = -window.innerWidth * 0.45;
+				  deltaY = 0;
+			    break;
+			    case 2:
+				  deltaX = 0;
+				  deltaY = -window.innerHeight * 0.4;
+			    break;
+			    default:
+				  deltaX = window.innerWidth * 0.36;
+				  deltaY = 0;
+			    break;
+			  }
+			  cardRef.current.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+			  cardRef.current.style.transition = 'transform 1s ease-in-out';
+	  
+			  const onTransitionEnd = () => {
 						if (cardRef.current) {
-							cardRef.current.style.transform = '';
-							cardRef.current.style.transition = '';
-							cardRef.current.removeEventListener('transitionend', onTransitionEnd);
+				  cardRef.current.style.transform = '';
+				  cardRef.current.style.transition = '';
+				  cardRef.current.removeEventListener('transitionend', onTransitionEnd);
 						}
-					};
-					cardRef.current.addEventListener('transitionend', onTransitionEnd);
+			  };
+			  cardRef.current.addEventListener('transitionend', onTransitionEnd);
 				}
-			}, animationDelay);
-
-			return (
+		  };
+	  
+		  requestAnimationFrame(() => {
+				setTimeout(animateCard, animationDelay);
+		  });
+	  
+		  return (
 				<div
-					key={`animatedCard-${index}`}
-					className="card-back"
-					ref={cardRef}
-					style={{
+			  key={`animatedCard-${index}`}
+			  className="card-back"
+			  ref={cardRef}
+			  style={{
 						zIndex: -index,
-					}}
+			  }}
 				></div>
-			);
+		  );
 		});
-	};
+	  };
 	return (
 		<DeckStyled highlight={currentPlayer === 0} onClick={onClick}>
 			{deck.length > 0 && (
