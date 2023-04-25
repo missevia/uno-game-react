@@ -1,6 +1,6 @@
 import { Card, shuffle, isSpecialCard } from '../../utils/cardUtils';
 import { cardDeck } from '../../utils/cardDeck';
-import { runInAction, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 export class CardManager {
 	discardPile: Card[] = [];
@@ -10,22 +10,22 @@ export class CardManager {
 	constructor() {
 		makeAutoObservable(this);
 		this.initialiseDeck();
-		this.getFirstDiscardCard();
+		this.setFirstDiscardCard();
 	}
 
+	// Initialise the deck by shuffling the cardDeck
 	initialiseDeck() {
 		this.deck = shuffle(cardDeck);
 	}
-
+	
+	// Add a card to the discard pile and set it as the last discard pile card
 	discardCardToPile(card: Card) {
-		// Draw the first card from the deck and place it in the discard pile
 		this.discardPile.push(card);
 		this.lastDiscardPileCard = card;
 	}
 
-	// change to setFirstDiscardCard ?
-
-	getFirstDiscardCard() {
+	// Set the first card of the discard pile, ensuring it is not a special card
+	setFirstDiscardCard() {
 		let firstDiscardCard = this.drawOneCard();
 
 		while (isSpecialCard(firstDiscardCard)) {
@@ -37,10 +37,12 @@ export class CardManager {
 		this.lastDiscardPileCard = firstDiscardCard;
 	}
 
+	// Remove a specified number of cards from the deck
 	removeCardsFromDeck(cards: number) {
 		this.deck.splice(0, cards);
 	}
 
+	// Draw one card from the deck
 	drawOneCard(): Card {
 		if (this.deck.length === 0) {
 			throw new Error('The deck is empty');
@@ -48,6 +50,7 @@ export class CardManager {
 		return this.deck.pop() as Card;
 	}
 
+	// Draw a specified number of cards from the deck
 	drawCards(count: number): Card[] {
 		const newCards: Card[] = [];
 
