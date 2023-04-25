@@ -22,7 +22,37 @@ import {
 	skipYellow,
 	skipBlank,
 	wild,
+	backside, 
+	unoLogo
 } from './CardImages';
+
+export const allImages = [
+	frontWild,
+	frontBlue,
+	frontGreen,
+	frontRed,
+	frontYellow,
+	drawFour,
+	drawFourBlank,
+	drawTwoBlue,
+	drawTwoGreen,
+	drawTwoRed,
+	drawTwoYellow,
+	drawTwoBlank,
+	reverseYellow,
+	reverseBlue,
+	reverseGreen,
+	reverseRed,
+	reverseBlank,
+	skipBlue,
+	skipGreen,
+	skipRed,
+	skipYellow,
+	skipBlank,
+	wild,
+	backside, 
+	unoLogo
+];
 
 export enum CardColor {
   Red = 'red',

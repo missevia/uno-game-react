@@ -21,6 +21,8 @@ import skipRed from '../assets/cards/skip-red.png';
 import skipYellow from '../assets/cards/skip-yellow.png';
 import skipBlank from '../assets/cards/skip-blank.png';
 import wild from '../assets/cards/wild.png';
+import unoLogo from '../assets/cards/uno-logo.png'; 
+import backside from '../assets/cards/backside.png';
 
 export {
 	frontWild,
@@ -46,4 +48,6 @@ export {
 	skipYellow,
 	skipBlank,
 	wild,
+	unoLogo, 
+	backside
 };

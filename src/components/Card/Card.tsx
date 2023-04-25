@@ -122,40 +122,37 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 					aiHand={aiHand}
 					isPile={isPile}
 					noShadow={noShadow}
-				>	
+				>
 					<div className='wrapper'>
 						<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
-						{!showBack && (
-							<>
-								<img className='card-front' src={cardFrontSrc} alt={`${color} card`} />
-								{!isNumeric && value !== CardValue.Wild && (
-									<img className='card-value' src={valueSrc} alt={`${color} ${value}`} />
-								)}
-								{isNumeric && (
-									<div className='card-number' style={{ color: getNumberColor(color) }}>
+						<>
+							<img className={`card-front ${showBack ? 'card-front-hidden' : ''}`} src={cardFrontSrc} alt={`${color} card`} />
+							{!isNumeric && value !== CardValue.Wild && (
+								<img className={`card-value ${showBack ? 'card-front-hidden' : ''}`} src={valueSrc} alt={`${color} ${value}`} />
+							)}
+							{isNumeric && (
+								<div className={`card-number ${showBack ? 'card-front-hidden' : ''}`} style={{ color: getNumberColor(color) }}>
+									<span>{value}</span>
+								</div>
+							)}
+							{isNumeric ? (
+								<>
+									<div className={`card-corner top-left ${showBack ? 'card-front-hidden' : ''}`} style={{ color: 'white' }}>
 										<span>{value}</span>
 									</div>
-								)}
-								{isNumeric ? (
-									<>
-										<div className='card-corner top-left' style={{ color: 'white' }}>
-											<span>{value}</span>
-										</div>
-										<div className='card-corner bottom-right' style={{ color: 'white' }}>
-											<span>{value}</span>
-										</div>
-									</>
-								) : (
-									<>
-										<img className={'card-corner card-corner-image top-left'} src={blankValueSrc} />
-										<img className={'card-corner card-corner-image bottom-right'} src={blankValueSrc} />
-									</>
-								)}
-							</>
-						)}
+									<div className={`card-corner bottom-right ${showBack ? 'card-front-hidden' : ''}`} style={{ color: 'white' }}>
+										<span>{value}</span>
+									</div>
+								</>
+							) : (
+								<>
+									<img className={`card-corner card-corner-image top-left ${showBack ? 'card-front-hidden' : ''}`} src={blankValueSrc} />
+									<img className={`card-corner card-corner-image bottom-right ${showBack ? 'card-front-hidden' : ''}`} src={blankValueSrc} />
+								</>
+							)}
+						</>
 						{showBack && <div className="card-back" />}
 					</div>
-		
 				</CardStyled>
 			</motion.div>
 		);

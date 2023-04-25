@@ -1,5 +1,5 @@
 // MainMenu.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import unoLogo from './assets/cards/uno-logo.png';
@@ -54,6 +54,7 @@ interface MainMenuProps {
 
 const MainMenu: React.FC<MainMenuProps> = ({ playMusic }) => {
 	const navigate = useNavigate();
+	const [logoLoaded, setLogoLoaded] = useState(false);
 
 	const startGame = () => {
 		playMusic();
@@ -65,14 +66,14 @@ const MainMenu: React.FC<MainMenuProps> = ({ playMusic }) => {
 	};
 
 	return (
-		<MenuContainer>
-			<Menu>
-				<UnoLogo src={unoLogo} alt='uno-logo' />
-				<Button onClick={startGame} text={'Start game'} fontSize={3}/>
+		<MenuContainer style={{ display: logoLoaded ? 'flex' : 'none' }}>
+		  <Menu>
+				<UnoLogo src={unoLogo} alt='uno-logo' onLoad={() => setLogoLoaded(true)} />
+				<Button onClick={startGame} text={'Start game'} fontSize={3} />
 				<GameRulesText onClick={goToRules}>Game rules</GameRulesText>
-			</Menu>
+		  </Menu>
 		</MenuContainer>
-	);
+	  );
 };
 
 export default MainMenu;

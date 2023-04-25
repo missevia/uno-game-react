@@ -14,6 +14,7 @@ html {
 body {
   box-sizing: border-box;
   font-family: 'Bangers';
+  background-image: linear-gradient(to right, rgb(116, 235, 213), rgb(159, 172, 230));
 }
 
 :root {
