@@ -15,11 +15,10 @@ const AIHandStyled = styled.div<{ horizontal: boolean }>`
 interface AIHandProps {
   aiHand: Card[]
   horizontal: boolean
-  aiPlayerIndex: number
 }
 
 const AIHand: React.FC<AIHandProps> = observer(
-	({ aiHand, horizontal, aiPlayerIndex}) => {
+	({ aiHand, horizontal }) => {
 		return (
 			<AIHandStyled horizontal={horizontal}>
 				{aiHand.map((card, index) => (

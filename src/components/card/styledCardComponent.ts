@@ -2,12 +2,11 @@ import styled from 'styled-components';
 import cardBack from '../../assets/cards/backside.png';
 
 interface CardStyledProps {
-    highlight?: boolean
-    mainPlayerHand?: boolean
-    aiHand?: boolean
-    isPile?: boolean
+    isHighlighted: boolean
+    isMainPlayerHand: boolean
+    isAiHand: boolean
+    isPile: boolean
     isNumeric: boolean;
-    hovered: boolean;
 }
 
 export const StyledCard = styled.div<Partial<CardStyledProps>>`
@@ -16,10 +15,10 @@ export const StyledCard = styled.div<Partial<CardStyledProps>>`
     width: ${({ isPile }) => (isPile ? 'var(--cardWidthBigger)' : 'var(--cardWidth)')};
     height: ${({ isPile }) => (isPile ? 'var(--cardHeightBigger)' : 'var(--cardHeight)')};
     display: inline-block;
-    filter: ${({ highlight, mainPlayerHand }) =>
-		highlight || !mainPlayerHand ? 'contrast(1)' : 'contrast(0.5)'};
-    cursor: ${({ highlight }) => (highlight ? 'pointer' : 'default')};
-    z-index: ${({ isPile, aiHand, highlight }) => (isPile ? '-100' : aiHand ? '100' : highlight ? 'auto' : '0')};
+    filter: ${({ isHighlighted, isMainPlayerHand }) =>
+		isHighlighted || !isMainPlayerHand ? 'contrast(1)' : 'contrast(0.5)'};
+    cursor: ${({ isHighlighted }) => (isHighlighted? 'pointer' : 'default')};
+    z-index: ${({ isPile, isAiHand, isHighlighted }) => (isPile ? '-100' : isAiHand ? '100' : isHighlighted ? 'auto' : '0')};
     transition: z-index 0.3s;
   }
 

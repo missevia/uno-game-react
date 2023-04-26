@@ -1,5 +1,5 @@
 import { Card, checkValidCard, ActiveSpecialCard } from '../../utils/cardUtils';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable  } from 'mobx';
 
 export class Player {
 	private id = 0;
@@ -22,8 +22,11 @@ export class Player {
 		const cardIndexToPlay = this.cards.findIndex((card) =>
 			checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards),
 		);
-		const cardToPlay = this.cards[cardIndexToPlay];
-		return cardToPlay;
+		let cardToPlay;
+		if (cardIndexToPlay >= 0) {
+			cardToPlay = this.cards[cardIndexToPlay];
+		}
+		return cardToPlay || null;
 	}
 
 	// Set new cards for the player
@@ -32,12 +35,13 @@ export class Player {
 	}
 
 	// Play a card from the player's hand
+	// Uncomment the below console.logs for debugging purposes
 	playCard(
 		activeSpecialCard: ActiveSpecialCard | null,
 		lastDiscardPileCard: Card,
 		cardIndex: number,
 	): Card | null {
-		console.log(`Player ${this.id} cards before playing:`, JSON.stringify(this.cards));
+		// console.log(`Player ${this.id} cards before playing:`, JSON.stringify(this.cards));
 		if (this.isPlayer) {
 			const playerHand = this.cards;
 			const card = playerHand[cardIndex];
@@ -45,8 +49,8 @@ export class Player {
 			if (checkValidCard(card, activeSpecialCard, lastDiscardPileCard, this.cards)) {
 				this.setCards([...playerHand.slice(0, cardIndex), ...playerHand.slice(cardIndex + 1)]);
 			}
-			console.log(`Player ${this.id} card to play:`, JSON.stringify(card));
-			console.log(`Player ${this.id} cards after playing:`, JSON.stringify(this.cards));
+			// console.log(`Player ${this.id} card to play:`, JSON.stringify(card));
+			// console.log(`Player ${this.id} cards after playing:`, JSON.stringify(this.cards));
 
 			return card;
 		} else {
@@ -55,12 +59,10 @@ export class Player {
 			const cardToPlay = this.getAiPlayableCard(activeSpecialCard, lastDiscardPileCard);
 
 			if (cardToPlay) {
-				runInAction(() => {
-					this.cards = aiHand.filter((item) => item !== cardToPlay);
-				});
+				this.setCards(aiHand.filter((item) => item !== cardToPlay));
 			}
-			console.log(`Player ${this.id} card to play:`, JSON.stringify(cardToPlay));
-			console.log(`Player ${this.id} cards after playing:`, JSON.stringify(this.cards));
+			// console.log(`Player ${this.id} card to play:`, JSON.stringify(cardToPlay));
+			// console.log(`Player ${this.id} cards after playing:`, JSON.stringify(this.cards));
 			return cardToPlay;
 		}
 	}

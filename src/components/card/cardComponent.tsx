@@ -15,16 +15,16 @@ import { useAnimateToDiscardPile } from '../../hooks/useAnimateToDiscardPile';
 interface CardComponentProps {
   card: Card
   cardIndex?: number
-  highlight?: boolean
+  isHighlighted?: boolean
   style?: React.CSSProperties
-  cardType?: CardType;
+  cardType: CardType;
 }
 
 const CardComponent: React.FC<CardComponentProps> = observer(
 	({
 		card,
 		cardIndex,
-		highlight = false,
+		isHighlighted = false,
 		cardType = CardType.MainPlayerHand,
 	}) => {
 		const { game } = useGame();
@@ -42,18 +42,18 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 
 
 		const handleClick = () => {
-			if (cardIndex !== undefined && cardType !== CardType.AiHand && highlight) {
+			if (cardIndex !== undefined && cardType !== CardType.AiHand && isHighlighted) {
 			  setTimeout(() => {
 					game.playCard(cardIndex);
 			  }, 450);
 			  animateToDiscardPile(false);
 			}
-		  };
+		};
 
 		return (
 			<motion.div
 				whileHover={
-					highlight
+					isHighlighted
 						? { y: -40, transition: { duration: 0.3 } }
 						: { y: 0, transition: { duration: 0.3 } }
 				}
@@ -61,9 +61,9 @@ const CardComponent: React.FC<CardComponentProps> = observer(
 				<StyledCard
 					ref={cardRef}
 					onClick={handleClick}
-					highlight={highlight}
-					mainPlayerHand={cardType === CardType.MainPlayerHand}
-					aiHand={cardType === CardType.AiHand}
+					isHighlighted={isHighlighted}
+					isMainPlayerHand={cardType === CardType.MainPlayerHand}
+					isAiHand={cardType === CardType.AiHand}
 					isPile={cardType === CardType.Pile}
 				>
 					<div className='wrapper'>
