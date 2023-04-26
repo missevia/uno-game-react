@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import Modal from './Modal';
+import Modal from './modal';
 
 interface ModalRenderProps {
   startNewGame: () => void;

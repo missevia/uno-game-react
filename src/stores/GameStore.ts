@@ -6,9 +6,9 @@ import {
 	isSpecialCard,
 	ActiveSpecialCard,
 } from '../utils/cardUtils';
-import { RootStore } from './RootStore';
-import { CardManager } from './modules/CardManager';
-import { Player } from './modules/Player';
+import { RootStore } from './rootStore';
+import { CardManager } from './modules/cardManager';
+import { Player } from './modules/player';
 
 export class GameStore {
 	currentPlayer = 0;

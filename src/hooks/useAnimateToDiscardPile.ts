@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
+import { useDiscardPilePosition } from '../contexts/discardPilePositionContext';
 
 type AnimateToDiscardPile = (
     cardRef: RefObject<HTMLDivElement>

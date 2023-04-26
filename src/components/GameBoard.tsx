@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import PlayerHand from './PlayerHand';
-import AIHandContainer from './AIHand/AiHandContainer';
-import DiscardPile from './DiscardPile';
-import Deck from './Deck';
+import PlayerHand from './playerHand';
+import AIHandContainer from './aiHand/aiHandContainer';
+import DiscardPile from './discardPile';
+import Deck from './deck';
 import styled from 'styled-components';
-import { GameStore } from '../stores/GameStore';
-import DiscardPilePositionContext from '../contexts/DiscardPilePositionContext';
-import ModalRender from './Modal/ModalRender';
+import { GameStore } from '../stores/gameStore';
+import DiscardPilePositionContext from '../contexts/discardPilePositionContext';
+import ModalRender from './modal/modalRender';
 
 
 const GameBoardStyled = styled.div`

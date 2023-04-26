@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { RootStoreContext } from './hooks/useGameStore';
-import { RootStore } from './stores/RootStore';
-import UnoGame from './UnoGame';
-import Rules from './Rules';
+import { RootStore } from './stores/rootStore';
+import UnoGame from './components/unoGame';
+import Rules from './components/rules';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainMenu from './MainMenu';
+import MainMenu from './components/mainMenu';
 import bgMusic from './assets/audio/bg-music.mp3';
 import AudioPlayer from './utils/audioPlayer';
 import { preloadImages } from './utils/imageUtils';

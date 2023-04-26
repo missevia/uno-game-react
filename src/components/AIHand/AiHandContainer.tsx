@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../../utils/cardUtils';
 import styled from 'styled-components';
 import { observer } from 'mobx-react-lite';
-import AIHand from './AiHand';
+import AIHand from './aiHand';
 
 const AIHandContainerStyled = styled.div<{ horizontal: boolean, size: { height: number, width: number } }>`
   position: fixed;

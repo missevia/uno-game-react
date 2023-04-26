@@ -31,7 +31,7 @@ const DeckStyled = styled.div<DeckStyledProps>`
     background-size: cover;
     border-radius: 4px;
     cursor: pointer;
-	z-index: -1;
+	z-index: -5;
   }
 
 
