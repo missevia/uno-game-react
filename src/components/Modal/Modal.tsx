@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import Backdrop from './Backdrop';
+import Backdrop from './backdrop';
 import Button from '../button';
 
 const ModalStyled = styled.div`

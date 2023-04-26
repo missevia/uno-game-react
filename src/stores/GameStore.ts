@@ -6,9 +6,9 @@ import {
 	isSpecialCard,
 	ActiveSpecialCard,
 } from '../utils/cardUtils';
-import { RootStore } from './RootStore';
-import { CardManager } from './modules/CardManager';
-import { Player } from './modules/Player';
+import { RootStore } from './rootStore';
+import { CardManager } from './modules/cardManager';
+import { Player } from './modules/player';
 
 export class GameStore {
 	currentPlayer = 0;
@@ -282,7 +282,6 @@ export class GameStore {
 							runInAction(() => {
 								// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.
 								if (this.cardManager.deck.length !== 0 && this.gameInProgress) {
-									console.log(`DRAWING CARDS FOR PLAYER NUMBER ${this.currentPlayer}`);
 									this.drawCardsToPlayer(this.currentPlayer);
 								}
 	

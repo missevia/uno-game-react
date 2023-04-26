@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useGame } from './hooks/useGameStore';
+import { useGame } from '../hooks/useGameStore';
 import { observer } from 'mobx-react-lite';
-import GameBoard from './components/GameBoard';
+import GameBoard from './gameBoard';
 import styled from 'styled-components';
 
 const UnoGameStyled = styled.div`

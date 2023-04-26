@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import unoLogo from './assets/cards/uno-logo.png';
-import Button from './components/button';
+import unoLogo from '../assets/cards/uno-logo.png';
+import Button from './button';
 
 const MenuContainer = styled.div`
   display: flex;

@@ -10,17 +10,19 @@ interface DeckProps {
   currentPlayer: number
   numberOfCardsToDraw: number | null;
   previousPlayer: number;
+  isHighlighted: boolean;
 }
 
 interface DeckStyledProps {
-  highlight: boolean;
+  isHighlighted: boolean;
 }
 
 const DeckStyled = styled.div<DeckStyledProps>`
   display: inline-block;
   margin-left: 15rem;
+  margin-bottom: 1rem;
   position: relative;
-  filter: ${({ highlight }) => highlight && 'drop-shadow(white 0px 0px 1.5rem)'};
+  filter: ${({ isHighlighted }) => isHighlighted && 'drop-shadow(white 0px 0px 1.5rem)'};
   .card-back {
     position: absolute;
     width: 11.2rem;
@@ -29,14 +31,23 @@ const DeckStyled = styled.div<DeckStyledProps>`
     background-size: cover;
     border-radius: 4px;
     cursor: pointer;
+	z-index: -5;
   }
+
+
+
+  .flying {
+	z-index: 100;
+  }
+
+
 
   h1 {
     font-size: 100rem
   }
 `;
 
-const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck, numberOfCardsToDraw, previousPlayer }) => {
+const Deck: React.FC<DeckProps> = observer(({ onClick, deck, numberOfCardsToDraw, previousPlayer, isHighlighted }) => {
 
 	const renderAnimatedCards = (count: number) => {
 		return Array.from({ length: count }, (_, index) => {
@@ -87,7 +98,7 @@ const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck, numb
 		  return (
 				<div
 			  key={`animatedCard-${index}`}
-			  className="card-back"
+			  className="card-back flying"
 			  ref={cardRef}
 			  style={{
 						zIndex: -index,
@@ -97,11 +108,11 @@ const Deck: React.FC<DeckProps> = observer(({ onClick, currentPlayer, deck, numb
 		});
 	  };
 	return (
-		<DeckStyled highlight={currentPlayer === 0} onClick={onClick}>
+		<DeckStyled isHighlighted={isHighlighted} onClick={onClick}>
 			{deck.length > 0 && (
 				<div key="defaultCard" className="card-back" onClick={onClick}></div>
 			)}
-			{numberOfCardsToDraw !== null && numberOfCardsToDraw <= deck.length && renderAnimatedCards(numberOfCardsToDraw)};
+			{numberOfCardsToDraw !== null && numberOfCardsToDraw <= deck.length && renderAnimatedCards(numberOfCardsToDraw)}
 		</DeckStyled>
 	);
 });

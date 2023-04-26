@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import CardComponent from './card/cardComponent';
 import { Card, CardType } from '../utils/cardUtils';
 import { observer } from 'mobx-react-lite';
-import { useDiscardPilePosition } from '../contexts/DiscardPilePositionContext';
+import { useDiscardPilePosition } from '../contexts/discardPilePositionContext';
 
 interface DiscardPileProps {
   topCard?: Card

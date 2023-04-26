@@ -53,7 +53,7 @@ const PlayerHand: React.FC<PlayerHandProps> = observer(
 							key={card.id}
 							card={card}
 							cardIndex={index}
-							highlight={isPlayerTurn && validMoves.includes(index)}
+							isHighlighted={isPlayerTurn && validMoves.includes(index)}
 							cardType={CardType.MainPlayerHand}
 						/>
 					))}
