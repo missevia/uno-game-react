@@ -47,16 +47,12 @@ const GameRulesText = styled.p`
   }
 `;
 
-interface MainMenuProps {
-	playMusic: () => void;
-}
 
-const MainMenu: React.FC<MainMenuProps> = ({ playMusic }) => {
+const MainMenu = () => {
 	const navigate = useNavigate();
 	const [logoLoaded, setLogoLoaded] = useState(false);
 
 	const startGame = () => {
-		playMusic();
 		navigate('/game');
 	};
 

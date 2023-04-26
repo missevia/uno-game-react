@@ -55,9 +55,9 @@ const App = () => {
 				<AudioPlayer audioFile={bgMusic} play={playBgMusic} loop />
 				<AppStyled>
 					<Routes>
-						<Route index element={<MainMenu playMusic={playMusic} />} />
-						<Route path="/main-menu" element={<MainMenu playMusic={playMusic} />} />
-						<Route path="/game" element={<UnoGame />} />
+						<Route index element={<MainMenu />} />
+						<Route path="/main-menu" element={<MainMenu />} />
+						<Route path="/game" element={<UnoGame playMusic={playMusic} />} />
 						<Route path="/rules" element={<Rules />} />
 					</Routes>
 				</AppStyled>

@@ -9,7 +9,11 @@ const UnoGameStyled = styled.div`
   max-width: 100vw;
 `;
 
-const UnoGame = observer(() => {
+interface UnoGameProps {
+	playMusic: () => void;
+}
+
+const UnoGame: React.FC<UnoGameProps> = observer(({ playMusic }) => {
 	const { game } = useGame();
 	const initialized = useRef(false);
 	const [gameStarted, setGameStarted] = useState(false);
@@ -21,6 +25,10 @@ const UnoGame = observer(() => {
 			setGameStarted(true);
 		}
 	}, [game]);
+
+	useEffect(() => {
+		playMusic();
+	}, []);
 
 	if (!game) {
 		return null;
