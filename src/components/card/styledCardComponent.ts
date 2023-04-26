@@ -18,7 +18,7 @@ export const StyledCard = styled.div<Partial<CardStyledProps>>`
     filter: ${({ isHighlighted, isMainPlayerHand }) =>
 		isHighlighted || !isMainPlayerHand ? 'contrast(1)' : 'contrast(0.5)'};
     cursor: ${({ isHighlighted }) => (isHighlighted? 'pointer' : 'default')};
-    z-index: ${({ isPile, isAiHand, isHighlighted }) => (isPile ? '-100' : isAiHand ? '100' : isHighlighted ? 'auto' : '0')};
+    z-index: ${({ isPile, isAiHand, isHighlighted }) => (isPile ? '-10' : isAiHand ? '10' : isHighlighted ? 'auto' : '0')};
     transition: z-index 0.3s;
   }
 

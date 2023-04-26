@@ -282,7 +282,6 @@ export class GameStore {
 							runInAction(() => {
 								// Check if the AI player needs to draw cards due to a DrawTwo or DrawFour card.
 								if (this.cardManager.deck.length !== 0 && this.gameInProgress) {
-									console.log(`DRAWING CARDS FOR PLAYER NUMBER ${this.currentPlayer}`);
 									this.drawCardsToPlayer(this.currentPlayer);
 								}
 	

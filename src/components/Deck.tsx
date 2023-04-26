@@ -20,6 +20,7 @@ interface DeckStyledProps {
 const DeckStyled = styled.div<DeckStyledProps>`
   display: inline-block;
   margin-left: 15rem;
+  margin-bottom: 1rem;
   position: relative;
   filter: ${({ isHighlighted }) => isHighlighted && 'drop-shadow(white 0px 0px 1.5rem)'};
   .card-back {
@@ -30,7 +31,16 @@ const DeckStyled = styled.div<DeckStyledProps>`
     background-size: cover;
     border-radius: 4px;
     cursor: pointer;
+	z-index: -1;
   }
+
+
+
+  .flying {
+	z-index: 100;
+  }
+
+
 
   h1 {
     font-size: 100rem
@@ -88,7 +98,7 @@ const Deck: React.FC<DeckProps> = observer(({ onClick, deck, numberOfCardsToDraw
 		  return (
 				<div
 			  key={`animatedCard-${index}`}
-			  className="card-back"
+			  className="card-back flying"
 			  ref={cardRef}
 			  style={{
 						zIndex: -index,
@@ -102,7 +112,7 @@ const Deck: React.FC<DeckProps> = observer(({ onClick, deck, numberOfCardsToDraw
 			{deck.length > 0 && (
 				<div key="defaultCard" className="card-back" onClick={onClick}></div>
 			)}
-			{numberOfCardsToDraw !== null && numberOfCardsToDraw <= deck.length && renderAnimatedCards(numberOfCardsToDraw)};
+			{numberOfCardsToDraw !== null && numberOfCardsToDraw <= deck.length && renderAnimatedCards(numberOfCardsToDraw)}
 		</DeckStyled>
 	);
 });
